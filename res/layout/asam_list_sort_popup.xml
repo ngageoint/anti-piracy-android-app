@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp">
+    
+    <TextView android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="3dp"
+        android:paddingLeft="10dp"
+        android:paddingTop="10dp"
+        android:text="@string/asam_list_sort_popup_prompt_text"
+        />
+        
+    <Spinner android:id="@+id/asam_list_sort_popup_sort_spinner_ui"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="3dp"
+        android:prompt="@string/asam_list_sort_popup_spinner_prompt_text"
+        />
+        
+    <RadioGroup android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        
+        <RadioButton android:id="@+id/asam_list_sort_popup_sort_ascending_radio_button_ui"
+            android:checked="false"
+            android:text="@string/asam_list_sort_popup_ascending_radio_button_text"
+            />
+
+        <RadioButton android:id="@+id/asam_list_sort_popup_sort_descending_radio_button_ui"
+            android:checked="false"
+            android:text="@string/asam_list_sort_popup_descending_radio_button_text"
+            />
+            
+    </RadioGroup>
+    
+</LinearLayout>

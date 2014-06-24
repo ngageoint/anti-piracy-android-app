@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    
+    <item android:id="@+id/subregion_map_menu_query_ui"
+        android:title="@string/subregion_map_menu_query_text"
+        android:showAsAction="always"
+        android:icon="@drawable/ic_action_bar_query"
+        android:enabled="false"
+        android:menuCategory="system"
+        android:orderInCategory="100">
+        
+        <menu>
+            
+            <item android:id="@+id/subregion_map_menu_60_days_ui"
+                android:title="@string/subregion_map_menu_60_days_text"
+                />
+        
+            <item android:id="@+id/subregion_map_menu_90_days_ui"
+                android:title="@string/subregion_map_menu_90_days_text"
+                />
+            
+            <item android:id="@+id/subregion_map_menu_180_days_ui"
+                android:title="@string/subregion_map_menu_180_days_text"
+                />
+            
+            <item android:id="@+id/subregion_map_menu_1_year_ui"
+                android:title="@string/subregion_map_menu_1_year_text"
+                />
+            
+            <item android:id="@+id/subregion_map_menu_5_years_ui"
+                android:title="@string/subregion_map_menu_5_years_text"
+                />
+            
+            <item android:id="@+id/subregion_map_menu_all_ui"
+                android:title="@string/subregion_map_menu_all_text"
+                />
+            
+        </menu>
+    
+    </item>
+    
+    <item android:id="@+id/subregion_map_menu_reset_ui"
+        android:title="@string/subregion_map_menu_reset_text"
+        android:showAsAction="always"
+        android:icon="@drawable/ic_action_bar_reset"
+        android:enabled="false"
+        android:menuCategory="system"
+        android:orderInCategory="200"
+        />
+    
+    <item android:id="@+id/subregion_map_menu_selected_subregions_ui"
+        android:title="@string/subregion_map_menu_selected_subregions_text"
+        android:showAsAction="always"
+        android:icon="@drawable/ic_action_bar_selected_subregions"
+        android:enabled="false"
+        android:menuCategory="system"
+        android:orderInCategory="50"
+        />
+        
+</menu>

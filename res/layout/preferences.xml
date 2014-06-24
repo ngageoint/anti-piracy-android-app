@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" 
+    android:layout_height="match_parent"
+    android:layout_alignParentTop="true"
+    android:orientation="vertical"
+    android:padding="10dp">
+                
+    <TextView android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/preferences_hide_disclaimer_label_text"
+        android:textColor="@color/asam_highlight_color"
+        android:textStyle="bold"
+        android:paddingTop="10dp"
+        />
+        
+    <CheckBox android:id="@+id/preferences_hide_disclaimer_checkbox_ui"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/preferences_hide_disclaimer_checkbox_text"
+        android:checked="false"
+        android:onClick="disclaimerButtonClicked"
+        android:paddingTop="10dp"
+        />
+            
+    <ImageView android:src="@android:drawable/divider_horizontal_dark"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scaleType="fitXY"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:paddingBottom="2dp"
+        android:paddingTop="2dp"
+        android:contentDescription="@string/empty_content_description"
+        />
+            
+    <TextView android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/preferences_last_sync_time_label_text"
+        android:textStyle="bold"
+        android:textColor="@color/asam_highlight_color"
+        android:paddingTop="10dp"
+        />
+            
+    <TextView android:id="@+id/preferences_last_sync_time_ui"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="5dp"
+        android:textIsSelectable="false"
+        />
+            
+    <Button android:id="@+id/preferences_sync_now_button_ui"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/preferences_sync_now_button_text"
+        android:onClick="syncButtonClicked"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="3dp"
+        />
+
+</LinearLayout>

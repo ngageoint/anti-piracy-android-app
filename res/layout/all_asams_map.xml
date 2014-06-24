@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+     
+    <TextView android:id="@+id/all_asams_map_query_feedback_text_ui"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textIsSelectable="false"
+        android:paddingLeft="10dp"
+        />
+    
+    <fragment android:id="@+id/all_asams_map_map_view_ui"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        class="com.google.android.gms.maps.SupportMapFragment"
+        />
+    
+</LinearLayout>

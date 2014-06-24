@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/text_query_menu_query_ui"
+        android:title="@string/text_query_menu_query_text"
+        android:showAsAction="always"
+        android:icon="@drawable/ic_action_bar_query"
+        android:menuCategory="system"
+        android:orderInCategory="100"
+        />
+    
+    <item android:id="@+id/text_query_menu_reset_ui"
+        android:title="@string/text_query_menu_reset_text"
+        android:showAsAction="always"
+        android:icon="@drawable/ic_action_bar_reset"
+        android:menuCategory="system"
+        android:orderInCategory="200"
+        />
+        
+</menu>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    
+    <item android:id="@+id/all_asams_map_menu_query_ui"
+        android:title="@string/all_asams_map_menu_query_text"
+        android:showAsAction="always"
+        android:icon="@drawable/ic_action_bar_query"
+        android:menuCategory="system"
+        android:orderInCategory="100">
+        
+        <menu>
+            
+            <item android:id="@+id/all_asams_map_menu_60_days_ui"
+                android:title="@string/all_asams_map_menu_60_days_text"
+                />
+        
+            <item android:id="@+id/all_asams_map_menu_90_days_ui"
+                android:title="@string/all_asams_map_menu_90_days_text"
+                />
+            
+            <item android:id="@+id/all_asams_map_menu_180_days_ui"
+                android:title="@string/all_asams_map_menu_180_days_text"
+                />
+            
+            <item android:id="@+id/all_asams_map_menu_1_year_ui"
+                android:title="@string/all_asams_map_menu_1_year_text"
+                />
+            
+            <item android:id="@+id/all_asams_map_menu_5_years_ui"
+                android:title="@string/all_asams_map_menu_5_years_text"
+                />
+            
+            <item android:id="@+id/all_asams_map_menu_all_ui"
+                android:title="@string/all_asams_map_menu_all_text"
+                />
+            
+        </menu>
+        
+    </item>
+    
+    <item android:id="@+id/all_asams_map_menu_list_view_ui"
+        android:title="@string/all_asams_map_menu_list_view_text"
+        android:showAsAction="always"
+        android:icon="@drawable/ic_action_bar_list_view"
+        android:menuCategory="system"
+        android:orderInCategory="200"
+        />
+    
+    <item android:id="@+id/all_asams_map_menu_zoom_ui"
+        android:title="@string/all_asams_map_menu_zoom_text"
+        android:showAsAction="always"
+        android:icon="@drawable/ic_action_bar_zoom"
+        android:menuCategory="system"
+        android:orderInCategory="300"
+        />
+    
+</menu>

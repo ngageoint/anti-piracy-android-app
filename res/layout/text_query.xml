@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" 
+    android:layout_height="wrap_content">
+        
+    <LinearLayout android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:scrollbars="vertical"
+        android:padding="10dp">
+            
+        <!-- Subregion. -->
+        <TextView android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/text_query_select_subregion_label_text"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/asam_highlight_color"
+            android:textSize="18sp"
+            />
+                
+        <Spinner android:id="@+id/text_query_subregion_spinner_ui"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:prompt="@string/text_query_select_subregion_prompt_text"
+            />
+                
+        <!-- Reference number -->
+        <TextView android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/text_query_reference_number_label_text"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/asam_highlight_color"
+            android:textSize="18sp"
+            />
+                
+        <LinearLayout android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+                
+            <EditText android:id="@+id/text_query_reference_number_year_edit_text_ui"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:inputType="number"
+                android:hint="@string/text_query_year_hint_text"
+                />
+                    
+            <TextView android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/hyphen_text"
+                />
+                    
+            <EditText android:id="@+id/text_query_reference_number_id_edit_text_ui"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:inputType="number"
+                android:hint="@string/text_query_number_hint_text"
+                />
+                
+        </LinearLayout>
+            
+        <!-- Date From/Date To -->
+        <LinearLayout android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp">
+                
+            <TextView android:text="@string/text_query_date_from_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="left"
+                android:textColor="@color/asam_highlight_color"
+                android:textSize="18sp"
+                />
+                
+            <TextView android:text="@string/text_query_date_to_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="left"
+                android:textColor="@color/asam_highlight_color"
+                android:textSize="18sp"
+                />
+                
+        </LinearLayout>
+            
+        <LinearLayout android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+                
+            <EditText android:id="@+id/text_query_date_from_edit_text_ui"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:inputType="date"
+                android:gravity="left"
+                android:hint="@string/text_query_date_hint_text"
+                android:focusable="false"
+                />
+                    
+            <TextView android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/hyphen_text"
+                />
+                    
+            <EditText android:id="@+id/text_query_date_to_edit_text_ui"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:inputType="date"
+                android:hint="@string/text_query_date_hint_text"
+                android:focusable="false"
+                />
+                
+        </LinearLayout>
+            
+        <!-- Victim -->
+        <TextView android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/text_query_victim_label_text"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/asam_highlight_color"
+            android:textSize="18sp"
+            />
+                
+        <EditText android:id="@+id/text_query_victim_edit_text_ui"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:contentDescription="@string/text_query_victim_content_description_text"
+            />
+                
+        <!-- Aggressor -->
+        <TextView android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/text_query_aggressor_label_text"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/asam_highlight_color"
+            android:textSize="18sp"
+            />
+                
+        <EditText android:id="@+id/text_query_aggressor_edit_text_ui"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:contentDescription="@string/text_query_aggressor_content_description_text"
+            />
+        
+        <LinearLayout android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:padding="10dp">
+            
+            <Button android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/text_query_query_button_text"
+                android:drawableLeft="@drawable/ic_action_bar_query"
+                android:onClick="queryButtonClicked"
+                />
+            
+            <Button android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/text_query_reset_button_text"
+                android:drawableLeft="@drawable/ic_button_reset"
+                android:onClick="clearButtonClicked"
+                />
+        </LinearLayout>
+            
+    </LinearLayout>
+        
+</ScrollView>
