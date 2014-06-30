@@ -22,6 +22,8 @@ public class AsamConstants {
     public static final String PREFERENCES_DIALOG_TAG = "preferences_dialog";
     public static final String INFO_DIALOG_TAG = "info_dialog";
     
+    public static final String MAP_TYPE_KEY = "map_type_key";
+    
     public static final String SORT_DIRECTION_KEY = "sort_direction";
     public static final String SPINNER_SELECTION_KEY = "sort_popup_spinner_selection";
     public static final int SORT_ASCENDING = 0;

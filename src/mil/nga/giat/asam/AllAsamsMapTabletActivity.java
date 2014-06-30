@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Locale;
 
 import mil.nga.giat.asam.DisclaimerDialogFragment.OnDisclaimerDialogDismissedListener;
+import mil.nga.giat.asam.MapTypeDialogFragment.OnMapTypeChangedListener;
 import mil.nga.giat.asam.PreferencesDialogFragment.OnPreferencesDialogDismissedListener;
 import mil.nga.giat.asam.TextQueryDialogFragment.OnTextQueryListener;
 import mil.nga.giat.asam.db.AsamDbHelper;
@@ -41,12 +42,15 @@ import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -67,7 +71,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 
-public class AllAsamsMapTabletActivity extends ActionBarActivity implements OnCameraChangeListener, OnMarkerClickListener, CancelableCallback, OnTextQueryListener, OnDisclaimerDialogDismissedListener, OnPreferencesDialogDismissedListener {
+public class AllAsamsMapTabletActivity extends ActionBarActivity implements OnCameraChangeListener, OnMarkerClickListener, CancelableCallback, OnTextQueryListener, OnDisclaimerDialogDismissedListener, OnPreferencesDialogDismissedListener, OnClickListener, OnMapTypeChangedListener {
 
     private static class QueryHandler extends Handler {
         
@@ -204,6 +208,9 @@ public class AllAsamsMapTabletActivity extends ActionBarActivity implements OnCa
         AsamLog.i(AllAsamsMapTabletActivity.class.getName() + ":onCreate");
         setContentView(R.layout.all_asams_map_tablet);
         
+        ImageButton mapSettings = (ImageButton) findViewById(R.id.map_settings);
+        mapSettings.setOnClickListener(this);
+        
         mQueryError = false;
         mPerformMapClustering = false;
         mAsams = new ArrayList<AsamBean>();
@@ -213,6 +220,11 @@ public class AllAsamsMapTabletActivity extends ActionBarActivity implements OnCa
         mMapUI = ((SupportMapFragment)getSupportFragmentManager().findFragmentById(R.id.all_asams_map_tablet_map_view_ui)).getMap();
         mMapUI.setOnCameraChangeListener(this);
         mMapUI.setOnMarkerClickListener(this);
+        
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        int mapType = preferences.getInt(AsamConstants.MAP_TYPE_KEY, GoogleMap.MAP_TYPE_NORMAL);
+        mMapUI.setMapType(mapType);
+        
         mPreviousZoomLevel = -1;
         mDateRangeTextViewUI = (TextView)findViewById(R.id.all_asams_map_tablet_date_range_text_view_ui);
         mTimeSliderUI = (SeekBar)findViewById(R.id.all_asams_map_tablet_time_slider_ui);
@@ -266,7 +278,6 @@ public class AllAsamsMapTabletActivity extends ActionBarActivity implements OnCa
         mQueryHandler = new QueryHandler(this);
         
         // Show the disclaimer popup if necessary.
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean hideDisclaimer = preferences.getBoolean(AsamConstants.HIDE_DISCLAIMER_KEY, false);
         boolean isTabletLaunching = getIntent().getBooleanExtra(AsamConstants.TABLET_IS_LAUNCHING_KEY, false);
         if (isTabletLaunching && !hideDisclaimer) {
@@ -895,5 +906,30 @@ public class AllAsamsMapTabletActivity extends ActionBarActivity implements OnCa
             }
             mQueryHandler.sendEmptyMessage(0);
         }
+    }
+    
+    @Override
+    public void onClick(View view) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        int mapType = preferences.getInt(AsamConstants.MAP_TYPE_KEY, GoogleMap.MAP_TYPE_NORMAL);
+        
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        MapTypeDialogFragment fragment = MapTypeDialogFragment.newInstance(mapType);
+        fragment.show(transaction, "MapType");
+    }
+
+    @Override
+    public void onMapTypeChanged(int mapType) {
+        System.out.println("Changed map type " + mapType);
+        
+        // Change the map
+        mMapUI.setMapType(mapType);
+        
+        // Update shared preferences
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putInt(AsamConstants.MAP_TYPE_KEY, mapType);
+        editor.commit();
+        
     }
 }

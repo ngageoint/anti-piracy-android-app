@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import mil.nga.giat.asam.MapTypeDialogFragment.OnMapTypeChangedListener;
 import mil.nga.giat.asam.db.AsamDbHelper;
 import mil.nga.giat.asam.model.AsamBean;
 import mil.nga.giat.asam.model.AsamJsonParser;
@@ -24,16 +25,22 @@ import mil.nga.giat.poffencluster.PoffenPoint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.PreferenceManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -52,7 +59,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 
-public class AllAsamsMapActivity extends ActionBarActivity implements OnCameraChangeListener, OnMarkerClickListener, CancelableCallback {
+public class AllAsamsMapActivity extends ActionBarActivity implements OnCameraChangeListener, OnMarkerClickListener, CancelableCallback, OnClickListener, OnMapTypeChangedListener {
 
     private static class QueryHandler extends Handler {
         
@@ -142,6 +149,9 @@ public class AllAsamsMapActivity extends ActionBarActivity implements OnCameraCh
         setContentView(R.layout.all_asams_map);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         
+        ImageButton mapSettings = (ImageButton) findViewById(R.id.map_settings);
+        mapSettings.setOnClickListener(this);
+        
         mQueryError = false;
         mPerformMapClustering = false;
         mAsams = new ArrayList<AsamBean>();
@@ -153,6 +163,10 @@ public class AllAsamsMapActivity extends ActionBarActivity implements OnCameraCh
         mMapUI.setOnCameraChangeListener(this);
         mMapUI.setOnMarkerClickListener(this);
         mPreviousZoomLevel = -1;
+        
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        int mapType = preferences.getInt(AsamConstants.MAP_TYPE_KEY, GoogleMap.MAP_TYPE_NORMAL);
+        mMapUI.setMapType(mapType);
         
         // Called to handle the UI after the query has run.
         mQueryHandler = new QueryHandler(this);
@@ -552,5 +566,30 @@ public class AllAsamsMapActivity extends ActionBarActivity implements OnCameraCh
             }
             mQueryHandler.sendEmptyMessage(0);
         }
+    }
+
+    @Override
+    public void onClick(View view) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        int mapType = preferences.getInt(AsamConstants.MAP_TYPE_KEY, GoogleMap.MAP_TYPE_NORMAL);
+        
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        MapTypeDialogFragment fragment = MapTypeDialogFragment.newInstance(mapType);
+        fragment.show(transaction, "MapType");
+    }
+
+    @Override
+    public void onMapTypeChanged(int mapType) {
+        System.out.println("Changed map type " + mapType);
+        
+        // Change the map
+        mMapUI.setMapType(mapType);
+        
+        // Update shared preferences
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putInt(AsamConstants.MAP_TYPE_KEY, mapType);
+        editor.commit();
+        
     }
 }

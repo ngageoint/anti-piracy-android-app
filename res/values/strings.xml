@@ -320,4 +320,7 @@
         <item>This is a text of the emergency broadcast system.</item>
     </string-array>
     
+    <string name="layer_button_desc">Map type selection</string>
+    <string name="dialog_map_type">Map Layer</string>    
+    
 </resources>
