@@ -15,3 +15,7 @@ Software source code previously released under an open source license and then m
 ![asam2] (https://cloud.githubusercontent.com/assets/3793883/3378304/63962198-fbe8-11e3-94f2-cd4cd3c7ab7f.png)
 ![asam3] (https://cloud.githubusercontent.com/assets/3793883/3378306/63a3ce42-fbe8-11e3-8b46-83a6239dc0f8.png)
 ![asam4] (https://cloud.githubusercontent.com/assets/3793883/3378305/63a2f7ce-fbe8-11e3-9dcd-351c6adfead1.png)
+
+
+#### ASAM offline map data
+![natural-earth-logo] (https://cloud.githubusercontent.com/assets/3382274/3486791/8a97b650-0451-11e4-972d-b5d9f63596ce.png)
