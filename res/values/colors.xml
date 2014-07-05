@@ -12,4 +12,6 @@
     <color name="list_divider_color">#333333</color>
     <color name="legal_fragment_background_color">#222222</color>
     <color name="tablerow_clicked_color">#ff33b5e5</color> <!-- light blue -->
+    <color name="holo_red_light">#ffff4444</color>
+    
 </resources>

@@ -1,5 +1,7 @@
 package mil.nga.giat.asam;
 
+import mil.nga.giat.asam.map.AllAsamsMapActivity;
+import mil.nga.giat.asam.map.SubregionMapActivity;
 import mil.nga.giat.asam.util.AsamConstants;
 import android.content.Context;
 import android.content.Intent;

@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 import mil.nga.giat.asam.db.AsamDbHelper;
+import mil.nga.giat.asam.map.AllAsamsMapActivity;
 import mil.nga.giat.asam.model.SubregionTextParser;
 import mil.nga.giat.asam.model.TextQueryParametersBean;
 import mil.nga.giat.asam.util.AsamConstants;
