@@ -46,6 +46,15 @@ public class OfflineMap {
         if (visible) mMapUI.setMapType(GoogleMap.MAP_TYPE_NONE);
     }
     
+    public void clear() {
+        backgroundTileOverlay.clearTileCache();
+        backgroundTileOverlay.remove();
+        for (Polygon polygon : offlinePolygons) {
+            polygon.remove();
+        }
+        offlinePolygons.clear();
+    }
+    
     private void loadOfflineMaps() {
         BackgroundTileProvider tileProvider = new BackgroundTileProvider(mContext);           
         backgroundTileOverlay = mMapUI.addTileOverlay(new TileOverlayOptions().tileProvider(tileProvider).zIndex(1).visible(false));

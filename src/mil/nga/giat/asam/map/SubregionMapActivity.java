@@ -113,6 +113,8 @@ public class SubregionMapActivity extends ActionBarActivity implements OnMapClic
     public void onPause() {
         super.onPause();
         
+        offlineMap.clear();
+        offlineMap = null;
         ((Asam) getApplication()).unregisterOfflineMapListener(this);
     }
     

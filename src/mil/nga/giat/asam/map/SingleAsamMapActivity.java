@@ -87,6 +87,8 @@ public class SingleAsamMapActivity extends ActionBarActivity implements Asam.OnO
     public void onPause() {
         super.onPause();
         
+        offlineMap.clear();
+        offlineMap = null;
         ((Asam) getApplication()).unregisterOfflineMapListener(this);
     }
     
