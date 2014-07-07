@@ -101,8 +101,9 @@ public class SubregionMapActivity extends ActionBarActivity implements OnMapClic
         CameraPosition cameraPosition = new CameraPosition.Builder().target(position).zoom(INITIAL_ZOOM_LEVEL).build();
         mMapUI.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
         
-        ((Asam) getApplication()).registerOfflineMapListener(this);
-        
+        if (offlineMap == null) {
+            ((Asam) getApplication()).registerOfflineMapListener(this);
+        }        
         supportInvalidateOptionsMenu();
         
         int mapType = mSharedPreferences.getInt(AsamConstants.MAP_TYPE_KEY, GoogleMap.MAP_TYPE_NORMAL);
@@ -113,8 +114,6 @@ public class SubregionMapActivity extends ActionBarActivity implements OnMapClic
     public void onPause() {
         super.onPause();
         
-        offlineMap.clear();
-        offlineMap = null;
         ((Asam) getApplication()).unregisterOfflineMapListener(this);
     }
     

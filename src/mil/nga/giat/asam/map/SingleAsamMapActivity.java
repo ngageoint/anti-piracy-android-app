@@ -75,8 +75,9 @@ public class SingleAsamMapActivity extends ActionBarActivity implements Asam.OnO
     protected void onResume() {
         super.onResume();
         
-        ((Asam) getApplication()).registerOfflineMapListener(this);
-        
+        if (offlineMap == null) {
+            ((Asam) getApplication()).registerOfflineMapListener(this);
+        }        
         supportInvalidateOptionsMenu();
         
         int mapType = mSharedPreferences.getInt(AsamConstants.MAP_TYPE_KEY, GoogleMap.MAP_TYPE_NORMAL);
@@ -87,8 +88,6 @@ public class SingleAsamMapActivity extends ActionBarActivity implements Asam.OnO
     public void onPause() {
         super.onPause();
         
-        offlineMap.clear();
-        offlineMap = null;
         ((Asam) getApplication()).unregisterOfflineMapListener(this);
     }
     

@@ -339,7 +339,9 @@ public class AllAsamsMapTabletActivity extends ActionBarActivity implements OnCa
     public void onResume() {
         super.onResume();
         
-        ((Asam) getApplication()).registerOfflineMapListener(this);
+        if (offlineMap == null) {
+            ((Asam) getApplication()).registerOfflineMapListener(this);
+        }
         
         supportInvalidateOptionsMenu();
         
@@ -351,8 +353,6 @@ public class AllAsamsMapTabletActivity extends ActionBarActivity implements OnCa
     public void onPause() {
         super.onPause();
         
-        offlineMap.clear();
-        offlineMap = null;
         ((Asam) getApplication()).unregisterOfflineMapListener(this);
     }
     
