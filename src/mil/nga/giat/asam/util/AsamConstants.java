@@ -12,7 +12,6 @@ public class AsamConstants {
     public static final int QUERY_TIMEOUT_THRESHOLD_IN_MILLISECONDS = 20 * 1000;
     public static final String LAST_SYNC_TIME = "last_sync_time";
     public static final String HIDE_DISCLAIMER_KEY = "hide_disclaimer";
-    public static final String TABLET_IS_LAUNCHING_KEY = "tablet_is_launching";
     public static final String INITIAL_MAP_POSITION_KEY = "initial_map_position";
     public static final String SUBREGION_MAP_EXPECTING_RESULT_CODE_KEY = "subregion_map_expecting_result_code";
     public static final String LEGAL_DETAILS_TITLE_KEY = "legal_deatails_title";

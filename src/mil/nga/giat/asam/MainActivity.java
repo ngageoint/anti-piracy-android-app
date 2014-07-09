@@ -70,7 +70,6 @@ public class MainActivity extends FragmentActivity {
         Intent intent = null;
         if (isTablet()) {
             intent = new Intent(this, AllAsamsMapTabletActivity.class);
-            intent.putExtra(AsamConstants.TABLET_IS_LAUNCHING_KEY, true);
         }
         else if (!hideDisclaimer) {
             intent = new Intent(this, DisclaimerActivity.class);

@@ -21,6 +21,7 @@
             
     		<Button android:id="@+id/disclaimer_exit_button_ui"
         		android:text="@string/disclaimer_exit_button_text"
+        		android:contentDescription="@string/disclaimer_exit_button_text"
         		android:layout_width="0dp"
         		android:layout_height="wrap_content"
         		android:layout_weight="1"
@@ -29,6 +30,7 @@
     		
     		<Button android:id="@+id/disclaimer_agree_button_ui"
         		android:text="@string/disclaimer_agree_button_text"
+        		android:contentDescription="@string/disclaimer_agree_button_text"
         		android:layout_width="0dp"
         		android:layout_height="wrap_content"
         		android:layout_weight="1"
