@@ -73,6 +73,7 @@
     <string name="asam_report_description_label_text">Description</string>
     <string name="asam_report_map_it_label_text">Map It</string>
     <string name="asam_report_back_button_text">Back</string>
+    <string name="tablet_disclaimer">true</string>
     <string name="disclaimer_title_text">Disclaimer</string>
     <string name="disclaimer_text">
         Information contained in this Application resides on a computer system funded by the National Geospatial-Intelligence Agency. This system

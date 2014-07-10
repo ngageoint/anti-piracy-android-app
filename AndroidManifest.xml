@@ -129,7 +129,7 @@
         <meta-data android:name="web_service_url" android:value="http://msi.nga.mil/MSI_JWS/ASAM_JSON/getJSON?typename=DateRange_AllRefNumbers&amp;fromDate=%s&amp;toDate=%s" />
         <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
         
-        <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyDkK8w6bNkwLXa1-YJaPUbUEKZ0GZ8nZ4w"/> 
+        <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyBsrbpe5jgf7zmG04SRYd0l1kwlS3kU_po"/> 
         
     </application>
     

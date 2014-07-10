@@ -99,7 +99,7 @@ public class AllAsamsMapTabletActivity extends ActionBarActivity implements OnCa
                 Toast.makeText(allAsamsMapTabletActivity, allAsamsMapTabletActivity.getString(R.string.all_asams_map_tablet_query_error_text), Toast.LENGTH_LONG).show();
             }
             
-            allAsamsMapTabletActivity.mMapUI.clear();
+            allAsamsMapTabletActivity.clearAsamMarkers();
             if (allAsamsMapTabletActivity.mAsams.size() == 1) {
                 
                 // Camera position changing so redraw will be triggered in onCameraChange.
@@ -803,7 +803,6 @@ public class AllAsamsMapTabletActivity extends ActionBarActivity implements OnCa
 
         @Override
         protected void onPostExecute(Void empty) {
-            mMapUI.clear();
             redrawMarkersOnMapBasedOnVisibleRegion();
         }
     }
@@ -968,6 +967,12 @@ public class AllAsamsMapTabletActivity extends ActionBarActivity implements OnCa
                 }
             }
             mQueryHandler.sendEmptyMessage(0);
+        }
+    }
+    
+    private void clearAsamMarkers() {        
+        for (AsamMapClusterBean mapCluster : mVisibleClusters) {
+            mapCluster.getMapMarker().remove(); // Remove from map.
         }
     }
     
