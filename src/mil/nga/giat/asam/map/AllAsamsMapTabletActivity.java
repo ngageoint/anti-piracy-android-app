@@ -1,19 +1,29 @@
-package mil.nga.giat.asam;
+package mil.nga.giat.asam.map;
 
 import java.lang.ref.WeakReference;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 
+import mil.nga.giat.asam.Asam;
+import mil.nga.giat.asam.AsamListReportTabletActivity;
+import mil.nga.giat.asam.DisclaimerDialogFragment;
 import mil.nga.giat.asam.DisclaimerDialogFragment.OnDisclaimerDialogDismissedListener;
+import mil.nga.giat.asam.InfoDialogFragment;
+import mil.nga.giat.asam.LegalTabletActivity;
+import mil.nga.giat.asam.PreferencesDialogFragment;
 import mil.nga.giat.asam.PreferencesDialogFragment.OnPreferencesDialogDismissedListener;
+import mil.nga.giat.asam.R;
+import mil.nga.giat.asam.TextQueryDialogFragment;
 import mil.nga.giat.asam.TextQueryDialogFragment.OnTextQueryListener;
+import mil.nga.giat.asam.connectivity.OfflineBannerFragment;
 import mil.nga.giat.asam.db.AsamDbHelper;
 import mil.nga.giat.asam.model.AsamBean;
 import mil.nga.giat.asam.model.AsamJsonParser;
@@ -65,9 +75,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.vividsolutions.jts.geom.Geometry;
 
 
-public class AllAsamsMapTabletActivity extends ActionBarActivity implements OnCameraChangeListener, OnMarkerClickListener, CancelableCallback, OnTextQueryListener, OnDisclaimerDialogDismissedListener, OnPreferencesDialogDismissedListener {
+public class AllAsamsMapTabletActivity extends ActionBarActivity implements OnCameraChangeListener, OnMarkerClickListener, CancelableCallback, OnTextQueryListener, OnDisclaimerDialogDismissedListener, OnPreferencesDialogDismissedListener, Asam.OnOfflineFeaturesListener, OfflineBannerFragment.OnOfflineBannerClick {
 
     private static class QueryHandler extends Handler {
         
@@ -88,7 +99,7 @@ public class AllAsamsMapTabletActivity extends ActionBarActivity implements OnCa
                 Toast.makeText(allAsamsMapTabletActivity, allAsamsMapTabletActivity.getString(R.string.all_asams_map_tablet_query_error_text), Toast.LENGTH_LONG).show();
             }
             
-            allAsamsMapTabletActivity.mMapUI.clear();
+            allAsamsMapTabletActivity.clearAsamMarkers();
             if (allAsamsMapTabletActivity.mAsams.size() == 1) {
                 
                 // Camera position changing so redraw will be triggered in onCameraChange.
@@ -175,6 +186,7 @@ public class AllAsamsMapTabletActivity extends ActionBarActivity implements OnCa
     private List<AsamBean> mAsams;
     private List<AsamMapClusterBean> mMapClusters;
     private GoogleMap mMapUI;
+    private int mMapType;
     private TextView mDateRangeTextViewUI;
     private TextView mTotalAsamsTextViewUI;
     private TextView mQueryModeMessageTextViewUI;
@@ -197,12 +209,18 @@ public class AllAsamsMapTabletActivity extends ActionBarActivity implements OnCa
     private int mPreviousZoomLevel;
     private List<AsamMapClusterBean> mVisibleClusters;
     private boolean mDisclaimerPopupShowing;
+    private SharedPreferences mSharedPreferences;
+    private OfflineMap offlineMap;
+    private MenuItem offlineMapMenuItem;
+    private OfflineBannerFragment offlineAlertFragment;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         AsamLog.i(AllAsamsMapTabletActivity.class.getName() + ":onCreate");
         setContentView(R.layout.all_asams_map_tablet);
+        
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         
         mQueryError = false;
         mPerformMapClustering = false;
@@ -213,6 +231,12 @@ public class AllAsamsMapTabletActivity extends ActionBarActivity implements OnCa
         mMapUI = ((SupportMapFragment)getSupportFragmentManager().findFragmentById(R.id.all_asams_map_tablet_map_view_ui)).getMap();
         mMapUI.setOnCameraChangeListener(this);
         mMapUI.setOnMarkerClickListener(this);
+        
+        offlineAlertFragment = new OfflineBannerFragment();
+        getSupportFragmentManager().beginTransaction()
+            .add(android.R.id.content, offlineAlertFragment)
+            .commit();
+        
         mPreviousZoomLevel = -1;
         mDateRangeTextViewUI = (TextView)findViewById(R.id.all_asams_map_tablet_date_range_text_view_ui);
         mTimeSliderUI = (SeekBar)findViewById(R.id.all_asams_map_tablet_time_slider_ui);
@@ -266,8 +290,7 @@ public class AllAsamsMapTabletActivity extends ActionBarActivity implements OnCa
         mQueryHandler = new QueryHandler(this);
         
         // Show the disclaimer popup if necessary.
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean hideDisclaimer = preferences.getBoolean(AsamConstants.HIDE_DISCLAIMER_KEY, false);
+        boolean hideDisclaimer = mSharedPreferences.getBoolean(AsamConstants.HIDE_DISCLAIMER_KEY, false);
         boolean isTabletLaunching = getIntent().getBooleanExtra(AsamConstants.TABLET_IS_LAUNCHING_KEY, false);
         if (isTabletLaunching && !hideDisclaimer) {
             mDisclaimerPopupShowing = true;
@@ -292,52 +315,107 @@ public class AllAsamsMapTabletActivity extends ActionBarActivity implements OnCa
         mTextQueryMenuItemUI = menu.findItem(R.id.all_asams_map_tablet_menu_text_query_ui);
         mInfoMenuItemUI = menu.findItem(R.id.all_asams_map_tablet_menu_info_ui);
         setMenuItemsState(!mDisclaimerPopupShowing);
+        
+        int mapType = mSharedPreferences.getInt(AsamConstants.MAP_TYPE_KEY, 1);
+        switch (mapType) {
+            case GoogleMap.MAP_TYPE_SATELLITE:
+                menu.findItem(R.id.map_type_satellite).setChecked(true);
+                break;
+            case GoogleMap.MAP_TYPE_HYBRID:
+                menu.findItem(R.id.map_type_hybrid).setChecked(true);
+                break;
+            case AsamConstants.MAP_TYPE_OFFLINE:
+                menu.findItem(R.id.map_type_offline).setChecked(true);
+                break;
+            default:
+                menu.findItem(R.id.map_type_normal).setChecked(true);
+
+        }
+        
         return super.onCreateOptionsMenu(menu);
     }
     
     @Override
+    public void onResume() {
+        super.onResume();
+        
+        if (offlineMap == null) {
+            ((Asam) getApplication()).registerOfflineMapListener(this);
+        }
+        
+        supportInvalidateOptionsMenu();
+        
+        int mapType = mSharedPreferences.getInt(AsamConstants.MAP_TYPE_KEY, GoogleMap.MAP_TYPE_NORMAL);
+        if (mapType != mMapType) onMapTypeChanged(mapType);
+    }
+    
+    @Override
+    public void onPause() {
+        super.onPause();
+        
+        ((Asam) getApplication()).unregisterOfflineMapListener(this);
+    }
+    
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Intent intent = null;
-        int itemId = item.getItemId();
-        if (itemId == R.id.all_asams_map_tablet_menu_list_view_ui) {
-            AsamListContainer.mAsams = mAsams;
-            intent = new Intent(this, AsamListReportTabletActivity.class);
-            startActivity(intent);
-            return true;
+        switch (item.getItemId()) {
+            case R.id.map_type_normal:
+                item.setChecked(!item.isChecked());
+                onMapTypeChanged(GoogleMap.MAP_TYPE_NORMAL);
+                return true;
+            case R.id.map_type_satellite:
+                item.setChecked(!item.isChecked());
+                onMapTypeChanged(GoogleMap.MAP_TYPE_SATELLITE);
+                return true;
+            case R.id.map_type_hybrid:
+                item.setChecked(!item.isChecked());
+                onMapTypeChanged(GoogleMap.MAP_TYPE_HYBRID);
+                return true;
+            case R.id.map_type_offline:
+                item.setChecked(!item.isChecked());
+                onMapTypeChanged(AsamConstants.MAP_TYPE_OFFLINE);
+                return true;
+            case R.id.all_asams_map_tablet_menu_list_view_ui: {
+                AsamListContainer.mAsams = mAsams;
+                Intent intent = new Intent(this, AsamListReportTabletActivity.class);
+                startActivity(intent);
+                return true;
+            }
+            case R.id.all_asams_map_tablet_menu_subregions_ui: {
+                // Jump to the subregions map.
+                Intent intent = new Intent(this, SubregionMapActivity.class);
+                intent.putExtra(AsamConstants.SUBREGION_MAP_EXPECTING_RESULT_CODE_KEY, true);
+                startActivityForResult(intent, SUBREGION_MAP_TABLET_ACTIVITY_REQUEST_CODE);
+                return true;
+            }
+            case R.id.all_asams_map_tablet_menu_text_query_ui: {
+                DialogFragment dialogFragment = TextQueryDialogFragment.newInstance();
+                dialogFragment.show(getSupportFragmentManager(), AsamConstants.TEXT_QUERY_DIALOG_TAG);
+                return true;
+            }
+            case R.id.all_asams_map_tablet_menu_settings_ui: {
+                DialogFragment dialogFragment = PreferencesDialogFragment.newInstance();
+                dialogFragment.show(getSupportFragmentManager(), AsamConstants.PREFERENCES_DIALOG_TAG);
+                return true;
+            }
+            case R.id.all_asams_map_tablet_menu_info_ui: {
+                DialogFragment dialogFragment = InfoDialogFragment.newInstance();
+                dialogFragment.show(getSupportFragmentManager(), AsamConstants.INFO_DIALOG_TAG);
+                return true;
+            }
+            case R.id.all_asams_map_tablet_menu_reset_ui:
+                mQueryModeMessageContainerUI.setVisibility(View.INVISIBLE);
+                mResetMenuItemUI.setVisible(false);
+                mQueryMode = ALL_QUERY_MODE;
+                mTextQueryDateEarliest = null;
+                mTextQueryDateLatest = null;
+                mQueryProgressDialog = ProgressDialog.show(this, getString(R.string.all_asams_map_tablet_query_progress_dialog_title_text), getString(R.string.all_asams_map_tablet_query_progress_dialog_content_text), true);
+                new QueryThread(getInitialTimePeriodQuery()).start();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+
         }
-        else if (itemId == R.id.all_asams_map_tablet_menu_subregions_ui) {
-            
-            // Jump to the subregions map.
-            intent = new Intent(this, SubregionMapActivity.class);
-            intent.putExtra(AsamConstants.SUBREGION_MAP_EXPECTING_RESULT_CODE_KEY, true);
-            startActivityForResult(intent, SUBREGION_MAP_TABLET_ACTIVITY_REQUEST_CODE);
-            return true;
-        }
-        else if (itemId == R.id.all_asams_map_tablet_menu_text_query_ui) {
-            DialogFragment dialogFragment = TextQueryDialogFragment.newInstance();
-            dialogFragment.show(getSupportFragmentManager(), AsamConstants.TEXT_QUERY_DIALOG_TAG);
-            return true;
-        }
-        else if (itemId == R.id.all_asams_map_tablet_menu_settings_ui) {
-            DialogFragment dialogFragment = PreferencesDialogFragment.newInstance();
-            dialogFragment.show(getSupportFragmentManager(), AsamConstants.PREFERENCES_DIALOG_TAG);
-            return true;
-        }
-        else if (itemId == R.id.all_asams_map_tablet_menu_info_ui) {
-            DialogFragment dialogFragment = InfoDialogFragment.newInstance();
-            dialogFragment.show(getSupportFragmentManager(), AsamConstants.INFO_DIALOG_TAG);
-        }
-        else if (itemId == R.id.all_asams_map_tablet_menu_reset_ui) {
-            mQueryModeMessageContainerUI.setVisibility(View.INVISIBLE);
-            mResetMenuItemUI.setVisible(false);
-            mQueryMode = ALL_QUERY_MODE;
-            mTextQueryDateEarliest = null;
-            mTextQueryDateLatest = null;
-            mQueryProgressDialog = ProgressDialog.show(this, getString(R.string.all_asams_map_tablet_query_progress_dialog_title_text), getString(R.string.all_asams_map_tablet_query_progress_dialog_content_text), true);
-            new QueryThread(getInitialTimePeriodQuery()).start();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
     
     @Override
@@ -522,10 +600,6 @@ public class AllAsamsMapTabletActivity extends ActionBarActivity implements OnCa
     }
     
     public void onDisclaimerDialogDismissed(boolean exitApplication) {
-//        DialogFragment dialogFragment = (DialogFragment)getSupportFragmentManager().findFragmentByTag(AsamConstants.DISCLAIMER_DIALOG_TAG);
-//        if (dialogFragment != null) {
-//            dialogFragment.dismiss();
-//        }
         if (exitApplication) {
             finish();
         }
@@ -729,7 +803,6 @@ public class AllAsamsMapTabletActivity extends ActionBarActivity implements OnCa
 
         @Override
         protected void onPostExecute(Void empty) {
-            mMapUI.clear();
             redrawMarkersOnMapBasedOnVisibleRegion();
         }
     }
@@ -895,5 +968,63 @@ public class AllAsamsMapTabletActivity extends ActionBarActivity implements OnCa
             }
             mQueryHandler.sendEmptyMessage(0);
         }
+    }
+    
+    private void clearAsamMarkers() {        
+        for (AsamMapClusterBean mapCluster : mVisibleClusters) {
+            mapCluster.getMapMarker().remove(); // Remove from map.
+        }
+    }
+    
+    public void onMapTypeChanged(int mapType) {
+        mMapType = mapType;
+        
+        // Show/hide the offline alert fragement based on map type
+        if (mMapType == AsamConstants.MAP_TYPE_OFFLINE) {
+            getSupportFragmentManager()
+                .beginTransaction()
+                .hide(offlineAlertFragment)
+                .commit();
+        } else {
+            getSupportFragmentManager()
+                .beginTransaction()
+                .show(offlineAlertFragment)
+                .commit(); 
+        }
+
+        
+        // Change the map
+        if (mMapType == AsamConstants.MAP_TYPE_OFFLINE) {
+            if (offlineMap != null) {
+                offlineMap.setVisible(true);
+            }
+        } else {
+            mMapUI.setMapType(mMapType);
+            if (offlineMap != null) {
+                offlineMap.setVisible(false);
+            }
+        }
+        
+        // Update shared preferences
+        SharedPreferences.Editor editor = mSharedPreferences.edit();
+        editor.putInt(AsamConstants.MAP_TYPE_KEY, mMapType);
+        editor.commit();   
+    }
+
+    @Override
+    public void onOfflineFeaturesLoaded(Collection<Geometry> offlineFeatures) {
+        offlineMap = new OfflineMap(getApplicationContext(), mMapUI, offlineFeatures);
+        
+        if (mMapType == AsamConstants.MAP_TYPE_OFFLINE) {
+            offlineMap.setVisible(true);
+        }
+        
+        if (offlineMapMenuItem != null) offlineMapMenuItem.setVisible(true);
+    }
+
+    @Override
+    public void onOfflineBannerClick() {
+        onMapTypeChanged(AsamConstants.MAP_TYPE_OFFLINE);
+        supportInvalidateOptionsMenu();
     }
 }

@@ -16,5 +16,5 @@
         android:layout_height="wrap_content"
         class="com.google.android.gms.maps.SupportMapFragment"
         />
-    
+
 </LinearLayout>

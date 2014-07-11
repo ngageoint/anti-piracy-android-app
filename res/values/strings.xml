@@ -3,6 +3,10 @@
     <string name="app_name">ASAM</string>
     <string name="empty_content_description"></string>
     <string name="hyphen_text">-</string>
+    <string name="map_type_normal_text">Normal</string>
+    <string name="map_type_satellite_text">Satellite</string>
+    <string name="map_type_hybrid_text">Hybrid</string>
+    <string name="map_type_offline_text">Offline</string>
     <string name="all_asams_list_title_text">List View</string>
     <string name="all_asams_map_title_text">ASAM</string>
     <string name="all_asams_map_query_error_text">There was an error retrieving new ASAMs.</string>
@@ -19,7 +23,8 @@
     <string name="all_asams_map_query_progress_dialog_content_text">Checking for new ASAMs</string>
     <string name="all_asams_map_menu_list_view_text">List View</string>
     <string name="all_asams_map_menu_query_text">Query</string>
-    <string name="all_asams_map_menu_zoom_text">Zoom</string>
+    <string name="all_asams_map_menu_zoom_text">Center Map</string>
+    <string name="all_asams_map_menu_map_type_text">Map Type</string>
     <string name="all_asams_map_menu_60_days_text">60 days</string>
     <string name="all_asams_map_menu_90_days_text">90 days</string>
     <string name="all_asams_map_menu_180_days_text">180 days</string>
@@ -68,6 +73,7 @@
     <string name="asam_report_description_label_text">Description</string>
     <string name="asam_report_map_it_label_text">Map It</string>
     <string name="asam_report_back_button_text">Back</string>
+    <string name="tablet_disclaimer">true</string>
     <string name="disclaimer_title_text">Disclaimer</string>
     <string name="disclaimer_text">
         Information contained in this Application resides on a computer system funded by the National Geospatial-Intelligence Agency. This system
@@ -320,4 +326,9 @@
         <item>This is a text of the emergency broadcast system.</item>
     </string-array>
     
+    <string name="layer_button_desc">Map type selection</string>
+    <string name="dialog_map_type">Map Layer</string>
+    
+    <string name="offline_warning_text">You have no/limited connectivity,\n click to switch to offline map view.</string>    
+        
 </resources>

@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:asam="http://schemas.android.com/apk/res-auto"
+    >
     
     <item android:id="@+id/launch_screen_menu_information_ui"
         android:title="@string/launch_screen_menu_information_text"
-        android:showAsAction="always"
+        asam:showAsAction="always"
         android:icon="@drawable/ic_action_bar_info"
         android:menuCategory="system"
         android:orderInCategory="100"

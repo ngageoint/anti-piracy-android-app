@@ -3,6 +3,7 @@ package mil.nga.giat.asam;
 import java.io.IOException;
 
 import mil.nga.giat.asam.db.AsamDbHelper;
+import mil.nga.giat.asam.map.AllAsamsMapTabletActivity;
 import mil.nga.giat.asam.util.AsamConstants;
 import mil.nga.giat.asam.util.AsamLog;
 import android.content.Intent;

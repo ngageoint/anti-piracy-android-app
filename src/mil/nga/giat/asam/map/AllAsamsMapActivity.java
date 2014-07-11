@@ -1,12 +1,18 @@
-package mil.nga.giat.asam;
+package mil.nga.giat.asam.map;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import mil.nga.giat.asam.Asam;
+import mil.nga.giat.asam.AsamListActivity;
+import mil.nga.giat.asam.AsamReportActivity;
+import mil.nga.giat.asam.R;
+import mil.nga.giat.asam.connectivity.OfflineBannerFragment;
 import mil.nga.giat.asam.db.AsamDbHelper;
 import mil.nga.giat.asam.model.AsamBean;
 import mil.nga.giat.asam.model.AsamJsonParser;
@@ -24,12 +30,14 @@ import mil.nga.giat.poffencluster.PoffenPoint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -50,10 +58,11 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.vividsolutions.jts.geom.Geometry;
 
 
-public class AllAsamsMapActivity extends ActionBarActivity implements OnCameraChangeListener, OnMarkerClickListener, CancelableCallback {
-
+public class AllAsamsMapActivity extends ActionBarActivity implements OnCameraChangeListener, OnMarkerClickListener, CancelableCallback, Asam.OnOfflineFeaturesListener, OfflineBannerFragment.OnOfflineBannerClick {
+    
     private static class QueryHandler extends Handler {
         
         WeakReference<AllAsamsMapActivity> mAllAsamsMapActivity;
@@ -71,7 +80,8 @@ public class AllAsamsMapActivity extends ActionBarActivity implements OnCameraCh
                 Toast.makeText(allAsamsMapActivity, allAsamsMapActivity.getString(R.string.all_asams_map_query_error_text), Toast.LENGTH_LONG).show();
             }
             
-            allAsamsMapActivity.mMapUI.clear();
+            allAsamsMapActivity.clearAsamMarkers();
+            
             if (allAsamsMapActivity.mAsams.size() == 1) {
                 allAsamsMapActivity.mPerformMapClustering = true;
                 AsamBean asam = allAsamsMapActivity.mAsams.get(0);
@@ -127,6 +137,7 @@ public class AllAsamsMapActivity extends ActionBarActivity implements OnCameraCh
     private List<AsamMapClusterBean> mMapClusters;
     private TextView mQueryFeedbackUI;
     private GoogleMap mMapUI;
+    private int mMapType;
     private ProgressDialog mQueryProgressDialog;
     private QueryHandler mQueryHandler;
     private String mTimeSpanTitleText;
@@ -134,13 +145,19 @@ public class AllAsamsMapActivity extends ActionBarActivity implements OnCameraCh
     private int mQueryType;
     private int mPreviousZoomLevel;
     private List<AsamMapClusterBean> mVisibleClusters;
-    
+    private SharedPreferences mSharedPreferences;  
+    private OfflineMap offlineMap;
+    private MenuItem offlineMapMenuItem;
+    private OfflineBannerFragment offlineAlertFragment;
+ 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         AsamLog.i(AllAsamsMapActivity.class.getName() + ":onCreate");
         setContentView(R.layout.all_asams_map);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         
         mQueryError = false;
         mPerformMapClustering = false;
@@ -153,6 +170,11 @@ public class AllAsamsMapActivity extends ActionBarActivity implements OnCameraCh
         mMapUI.setOnCameraChangeListener(this);
         mMapUI.setOnMarkerClickListener(this);
         mPreviousZoomLevel = -1;
+        
+        offlineAlertFragment = new OfflineBannerFragment();
+        getSupportFragmentManager().beginTransaction()
+            .add(android.R.id.content, offlineAlertFragment)
+            .commit();
         
         // Called to handle the UI after the query has run.
         mQueryHandler = new QueryHandler(this);
@@ -204,58 +226,113 @@ public class AllAsamsMapActivity extends ActionBarActivity implements OnCameraCh
     }
     
     @Override
+    public void onResume() {
+        super.onResume();
+        
+        if (offlineMap == null) {
+            ((Asam) getApplication()).registerOfflineMapListener(this);
+        }
+        
+        supportInvalidateOptionsMenu();
+        
+        int mapType = mSharedPreferences.getInt(AsamConstants.MAP_TYPE_KEY, GoogleMap.MAP_TYPE_NORMAL);
+        if (mapType != mMapType) onMapTypeChanged(mapType);
+    }
+    
+    @Override
+    public void onPause() {
+        super.onPause();
+        ((Asam) getApplication()).unregisterOfflineMapListener(this);
+    }
+    
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.all_asams_map_menu, menu);
+        inflater.inflate(R.menu.all_asams_map_menu, menu);        
         if (mQueryType == AsamConstants.SUBREGION_QUERY || mQueryType == AsamConstants.TEXT_QUERY) {
             MenuItem queryUI = menu.findItem(R.id.all_asams_map_menu_query_ui);
             queryUI.setVisible(false);
         }
+        
         return super.onCreateOptionsMenu(menu);
     }
     
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {        
-        int itemId = item.getItemId();
-        if (itemId == android.R.id.home) {
-            finish();
-            return true;
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        int mapType = mSharedPreferences.getInt(AsamConstants.MAP_TYPE_KEY, 1);
+        switch (mapType) {
+            case GoogleMap.MAP_TYPE_SATELLITE:
+                menu.findItem(R.id.map_type_satellite).setChecked(true);
+                break;
+            case GoogleMap.MAP_TYPE_HYBRID:
+                menu.findItem(R.id.map_type_hybrid).setChecked(true);
+                break;
+            case AsamConstants.MAP_TYPE_OFFLINE:
+                menu.findItem(R.id.map_type_offline).setChecked(true);
+                break;
+            default:
+                menu.findItem(R.id.map_type_normal).setChecked(true);
         }
-        else if (itemId == R.id.all_asams_map_menu_zoom_ui) {
-            zoomToOriginalExtent();
-            return true;
+        
+        offlineMapMenuItem = menu.findItem(R.id.map_type_offline);
+        if (offlineMap != null) offlineMapMenuItem.setVisible(true);
+        
+        return super.onPrepareOptionsMenu(menu);
+    }
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {                
+        switch (item.getItemId()) {
+            case android.R.id.home: {
+                finish();
+                return true;
+            }
+            case R.id.map_type_normal:
+                item.setChecked(!item.isChecked());
+                onMapTypeChanged(GoogleMap.MAP_TYPE_NORMAL);
+                return true;
+            case R.id.map_type_satellite:
+                item.setChecked(!item.isChecked());
+                onMapTypeChanged(GoogleMap.MAP_TYPE_SATELLITE);
+                return true;
+            case R.id.map_type_hybrid:
+                item.setChecked(!item.isChecked());
+                onMapTypeChanged(GoogleMap.MAP_TYPE_HYBRID);
+                return true;
+            case R.id.map_type_offline:
+                item.setChecked(!item.isChecked());
+                onMapTypeChanged(AsamConstants.MAP_TYPE_OFFLINE);
+                return true;
+            case R.id.all_asams_map_menu_zoom_ui:
+                zoomToOriginalExtent();
+                return true;
+            case R.id.all_asams_map_menu_list_view_ui:
+                AsamListContainer.mAsams = mAsams;
+                Intent intent = new Intent(this, AsamListActivity.class);
+                startActivity(intent);
+                return true;
+            case R.id.all_asams_map_menu_60_days_ui:
+                runQuery(getString(R.string.query_60_days_text), AsamConstants.TIME_SPAN_60_DAYS);
+                return true;
+            case R.id.all_asams_map_menu_90_days_ui:
+                runQuery(getString(R.string.query_90_days_text), AsamConstants.TIME_SPAN_90_DAYS);
+                return true;
+            case R.id.all_asams_map_menu_180_days_ui:
+                runQuery(getString(R.string.query_180_days_text), AsamConstants.TIME_SPAN_180_DAYS);
+                return true;
+            case R.id.all_asams_map_menu_1_year_ui:
+                runQuery(getString(R.string.query_1_year_text), AsamConstants.TIME_SPAN_1_YEAR);
+                return true;
+            case R.id.all_asams_map_menu_5_years_ui:
+                runQuery(getString(R.string.query_5_years_text), AsamConstants.TIME_SPAN_5_YEARS);
+                return true;
+            case R.id.all_asams_map_menu_all_ui:
+                runQuery(getString(R.string.query_all_text), AsamConstants.TIME_SPAN_ALL);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+
         }
-        else if (itemId == R.id.all_asams_map_menu_list_view_ui) {
-            AsamListContainer.mAsams = mAsams;
-            Intent intent = new Intent(this, AsamListActivity.class);
-            startActivity(intent);
-            return true;
-        }
-        else if (itemId == R.id.all_asams_map_menu_60_days_ui) {
-            runQuery(getString(R.string.query_60_days_text), AsamConstants.TIME_SPAN_60_DAYS);
-            return true;
-        }
-        else if (itemId == R.id.all_asams_map_menu_90_days_ui) {
-            runQuery(getString(R.string.query_90_days_text), AsamConstants.TIME_SPAN_90_DAYS);
-            return true;
-        }
-        else if (itemId == R.id.all_asams_map_menu_180_days_ui) {
-            runQuery(getString(R.string.query_180_days_text), AsamConstants.TIME_SPAN_180_DAYS);
-            return true;
-        }
-        else if (itemId == R.id.all_asams_map_menu_1_year_ui) {
-            runQuery(getString(R.string.query_1_year_text), AsamConstants.TIME_SPAN_1_YEAR);
-            return true;
-        }
-        else if (itemId == R.id.all_asams_map_menu_5_years_ui) {
-            runQuery(getString(R.string.query_5_years_text), AsamConstants.TIME_SPAN_5_YEARS);
-            return true;
-        }
-        else if (itemId == R.id.all_asams_map_menu_all_ui) {
-            runQuery(getString(R.string.query_all_text), AsamConstants.TIME_SPAN_ALL);
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
     
     @Override
@@ -421,6 +498,11 @@ public class AllAsamsMapActivity extends ActionBarActivity implements OnCameraCh
     private class RecalculateAndRedrawClustersBasedOnZoomLevelAsyncTask extends AsyncTask<Integer, Void, Void> {
 
         @Override
+        protected void onPreExecute() {
+            clearAsamMarkers();
+        }
+        
+        @Override
         protected Void doInBackground(Integer... zoomLevel) {
             mMapClusters.clear();
             if (mAsams.size() < AsamConstants.MAX_NUM_ASAMS_FOR_NO_CLUSTERING_WITH_ZOOM_LEVEL && zoomLevel[0] > AsamConstants.MAX_ZOOM_LEVEL_FOR_CLUSTERING) {
@@ -458,7 +540,6 @@ public class AllAsamsMapActivity extends ActionBarActivity implements OnCameraCh
 
         @Override
         protected void onPostExecute(Void empty) {
-            mMapUI.clear();
             redrawMarkersOnMapBasedOnVisibleRegion();
         }
     }
@@ -552,5 +633,63 @@ public class AllAsamsMapActivity extends ActionBarActivity implements OnCameraCh
             }
             mQueryHandler.sendEmptyMessage(0);
         }
+    }
+    
+    private void clearAsamMarkers() {        
+        for (AsamMapClusterBean mapCluster : mVisibleClusters) {
+            mapCluster.getMapMarker().remove(); // Remove from map.
+        }
+    }
+
+    public void onMapTypeChanged(int mapType) {
+        mMapType = mapType;
+        
+        // Show/hide the offline alert fragement based on map type
+        if (mMapType == AsamConstants.MAP_TYPE_OFFLINE) {
+            getSupportFragmentManager()
+                .beginTransaction()
+                .hide(offlineAlertFragment)
+                .commit();
+        } else {
+            getSupportFragmentManager()
+                .beginTransaction()
+                .show(offlineAlertFragment)
+                .commit(); 
+        }
+
+        
+        // Change the map
+        if (mMapType == AsamConstants.MAP_TYPE_OFFLINE) {
+            if (offlineMap != null) {
+                offlineMap.setVisible(true);
+            }
+        } else {
+            mMapUI.setMapType(mMapType);
+            if (offlineMap != null) {
+                offlineMap.setVisible(false);
+            }
+        }
+        
+        // Update shared preferences
+        SharedPreferences.Editor editor = mSharedPreferences.edit();
+        editor.putInt(AsamConstants.MAP_TYPE_KEY, mMapType);
+        editor.commit();   
+    }
+
+    @Override
+    public void onOfflineFeaturesLoaded(Collection<Geometry> offlineFeatures) {
+        offlineMap = new OfflineMap(getApplicationContext(), mMapUI, offlineFeatures);
+        
+        if (mMapType == AsamConstants.MAP_TYPE_OFFLINE) {
+            offlineMap.setVisible(true);
+        }
+        
+        if (offlineMapMenuItem != null) offlineMapMenuItem.setVisible(true);
+    }
+
+    @Override
+    public void onOfflineBannerClick() {
+        onMapTypeChanged(AsamConstants.MAP_TYPE_OFFLINE);
+        supportInvalidateOptionsMenu();
     }
 }

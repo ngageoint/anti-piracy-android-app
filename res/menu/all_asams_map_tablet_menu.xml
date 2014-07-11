@@ -1,51 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:asam="http://schemas.android.com/apk/res-auto"
+    >
     
-    <item android:id="@+id/all_asams_map_tablet_menu_list_view_ui"
-        android:title="@string/all_asams_map_tablet_menu_list_view_text"
-        android:showAsAction="always"
-        android:icon="@drawable/ic_action_bar_list_view"
+    
+    <item android:id="@+id/all_asams_map_tablet_menu_text_query_ui"
+        android:title="@string/all_asams_map_tablet_menu_text_query_text"
+        asam:showAsAction="always"
+        android:icon="@drawable/ic_action_bar_query"
         android:menuCategory="system"
         android:orderInCategory="100"
         />
-    
-    <item android:id="@+id/all_asams_map_tablet_menu_subregions_ui"
-        android:title="@string/all_asams_map_tablet_menu_subregions_text"
-        android:showAsAction="always"
-        android:icon="@drawable/ic_action_bar_subregions"
+        
+    <item android:id="@+id/all_asams_map_tablet_menu_list_view_ui"
+        android:title="@string/all_asams_map_tablet_menu_list_view_text"
+        asam:showAsAction="always"
+        android:icon="@drawable/ic_action_bar_list_view"
         android:menuCategory="system"
         android:orderInCategory="200"
         />
     
-    <item android:id="@+id/all_asams_map_tablet_menu_text_query_ui"
-        android:title="@string/all_asams_map_tablet_menu_text_query_text"
-        android:showAsAction="always"
-        android:icon="@drawable/ic_action_bar_query"
+    <item android:id="@+id/all_asams_map_tablet_menu_subregions_ui"
+        android:title="@string/all_asams_map_tablet_menu_subregions_text"
+        asam:showAsAction="always"
+        android:icon="@drawable/ic_action_bar_filter"
         android:menuCategory="system"
         android:orderInCategory="300"
         />
     
+    <item android:id="@+id/all_asams_map_menu_map_type"
+	     android:title="@string/all_asams_map_menu_map_type_text"
+	     asam:showAsAction="always"
+	     android:icon="@drawable/ic_action_bar_map"
+	     android:menuCategory="system"
+	     android:orderInCategory="400">
+	     
+         <menu>
+            <group android:checkableBehavior="single">
+	            <item android:id="@+id/map_type_normal"
+	                android:title="@string/map_type_normal_text"
+	                />
+	        
+	            <item android:id="@+id/map_type_satellite"
+	                android:title="@string/map_type_satellite_text"
+	                />
+	            
+	            <item android:id="@+id/map_type_hybrid"
+	                android:title="@string/map_type_hybrid_text"
+	                />
+	            
+	            <item android:id="@+id/map_type_offline"
+	                android:title="@string/map_type_offline_text"
+	                />
+            </group>
+        </menu>
+     
+     
+     </item>
+    
     <item android:id="@+id/all_asams_map_tablet_menu_settings_ui"
         android:title="@string/all_asams_map_tablet_menu_settings_text"
-        android:showAsAction="always"
+        asam:showAsAction="ifRoom"
         android:icon="@drawable/ic_action_bar_settings"
         android:menuCategory="system"
-        android:orderInCategory="400"
+        android:orderInCategory="500"
         />
     
     <item android:id="@+id/all_asams_map_tablet_menu_info_ui"
         android:title="@string/all_asams_map_tablet_menu_info_text"
-        android:showAsAction="ifRoom"
+        asam:showAsAction="ifRoom"
         android:icon="@drawable/ic_action_bar_info"
         android:menuCategory="system"
-        android:orderInCategory="500"
+        android:orderInCategory="600"
         />
     
     <item android:id="@+id/all_asams_map_tablet_menu_reset_ui"
         android:title="@string/all_asams_map_tablet_menu_reset_text"
         android:visible="false"
         android:menuCategory="system"
-        android:orderInCategory="600"
+        android:orderInCategory="700"
         />
     
 </menu>
