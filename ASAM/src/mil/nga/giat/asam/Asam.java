@@ -53,7 +53,7 @@ public class Asam extends Application {
 	}
 
 	private class OfflineMapTask extends AsyncTask<Void, Void, Collection<Geometry>> {
-	    private static final String OFFLINE_MAP_FILENAME = "ne_110m_land.geojson";
+	    private static final String OFFLINE_MAP_FILENAME = "ne_50m_land.simplify0.2.geojson";
 	    
 		@Override
 		protected Collection<Geometry> doInBackground(Void... params) {

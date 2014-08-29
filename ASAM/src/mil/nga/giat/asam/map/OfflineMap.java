@@ -5,6 +5,7 @@ import java.util.Collection;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
@@ -14,6 +15,7 @@ import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.MultiPolygon;
 
 public class OfflineMap {
     private static int FILL_COLOR = 0xFFDDDDDD;
@@ -68,34 +70,22 @@ public class OfflineMap {
         @Override
         protected Collection<PolygonOptions> doInBackground(Geometry... features) {
             Collection<PolygonOptions> polygons = new ArrayList<PolygonOptions>(features.length);
-            for (Geometry feature : features) {
-                // For now all offline map features are polygons
-                if ("Polygon".equals(feature.getGeometryType())) {
-                    PolygonOptions options = new PolygonOptions()
-                        .zIndex(2)
-                        .visible(false)
-                        .fillColor(FILL_COLOR)
-                        .strokeWidth(0);
-                    
-                    com.vividsolutions.jts.geom.Polygon polygon = (com.vividsolutions.jts.geom.Polygon) feature;
-                    for (Coordinate coordinate : polygon.getExteriorRing().getCoordinates()) {
-                        options.add(new LatLng(coordinate.y, coordinate.x));
-                    }
-                    
-                    for (int i = 0; i < polygon.getNumInteriorRing(); i++) {
-                        Coordinate[] coordinates = polygon.getInteriorRingN(0).getCoordinates();
-                        Collection<LatLng> hole = new ArrayList<LatLng>(coordinates.length);
-                        for (Coordinate coordinate : coordinates) {
-                            hole.add(new LatLng(coordinate.y, coordinate.x));
-                        }                     
-                        
-                        options.addHole(hole);
-                    }
-                    
-                    polygons.add(options);
+            for (Geometry feature : features) {            	
+                if (feature instanceof com.vividsolutions.jts.geom.Polygon) {                	                	
+                	polygons.add(generatePolygon((com.vividsolutions.jts.geom.Polygon)feature));                    
                 }
-            }
-            
+                else if(feature instanceof com.vividsolutions.jts.geom.MultiPolygon) {                	
+                	MultiPolygon multiPolygon = (MultiPolygon)feature;
+                	for(int i = 0; i < multiPolygon.getNumGeometries(); i++) {
+                		Geometry geometry = multiPolygon.getGeometryN(i);
+                		if(geometry instanceof com.vividsolutions.jts.geom.Polygon) {
+                			polygons.add(generatePolygon((com.vividsolutions.jts.geom.Polygon)geometry));
+                		}
+                		//nested MultiPolygons are ignored for now.  Recursive solution has performance
+                		//implications.                		
+                	}                	
+                }                
+            }                        
             return polygons;
         }
 
@@ -112,5 +102,39 @@ public class OfflineMap {
             
             mLoaded = true;
         }
+        
+        /**
+         * Utility method for generating PolygonOptions from a Polygon.
+         * @param pPolygon A Polygon to generate.
+         * @return A fully constructed PolygonOptions object complete with style and 
+         *         z-index positioning.
+         */
+        private PolygonOptions generatePolygon(com.vividsolutions.jts.geom.Polygon pPolygon) {
+        	
+        	PolygonOptions options = new PolygonOptions()
+                .zIndex(2)
+                .visible(false)
+                .fillColor(FILL_COLOR)
+                .strokeWidth(0);
+        	
+        	//Exterior Polygon
+        	for (Coordinate coordinate : pPolygon.getExteriorRing().getCoordinates()) {
+                options.add(new LatLng(coordinate.y, coordinate.x));
+            }
+        	
+        	//Interior Polygons
+        	for (int i = 0; i < pPolygon.getNumInteriorRing(); i++) {
+                Coordinate[] coordinates = pPolygon.getInteriorRingN(0).getCoordinates();
+                Collection<LatLng> hole = new ArrayList<LatLng>(coordinates.length);
+                for (Coordinate coordinate : coordinates) {
+                    hole.add(new LatLng(coordinate.y, coordinate.x));
+                }                                     
+                options.addHole(hole);
+            }        	
+        	
+        	return options;
+        }
+        
     }
+    
 }
