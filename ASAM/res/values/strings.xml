@@ -91,7 +91,7 @@
     <string name="info_fragment_version_text">ASAM v1.0.0</string>
     <string name="info_fragment_info_text">Anti-Shipping Activity Messages (ASAM) include the locations and descriptive accounts of specific hostile acts against ships and mariners. The reports may be useful for recognition, prevention and avoidance of potential hostile activity.</string>
     <string name="info_fragment_contact_text"><u>Contact Us</u></string>
-    <string name="info_fragment_phone_number_text">Phone: (571) 557-6841</string>
+    <string name="info_fragment_phone_number_text">Phone: 1-800-362-6289</string>
     <string name="info_fragment_email_subject_text">ASAM app feedback</string>
     <string name="info_fragment_email_text">Email: <a href="mailto:MCDASAM@nga.mil">MCDASAM@nga.mil</a></string>
     <string name="info_fragment_email_address">MCDASAM@nga.mil</string>
