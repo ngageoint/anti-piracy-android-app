@@ -64,8 +64,13 @@ public class OfflineMap {
         task.execute(mOfflineFeatures.toArray(new Geometry[mOfflineFeatures.size()]));
     }
        
-    private class OfflineMapsTask extends AsyncTask<Geometry, Void, Collection<PolygonOptions>> {
-   
+    private class OfflineMapsTask extends AsyncTask<Geometry, PolygonOptions, Collection<PolygonOptions>> {
+        @Override
+        protected void onPreExecute() {
+            offlinePolygons = new ArrayList<Polygon>();
+
+        }
+    	
         @Override
         protected Collection<PolygonOptions> doInBackground(Geometry... features) {
             Collection<PolygonOptions> polygons = new ArrayList<PolygonOptions>(features.length);
@@ -87,18 +92,18 @@ public class OfflineMap {
             }                        
             return polygons;
         }
+        
+        @Override
+        protected void onProgressUpdate(PolygonOptions... polygons) {
+        	PolygonOptions polygon = polygons[0];
+            polygon.visible(mVisible);
+            offlinePolygons.add(mMapUI.addPolygon(polygon));        
+        }
 
         @Override
         protected void onPostExecute(Collection<PolygonOptions> polygons) {
-            offlinePolygons = new ArrayList<Polygon>(polygons.size());
             if (mVisible) mMapUI.setMapType(GoogleMap.MAP_TYPE_NONE);
-
             backgroundTileOverlay.setVisible(mVisible);
-            for (PolygonOptions polygon : polygons) {
-                polygon.visible(mVisible);
-                offlinePolygons.add(mMapUI.addPolygon(polygon));
-            }
-            
             mLoaded = true;
         }
         
