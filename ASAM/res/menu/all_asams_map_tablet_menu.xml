@@ -76,7 +76,8 @@
     
     <item android:id="@+id/all_asams_map_tablet_menu_reset_ui"
         android:title="@string/all_asams_map_tablet_menu_reset_text"
-        android:visible="false"
+        asam:showAsAction="never"
+        android:icon="@drawable/ic_action_bar_reset"
         android:menuCategory="system"
         android:orderInCategory="700"
         />

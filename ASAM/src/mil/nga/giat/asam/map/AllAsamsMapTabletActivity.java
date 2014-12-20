@@ -192,7 +192,6 @@ public class AllAsamsMapTabletActivity extends ActionBarActivity implements OnCa
     private TextView mQueryModeMessageTextViewUI;
     private LinearLayout mQueryModeMessageContainerUI;
     private SeekBar mTimeSliderUI;
-    private MenuItem mResetMenuItemUI;
     private MenuItem mListViewMenuItemUI;
     private MenuItem mSubregionsMenuItemUI;
     private MenuItem mSettingsMenuItemUI;
@@ -308,7 +307,6 @@ public class AllAsamsMapTabletActivity extends ActionBarActivity implements OnCa
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.all_asams_map_tablet_menu, menu);
-        mResetMenuItemUI = menu.findItem(R.id.all_asams_map_tablet_menu_reset_ui);
         mListViewMenuItemUI = menu.findItem(R.id.all_asams_map_tablet_menu_list_view_ui);
         mSubregionsMenuItemUI = menu.findItem(R.id.all_asams_map_tablet_menu_subregions_ui);
         mSettingsMenuItemUI = menu.findItem(R.id.all_asams_map_tablet_menu_settings_ui);
@@ -405,7 +403,6 @@ public class AllAsamsMapTabletActivity extends ActionBarActivity implements OnCa
             }
             case R.id.all_asams_map_tablet_menu_reset_ui:
                 mQueryModeMessageContainerUI.setVisibility(View.INVISIBLE);
-                mResetMenuItemUI.setVisible(false);
                 mQueryMode = ALL_QUERY_MODE;
                 mTextQueryDateEarliest = null;
                 mTextQueryDateLatest = null;
@@ -531,10 +528,8 @@ public class AllAsamsMapTabletActivity extends ActionBarActivity implements OnCa
         switch (requestCode) {
             case SUBREGION_MAP_TABLET_ACTIVITY_REQUEST_CODE:
                 if (resultCode == Activity.RESULT_OK) {
-                    mQueryModeMessageContainerUI.setVisibility(View.VISIBLE);
                     mQueryMode = SUBREGION_QUERY_MODE;
                     mSelectedSubregionIds = data.getIntegerArrayListExtra(AsamConstants.SUBREGION_QUERY_SUBREGIONS_LIST_KEY);
-                    mQueryModeMessageTextViewUI.setText(Html.fromHtml(String.format(getResources().getString(R.string.all_asams_map_tablet_subregions_query_mode_message_text), AsamUtils.getCommaSeparatedStringFromIntegerList(mSelectedSubregionIds))));
                     
                     Calendar timePeriod = new GregorianCalendar();
                     int timeSpan = data.getIntExtra(AsamConstants.SUBREGION_QUERY_TIME_SPAN_KEY, AsamConstants.TIME_SPAN_60_DAYS);
@@ -550,10 +545,11 @@ public class AllAsamsMapTabletActivity extends ActionBarActivity implements OnCa
                     else {
                         timePeriod.add(Calendar.DAY_OF_YEAR, -timeSpan);
                     }
+                    mQueryModeMessageContainerUI.setVisibility(View.VISIBLE);
+                    mQueryModeMessageTextViewUI.setText(Html.fromHtml(String.format(getResources().getString(R.string.all_asams_map_tablet_subregions_query_mode_message_text), AsamUtils.getCommaSeparatedStringFromIntegerList(mSelectedSubregionIds))));
                     mTimeSliderUI.setProgress(calculateTimeSliderTicksFromDate(timePeriod.getTime()));
-                    mResetMenuItemUI.setVisible(true);
                     mQueryProgressDialog = ProgressDialog.show(this, getString(R.string.all_asams_map_tablet_query_progress_dialog_title_text), getString(R.string.all_asams_map_tablet_query_progress_dialog_content_text), true);
-                    new QueryThread(timePeriod).start();
+                    new QueryThread(timePeriod).start();                    
                 }
                 break;
         }
@@ -593,7 +589,6 @@ public class AllAsamsMapTabletActivity extends ActionBarActivity implements OnCa
         }
         mQueryModeMessageContainerUI.setVisibility(View.VISIBLE);
         mQueryModeMessageTextViewUI.setText(Html.fromHtml(String.format(getResources().getString(R.string.all_asams_map_tablet_text_query_mode_message_text), textQueryParameters.getParametersAsFormattedHtml())));
-        mResetMenuItemUI.setVisible(true);
         mTimeSliderUI.setProgress(TOTAL_TIME_SLIDER_TICKS - 1); // All of the time will be shown.
         mQueryProgressDialog = ProgressDialog.show(this, getString(R.string.all_asams_map_tablet_query_progress_dialog_title_text), getString(R.string.all_asams_map_tablet_query_progress_dialog_content_text), true);
         new QueryThread().start();
