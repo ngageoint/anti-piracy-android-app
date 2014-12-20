@@ -764,7 +764,11 @@ public class AllAsamsMapTabletActivity extends ActionBarActivity implements OnCa
     }
     
     private class RecalculateAndRedrawClustersBasedOnZoomLevelAsyncTask extends AsyncTask<Integer, Void, Void> {
-
+        @Override
+        protected void onPreExecute() {
+            clearAsamMarkers();
+        }
+    	
         @Override
         protected Void doInBackground(Integer... zoomLevel) {
             mMapClusters.clear();
