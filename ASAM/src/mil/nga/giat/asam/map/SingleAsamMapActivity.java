@@ -29,8 +29,9 @@ public class SingleAsamMapActivity extends ActionBarActivity implements Asam.OnO
     private GoogleMap mMapUI;
     private int mMapType;
     private SharedPreferences mSharedPreferences;
+    private Collection<Geometry> offlineGeometries = null;
     private OfflineMap offlineMap;
-    private MenuItem offlineMapMenuItem;
+    private MenuItem offlineMap110mMenuItem;
     private OfflineBannerFragment offlineAlertFragment;
     
     @Override
@@ -75,9 +76,7 @@ public class SingleAsamMapActivity extends ActionBarActivity implements Asam.OnO
     protected void onResume() {
         super.onResume();
         
-        if (offlineMap == null) {
-            ((Asam) getApplication()).registerOfflineMapListener(this);
-        }        
+        ((Asam) getApplication()).registerOfflineMapListener(this);
         supportInvalidateOptionsMenu();
         
         int mapType = mSharedPreferences.getInt(AsamConstants.MAP_TYPE_KEY, GoogleMap.MAP_TYPE_NORMAL);
@@ -108,15 +107,16 @@ public class SingleAsamMapActivity extends ActionBarActivity implements Asam.OnO
             case GoogleMap.MAP_TYPE_HYBRID:
                 menu.findItem(R.id.map_type_hybrid).setChecked(true);
                 break;
-            case AsamConstants.MAP_TYPE_OFFLINE:
-                menu.findItem(R.id.map_type_offline).setChecked(true);
+            case AsamConstants.MAP_TYPE_OFFLINE_110M:
+                menu.findItem(R.id.map_type_offline_110m).setChecked(true);
                 break;
             default:
                 menu.findItem(R.id.map_type_normal).setChecked(true);
         }
         
-        offlineMapMenuItem = menu.findItem(R.id.map_type_offline);
-        if (offlineMap != null) offlineMapMenuItem.setVisible(true);
+        offlineMap110mMenuItem = menu.findItem(R.id.map_type_offline_110m);
+
+        if (offlineGeometries != null) offlineMap110mMenuItem.setVisible(true);
         
         return super.onPrepareOptionsMenu(menu);
     }
@@ -139,9 +139,9 @@ public class SingleAsamMapActivity extends ActionBarActivity implements Asam.OnO
                 item.setChecked(!item.isChecked());
                 onMapTypeChanged(GoogleMap.MAP_TYPE_HYBRID);
                 return true;
-            case R.id.map_type_offline:
+            case R.id.map_type_offline_110m:
                 item.setChecked(!item.isChecked());
-                onMapTypeChanged(AsamConstants.MAP_TYPE_OFFLINE);
+                onMapTypeChanged(AsamConstants.MAP_TYPE_OFFLINE_110M);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -153,7 +153,7 @@ public class SingleAsamMapActivity extends ActionBarActivity implements Asam.OnO
         mMapType = mapType;
         
         // Show/hide the offline alert fragement based on map type
-        if (mMapType == AsamConstants.MAP_TYPE_OFFLINE) {
+        if (mMapType == AsamConstants.MAP_TYPE_OFFLINE_110M) {
             getSupportFragmentManager()
                 .beginTransaction()
                 .hide(offlineAlertFragment)
@@ -165,17 +165,17 @@ public class SingleAsamMapActivity extends ActionBarActivity implements Asam.OnO
                 .commit(); 
         }
 
-        
         // Change the map
-        if (mMapType == AsamConstants.MAP_TYPE_OFFLINE) {
-            if (offlineMap != null) {
-                offlineMap.setVisible(true);
-            }
+        if (mMapType == AsamConstants.MAP_TYPE_OFFLINE_110M) {
+        	if (offlineMap != null) offlineMap.clear();
+        	offlineMap = new OfflineMap(this, mMapUI, offlineGeometries);
         } else {
+        	if (offlineMap != null) {
+        		offlineMap.clear();
+        		offlineMap = null;        		
+        	}
+        	
             mMapUI.setMapType(mMapType);
-            if (offlineMap != null) {
-                offlineMap.setVisible(false);
-            }
         }
         
         // Update shared preferences
@@ -185,19 +185,20 @@ public class SingleAsamMapActivity extends ActionBarActivity implements Asam.OnO
     }
 
     @Override
-    public void onOfflineFeaturesLoaded(Collection<Geometry> offlineFeatures) {
-        offlineMap = new OfflineMap(getApplicationContext(), mMapUI, offlineFeatures);
+    public void onOfflineFeaturesLoaded(Collection<Geometry> offlineGeometries) {     
+    	this.offlineGeometries = offlineGeometries;
+    	
+        if (offlineMap110mMenuItem != null) offlineMap110mMenuItem.setVisible(true);
         
-        if (mMapType == AsamConstants.MAP_TYPE_OFFLINE) {
-            offlineMap.setVisible(true);
-        }
-        
-        if (offlineMapMenuItem != null) offlineMapMenuItem.setVisible(true);
+    	if (offlineMap == null && mMapType == AsamConstants.MAP_TYPE_OFFLINE_110M) {
+    		if (offlineMap != null) offlineMap.clear();
+    		offlineMap = new OfflineMap(this, mMapUI, offlineGeometries);
+    	}    
     }
 
     @Override
     public void onOfflineBannerClick() {
-        onMapTypeChanged(AsamConstants.MAP_TYPE_OFFLINE);
+        onMapTypeChanged(AsamConstants.MAP_TYPE_OFFLINE_110M);
         supportInvalidateOptionsMenu();
     }
 }

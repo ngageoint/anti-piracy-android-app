@@ -6,7 +6,10 @@
     <string name="map_type_normal_text">Normal</string>
     <string name="map_type_satellite_text">Satellite</string>
     <string name="map_type_hybrid_text">Hybrid</string>
-    <string name="map_type_offline_text">Offline</string>
+    <string name="map_type_offline_110m_text">Offline 1:110m</string>
+    <string name="map_type_offline_50m_text">Offline 1:50m</string>
+    <string name="offline_map_progress_dialog_title_text">Loading offline map, please wait...</string>
+    <string name="offline_map_progress_dialog_50m_content_text">The 1:50m map is signifigantly higher resolution than the 1:110m map.  As such you may experience load/performance issues on devices with limited memory.</string>
     <string name="all_asams_list_title_text">List View</string>
     <string name="all_asams_map_title_text">ASAM</string>
     <string name="all_asams_map_query_error_text">There was an error retrieving new ASAMs.</string>
@@ -329,6 +332,5 @@
     <string name="layer_button_desc">Map type selection</string>
     <string name="dialog_map_type">Map Layer</string>
     
-    <string name="offline_warning_text">You have no/limited connectivity,\n click to switch to offline map view.</string>    
-        
+	<string name="offline_warning_text">You have no/limited connectivity,\n click to switch to offline map view.</string>        
 </resources>

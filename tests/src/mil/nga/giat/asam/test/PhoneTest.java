@@ -458,7 +458,7 @@ public class PhoneTest implements DeviceTest {
 
         System.out.println("Selecting Offline Map Type");
         mapTypeButton.clickAndWaitForNewWindow(TestConstants.UI_ACTION_TIMEOUT);
-        UiObject offlineButton = new UiObject(new UiSelector().packageName(TestConstants.PACKAGE_NAME).className("android.widget.TextView").text("Offline"));
+        UiObject offlineButton = new UiObject(new UiSelector().packageName(TestConstants.PACKAGE_NAME).className("android.widget.TextView").text("Offline 1:110m"));
         offlineButton.click();
         Screenshot.takeScreenshot(String.format(screenshotFormat, mScreenshotCounter++));
         offlineButton.waitUntilGone(TestConstants.UI_ACTION_TIMEOUT);

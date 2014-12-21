@@ -49,8 +49,8 @@
 	                android:title="@string/map_type_hybrid_text"
 	                />
 	            
-	            <item android:id="@+id/map_type_offline"
-	                android:title="@string/map_type_offline_text"
+	            <item android:id="@+id/map_type_offline_110m"
+	                android:title="@string/map_type_offline_110m_text"
 	                />
             </group>
         </menu>
@@ -76,7 +76,8 @@
     
     <item android:id="@+id/all_asams_map_tablet_menu_reset_ui"
         android:title="@string/all_asams_map_tablet_menu_reset_text"
-        android:visible="false"
+        asam:showAsAction="never"
+        android:icon="@drawable/ic_action_bar_reset"
         android:menuCategory="system"
         android:orderInCategory="700"
         />
