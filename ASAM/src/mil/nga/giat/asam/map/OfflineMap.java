@@ -5,6 +5,7 @@ import java.util.Collection;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
@@ -22,8 +23,6 @@ public class OfflineMap {
     private Context mContext;
     private GoogleMap mMapUI;
     private Collection<Geometry> mOfflineFeatures;
-    private boolean mLoaded = false;
-    private boolean mVisible = false;
     private TileOverlay backgroundTileOverlay;
     private Collection<Polygon> offlinePolygons = null;
 
@@ -31,25 +30,14 @@ public class OfflineMap {
         this.mContext = context;
         this.mMapUI = map;
         this.mOfflineFeatures = offlineFeatures;
+        
         loadOfflineMaps();
-    }
-    
-    public void setVisible(boolean visible) {
-        this.mVisible = visible;
-        
-        if (!mLoaded) return;
-        
-        backgroundTileOverlay.setVisible(visible);
-        for (Polygon polygon : offlinePolygons) {
-            polygon.setVisible(visible);
-        }
-        
-        if (visible) mMapUI.setMapType(GoogleMap.MAP_TYPE_NONE);
     }
     
     public void clear() {
         backgroundTileOverlay.clearTileCache();
         backgroundTileOverlay.remove();
+        
         for (Polygon polygon : offlinePolygons) {
             polygon.remove();
         }
@@ -57,25 +45,25 @@ public class OfflineMap {
     }
     
     private void loadOfflineMaps() {
-        BackgroundTileProvider tileProvider = new BackgroundTileProvider(mContext);           
-        backgroundTileOverlay = mMapUI.addTileOverlay(new TileOverlayOptions().tileProvider(tileProvider).zIndex(1).visible(false));
-        
         OfflineMapsTask task = new OfflineMapsTask();
         task.execute(mOfflineFeatures.toArray(new Geometry[mOfflineFeatures.size()]));
     }
        
-    private class OfflineMapsTask extends AsyncTask<Geometry, PolygonOptions, Collection<PolygonOptions>> {
+    private class OfflineMapsTask extends AsyncTask<Geometry, Void, Collection<PolygonOptions>> {
         @Override
         protected void onPreExecute() {
-            offlinePolygons = new ArrayList<Polygon>();
-
+            mMapUI.setMapType(GoogleMap.MAP_TYPE_NONE);
+            
+            BackgroundTileProvider tileProvider = new BackgroundTileProvider(mContext);           
+            backgroundTileOverlay = mMapUI.addTileOverlay(new TileOverlayOptions().tileProvider(tileProvider).zIndex(1).visible(false));
+            backgroundTileOverlay.setVisible(true);
         }
     	
         @Override
-        protected Collection<PolygonOptions> doInBackground(Geometry... features) {
+        protected Collection<PolygonOptions> doInBackground(Geometry... features) {  	
             Collection<PolygonOptions> polygons = new ArrayList<PolygonOptions>(features.length);
-            for (Geometry feature : features) {            	
-                if (feature instanceof com.vividsolutions.jts.geom.Polygon) {                	                	
+            for (Geometry feature : features) { 
+                if (feature instanceof com.vividsolutions.jts.geom.Polygon) {      
                 	polygons.add(generatePolygon((com.vividsolutions.jts.geom.Polygon)feature));                    
                 }
                 else if(feature instanceof com.vividsolutions.jts.geom.MultiPolygon) {                	
@@ -85,28 +73,23 @@ public class OfflineMap {
                 		if(geometry instanceof com.vividsolutions.jts.geom.Polygon) {
                 			polygons.add(generatePolygon((com.vividsolutions.jts.geom.Polygon)geometry));
                 		}
-                		//nested MultiPolygons are ignored for now.  Recursive solution has performance
-                		//implications.                		
+                		                		
+                		//nested MultiPolygons are ignored for now.  Recursive solution has performance implications.                		
                 	}                	
-                }                
-            }                        
+                }
+            }    
+            
             return polygons;
         }
-        
-        @Override
-        protected void onProgressUpdate(PolygonOptions... polygons) {
-        	PolygonOptions polygon = polygons[0];
-            polygon.visible(mVisible);
-            offlinePolygons.add(mMapUI.addPolygon(polygon));        
-        }
 
-        @Override
+		@Override
         protected void onPostExecute(Collection<PolygonOptions> polygons) {
-            if (mVisible) mMapUI.setMapType(GoogleMap.MAP_TYPE_NONE);
-            backgroundTileOverlay.setVisible(mVisible);
-            mLoaded = true;
+    		offlinePolygons = new ArrayList<Polygon>(polygons.size());
+        	for (PolygonOptions polygon : polygons) {
+                offlinePolygons.add(mMapUI.addPolygon(polygon));  
+        	}
         }
-        
+		     
         /**
          * Utility method for generating PolygonOptions from a Polygon.
          * @param pPolygon A Polygon to generate.
@@ -116,8 +99,8 @@ public class OfflineMap {
         private PolygonOptions generatePolygon(com.vividsolutions.jts.geom.Polygon pPolygon) {
         	
         	PolygonOptions options = new PolygonOptions()
+        		.visible(true)
                 .zIndex(2)
-                .visible(false)
                 .fillColor(FILL_COLOR)
                 .strokeWidth(0);
         	
@@ -137,8 +120,6 @@ public class OfflineMap {
             }        	
         	
         	return options;
-        }
-        
-    }
-    
+        }    
+    } 
 }

@@ -23,7 +23,7 @@ public class AsamConstants {
     public static final String INFO_DIALOG_TAG = "info_dialog";
     
     public static final String MAP_TYPE_KEY = "map_type_key";
-    public static final int MAP_TYPE_OFFLINE = 100;
+    public static final int MAP_TYPE_OFFLINE_110M = 100;
     
     public static final String SORT_DIRECTION_KEY = "sort_direction";
     public static final String SPINNER_SELECTION_KEY = "sort_popup_spinner_selection";

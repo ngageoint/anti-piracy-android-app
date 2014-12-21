@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/alert_banner"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignParentTop="true"
+    android:layout_gravity="top"
+    android:layout_marginBottom="2dip"
+    android:orientation="horizontal"
+    android:padding="1dip" >
+
+    <Button
+        android:id="@+id/alert_banner_button"
+    	android:background="@color/holo_red_light"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#EEEEEE" 
+        android:text="@string/offline_warning_text"/>
+
+</RelativeLayout>

@@ -21,17 +21,26 @@ public class OfflineBannerFragment extends Fragment implements View.OnClickListe
 	private View alertBanner;
 	private Button alertBannerButton;
 	private OnOfflineBannerClick onOfflineBannerClickListener;
-	
-   @Override
-    public void onCreate(Bundle savedInstanceState) {
-        NetworkChangeReceiver.getInstance().addListener(this);
-        
-        super.onCreate(savedInstanceState);
-    }
+   
+	@Override
+	public void onResume() {
+		super.onResume();
+		
+		NetworkChangeReceiver.getInstance().addListener(this);
+	}
 	
 	@Override
+	public void onPause() {
+		super.onPause();
+		
+        NetworkChangeReceiver.getInstance().removeListener(this);
+	}
+
+	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		return inflater.inflate(R.layout.fragment_alert_banner, container, false);
+	    boolean isTablet = getResources().getBoolean(R.bool.is_tablet);
+	    int layout = isTablet ? R.layout.fragment_alert_banner_top : R.layout.fragment_alert_banner_bottom;
+		return inflater.inflate(layout, container, false);
 	}
 
    @Override

@@ -55,7 +55,7 @@
      android:menuCategory="system"
      android:orderInCategory="300">
      
-         <menu>
+         <menu android:id="@+id/map_types_menu">
             <group android:checkableBehavior="single">
 	            <item android:id="@+id/map_type_normal"
 	                android:title="@string/map_type_normal_text"
@@ -69,8 +69,8 @@
 	                android:title="@string/map_type_hybrid_text"
 	                />
 	            
-	            <item android:id="@+id/map_type_offline"
-	                android:title="@string/map_type_offline_text"
+	            <item android:id="@+id/map_type_offline_110m"
+	                android:title="@string/map_type_offline_110m_text"
 	                android:visible="false"
 	                />
             </group>

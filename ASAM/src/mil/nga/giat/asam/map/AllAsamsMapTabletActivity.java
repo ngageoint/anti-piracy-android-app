@@ -187,6 +187,7 @@ public class AllAsamsMapTabletActivity extends ActionBarActivity implements OnCa
     private List<AsamMapClusterBean> mMapClusters;
     private GoogleMap mMapUI;
     private int mMapType;
+    private Collection<Geometry> offlineGeometries = null;
     private TextView mDateRangeTextViewUI;
     private TextView mTotalAsamsTextViewUI;
     private TextView mQueryModeMessageTextViewUI;
@@ -210,7 +211,7 @@ public class AllAsamsMapTabletActivity extends ActionBarActivity implements OnCa
     private boolean mDisclaimerPopupShowing;
     private SharedPreferences mSharedPreferences;
     private OfflineMap offlineMap;
-    private MenuItem offlineMapMenuItem;
+    private MenuItem offlineMap110mMenuItem;
     private OfflineBannerFragment offlineAlertFragment;
     
     @Override
@@ -307,6 +308,7 @@ public class AllAsamsMapTabletActivity extends ActionBarActivity implements OnCa
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.all_asams_map_tablet_menu, menu);
+        
         mListViewMenuItemUI = menu.findItem(R.id.all_asams_map_tablet_menu_list_view_ui);
         mSubregionsMenuItemUI = menu.findItem(R.id.all_asams_map_tablet_menu_subregions_ui);
         mSettingsMenuItemUI = menu.findItem(R.id.all_asams_map_tablet_menu_settings_ui);
@@ -322,8 +324,8 @@ public class AllAsamsMapTabletActivity extends ActionBarActivity implements OnCa
             case GoogleMap.MAP_TYPE_HYBRID:
                 menu.findItem(R.id.map_type_hybrid).setChecked(true);
                 break;
-            case AsamConstants.MAP_TYPE_OFFLINE:
-                menu.findItem(R.id.map_type_offline).setChecked(true);
+            case AsamConstants.MAP_TYPE_OFFLINE_110M:
+                menu.findItem(R.id.map_type_offline_110m).setChecked(true);
                 break;
             default:
                 menu.findItem(R.id.map_type_normal).setChecked(true);
@@ -337,10 +339,7 @@ public class AllAsamsMapTabletActivity extends ActionBarActivity implements OnCa
     public void onResume() {
         super.onResume();
         
-        if (offlineMap == null) {
-            ((Asam) getApplication()).registerOfflineMapListener(this);
-        }
-        
+        ((Asam) getApplication()).registerOfflineMapListener(this);
         supportInvalidateOptionsMenu();
         
         int mapType = mSharedPreferences.getInt(AsamConstants.MAP_TYPE_KEY, GoogleMap.MAP_TYPE_NORMAL);
@@ -369,9 +368,9 @@ public class AllAsamsMapTabletActivity extends ActionBarActivity implements OnCa
                 item.setChecked(!item.isChecked());
                 onMapTypeChanged(GoogleMap.MAP_TYPE_HYBRID);
                 return true;
-            case R.id.map_type_offline:
+            case R.id.map_type_offline_110m:
                 item.setChecked(!item.isChecked());
-                onMapTypeChanged(AsamConstants.MAP_TYPE_OFFLINE);
+                onMapTypeChanged(AsamConstants.MAP_TYPE_OFFLINE_110M);
                 return true;
             case R.id.all_asams_map_tablet_menu_list_view_ui: {
                 AsamListContainer.mAsams = mAsams;
@@ -978,8 +977,8 @@ public class AllAsamsMapTabletActivity extends ActionBarActivity implements OnCa
     public void onMapTypeChanged(int mapType) {
         mMapType = mapType;
         
-        // Show/hide the offline alert fragement based on map type
-        if (mMapType == AsamConstants.MAP_TYPE_OFFLINE) {
+        // Show/hide the offline alert fragment based on map type
+        if (mMapType == AsamConstants.MAP_TYPE_OFFLINE_110M) {
             getSupportFragmentManager()
                 .beginTransaction()
                 .hide(offlineAlertFragment)
@@ -991,17 +990,17 @@ public class AllAsamsMapTabletActivity extends ActionBarActivity implements OnCa
                 .commit(); 
         }
 
-        
         // Change the map
-        if (mMapType == AsamConstants.MAP_TYPE_OFFLINE) {
-            if (offlineMap != null) {
-                offlineMap.setVisible(true);
-            }
+        if (mMapType == AsamConstants.MAP_TYPE_OFFLINE_110M) {
+        	if (offlineMap != null) offlineMap.clear();
+        	offlineMap = new OfflineMap(this, mMapUI, offlineGeometries);
         } else {
+        	if (offlineMap != null) {
+        		offlineMap.clear();
+        		offlineMap = null;        		
+        	}
+        	
             mMapUI.setMapType(mMapType);
-            if (offlineMap != null) {
-                offlineMap.setVisible(false);
-            }
         }
         
         // Update shared preferences
@@ -1011,19 +1010,20 @@ public class AllAsamsMapTabletActivity extends ActionBarActivity implements OnCa
     }
 
     @Override
-    public void onOfflineFeaturesLoaded(Collection<Geometry> offlineFeatures) {
-        offlineMap = new OfflineMap(getApplicationContext(), mMapUI, offlineFeatures);
+    public void onOfflineFeaturesLoaded(Collection<Geometry> offlineGeometries) {     
+    	this.offlineGeometries = offlineGeometries;
+    	
+        if (offlineMap110mMenuItem != null) offlineMap110mMenuItem.setVisible(true);
         
-        if (mMapType == AsamConstants.MAP_TYPE_OFFLINE) {
-            offlineMap.setVisible(true);
-        }
-        
-        if (offlineMapMenuItem != null) offlineMapMenuItem.setVisible(true);
+    	if (offlineMap == null && mMapType == AsamConstants.MAP_TYPE_OFFLINE_110M) {
+    		if (offlineMap != null) offlineMap.clear();
+    		offlineMap = new OfflineMap(this, mMapUI, offlineGeometries);
+    	}    
     }
-
+    
     @Override
     public void onOfflineBannerClick() {
-        onMapTypeChanged(AsamConstants.MAP_TYPE_OFFLINE);
+        onMapTypeChanged(AsamConstants.MAP_TYPE_OFFLINE_110M);
         supportInvalidateOptionsMenu();
     }
 }
