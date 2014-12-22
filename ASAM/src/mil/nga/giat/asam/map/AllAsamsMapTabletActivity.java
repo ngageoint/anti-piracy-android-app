@@ -53,6 +53,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -601,6 +602,9 @@ public class AllAsamsMapTabletActivity extends ActionBarActivity implements OnCa
             mDisclaimerPopupShowing = false;
             setMenuItemsState(true);
             mTimeSliderUI.setEnabled(true);
+            
+        	Log.i("Offline Map", "Offline Map - disclaimer gone, start query");
+
             new QueryThread(getInitialTimePeriodQuery()).start();
             mQueryProgressDialog = ProgressDialog.show(this, getString(R.string.all_asams_map_tablet_query_progress_dialog_title_text), getString(R.string.all_asams_map_tablet_query_progress_dialog_content_text), true);
         }
@@ -841,6 +845,9 @@ public class AllAsamsMapTabletActivity extends ActionBarActivity implements OnCa
         
         @Override
         public void run() {
+        	Log.i("Offline Map", "Offline Map - running asam query");
+
+        	
             Context context = AllAsamsMapTabletActivity.this;
             String json = null;
             SQLiteDatabase db = null;
@@ -865,6 +872,9 @@ public class AllAsamsMapTabletActivity extends ActionBarActivity implements OnCa
                 catch (Exception caught) {
                     AsamLog.e(AllAsamsMapTabletActivity.class.getName() + ":There was an error parsing ASAM feed", caught);
                     mQueryError = true;
+                    
+                	Log.i("Offline Map", "Offline Map - asam load error");
+
                 }
                 finally {
                     if (db != null) {
@@ -875,10 +885,15 @@ public class AllAsamsMapTabletActivity extends ActionBarActivity implements OnCa
             }
             
             if (mSynchronizationQuery) {
+            	Log.i("Offline Map", "Offline Map - asam sync");
+
                 runOnUiThread(new Runnable() {
                     
                     @Override
                     public void run() {
+                    	Log.i("Offline Map", "Offline Map - asam query dismiss progress dialog");
+
+                    	
                         mQueryProgressDialog.dismiss();
                         if (!mQueryError) {
                             Toast.makeText(AllAsamsMapTabletActivity.this, getString(R.string.preferences_sync_complete_description_text), Toast.LENGTH_LONG).show();
@@ -895,6 +910,9 @@ public class AllAsamsMapTabletActivity extends ActionBarActivity implements OnCa
                 
                 // Query for the time period based on the slider.
                 synchronized (Mutex) {
+                	Log.i("Offline Map", "Offline Map - query for time on slider");
+
+                	
                     mAsams.clear();
                     AsamDbHelper dbHelper = new AsamDbHelper(context);
                     db = dbHelper.getReadableDatabase();
@@ -993,6 +1011,9 @@ public class AllAsamsMapTabletActivity extends ActionBarActivity implements OnCa
         // Change the map
         if (mMapType == AsamConstants.MAP_TYPE_OFFLINE_110M) {
         	if (offlineMap != null) offlineMap.clear();
+        	
+        	Log.i("Offline Map", "Offline Map - UI map change new offline map");
+
         	offlineMap = new OfflineMap(this, mMapUI, offlineGeometries);
         } else {
         	if (offlineMap != null) {
@@ -1017,6 +1038,8 @@ public class AllAsamsMapTabletActivity extends ActionBarActivity implements OnCa
         
     	if (offlineMap == null && mMapType == AsamConstants.MAP_TYPE_OFFLINE_110M) {
     		if (offlineMap != null) offlineMap.clear();
+        	Log.i("Offline Map", "Offline Map - UI new offline map");
+
     		offlineMap = new OfflineMap(this, mMapUI, offlineGeometries);
     	}    
     }

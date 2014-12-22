@@ -3,6 +3,9 @@ package mil.nga.giat.asam.map;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import mil.nga.giat.asam.R;
+
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -25,6 +28,7 @@ public class OfflineMap {
     private Collection<Geometry> mOfflineFeatures;
     private TileOverlay backgroundTileOverlay;
     private Collection<Polygon> offlinePolygons = null;
+    private ProgressDialog progressDialog;
 
     public OfflineMap(Context context, GoogleMap map, Collection<Geometry> offlineFeatures) {
         this.mContext = context;
@@ -52,6 +56,8 @@ public class OfflineMap {
     private class OfflineMapsTask extends AsyncTask<Geometry, Void, Collection<PolygonOptions>> {
         @Override
         protected void onPreExecute() {
+        	progressDialog = ProgressDialog.show(mContext, mContext.getString(R.string.offline_map_progress_dialog_title_text), mContext.getString(R.string.offline_map_progress_dialog_content_text), true);
+
             mMapUI.setMapType(GoogleMap.MAP_TYPE_NONE);
             
             BackgroundTileProvider tileProvider = new BackgroundTileProvider(mContext);           
@@ -88,6 +94,8 @@ public class OfflineMap {
         	for (PolygonOptions polygon : polygons) {
                 offlinePolygons.add(mMapUI.addPolygon(polygon));  
         	}
+        	
+        	progressDialog.dismiss();
         }
 		     
         /**

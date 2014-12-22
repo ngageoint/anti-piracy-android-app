@@ -41,14 +41,22 @@ public class DisclaimerDialogFragment extends DialogFragment {
 
             @Override
             public void onClick(DialogInterface dialog, int whichButton) {
-                mOnDisclaimerDialogDismissedListener.onDisclaimerDialogDismissed(false);
+            	if (mOnDisclaimerDialogDismissedListener != null) {
+                    mOnDisclaimerDialogDismissedListener.onDisclaimerDialogDismissed(false);
+            	}
+            	
+            	mOnDisclaimerDialogDismissedListener = null;
             }
         });
         builder.setNegativeButton(getString(R.string.disclaimer_exit_button_text), new DialogInterface.OnClickListener() {
 
             @Override
             public void onClick(DialogInterface dialog, int whichButton) {
-                mOnDisclaimerDialogDismissedListener.onDisclaimerDialogDismissed(true);
+            	if (mOnDisclaimerDialogDismissedListener != null) {
+                    mOnDisclaimerDialogDismissedListener.onDisclaimerDialogDismissed(true);
+            	}
+            	
+            	mOnDisclaimerDialogDismissedListener = null;
             }
         });
         return builder.create();
