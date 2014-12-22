@@ -8,8 +8,8 @@
     <string name="map_type_hybrid_text">Hybrid</string>
     <string name="map_type_offline_110m_text">Offline 1:110m</string>
     <string name="map_type_offline_50m_text">Offline 1:50m</string>
-    <string name="offline_map_progress_dialog_title_text">Loading offline map, please wait...</string>
-    <string name="offline_map_progress_dialog_50m_content_text">The 1:50m map is signifigantly higher resolution than the 1:110m map.  As such you may experience load/performance issues on devices with limited memory.</string>
+    <string name="offline_map_progress_dialog_title_text">Please wait...</string>
+    <string name="offline_map_progress_dialog_content_text">Loading offline map data</string>
     <string name="all_asams_list_title_text">List View</string>
     <string name="all_asams_map_title_text">ASAM</string>
     <string name="all_asams_map_query_error_text">There was an error retrieving new ASAMs.</string>

@@ -53,6 +53,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -601,6 +602,7 @@ public class AllAsamsMapTabletActivity extends ActionBarActivity implements OnCa
             mDisclaimerPopupShowing = false;
             setMenuItemsState(true);
             mTimeSliderUI.setEnabled(true);
+            
             new QueryThread(getInitialTimePeriodQuery()).start();
             mQueryProgressDialog = ProgressDialog.show(this, getString(R.string.all_asams_map_tablet_query_progress_dialog_title_text), getString(R.string.all_asams_map_tablet_query_progress_dialog_content_text), true);
         }
@@ -993,6 +995,7 @@ public class AllAsamsMapTabletActivity extends ActionBarActivity implements OnCa
         // Change the map
         if (mMapType == AsamConstants.MAP_TYPE_OFFLINE_110M) {
         	if (offlineMap != null) offlineMap.clear();
+
         	offlineMap = new OfflineMap(this, mMapUI, offlineGeometries);
         } else {
         	if (offlineMap != null) {
