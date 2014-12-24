@@ -3,6 +3,9 @@ Anti-Shipping Activity Messages (ASAM) App for Android displays location and des
 
 The ASAM App was developed at the National Geospatial-Intelligence Agency (NGA) in collaboration with [Booz Allen Hamilton](http://www.boozallen.com/).  The government has ["unlimited rights"] (https://github.com/ngageoint/anti-shipping-activity-messages-android-app/blob/master/NOTICE) and is releasing this software to increase the impact of government investments by providing developers with the opportunity to take things in new directions. The software use, modification, and distribution rights are stipulated within the [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0.html) license.  
 
+![googleplay](https://cloud.githubusercontent.com/assets/5178768/3282093/2e291564-f4d7-11e3-82be-8ecd3d98a4b4.png)
+
+https://play.google.com/store/apps/details?id=mil.nga.giat.asam
 
 ### Pull Requests
 
