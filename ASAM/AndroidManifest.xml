@@ -113,6 +113,12 @@
             android:configChanges="orientation|keyboardHidden|screenSize">
         </activity>
         
+        <activity android:name=".OpenSourceDetailsActivity"
+            android:label="@string/legal_fragment_nga_open_source_licenses_label_text"
+            android:theme="@style/asam_theme"
+            android:configChanges="orientation|keyboardHidden|screenSize">
+        </activity>
+        
         <activity android:name="mil.nga.giat.asam.map.AllAsamsMapTabletActivity"
             android:label="@string/all_asams_map_tablet_title_text"
             android:theme="@style/asam_theme"

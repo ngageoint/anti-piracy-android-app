@@ -41,4 +41,9 @@ public class LegalActivity extends ActionBarActivity {
         intent.putExtra(AsamConstants.LEGAL_DETAILS_TEXT_KEY, R.string.legal_details_fragment_nga_privacy_policy_license_text);
         startActivity(intent);
     }
+    
+    public void openSourceAttributionRowClicked(View view) {
+        Intent intent = new Intent(this, OpenSourceDetailsActivity.class);
+        startActivity(intent);
+    }
 }

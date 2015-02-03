@@ -107,10 +107,9 @@
     <string name="launch_screen_sync_text">* Go to Settings and select \"Sync Now\" to view the most recent reports.</string>
     <string name="launch_screen_menu_information_text">About</string>
     <string name="legal_title_text">Legal</string>
-    <string name="legal_fragment_nga_disclaimer_row_text">Disclaimer</string>
     <string name="legal_fragment_nga_disclaimer_label_text">NGA Disclaimer</string>
-    <string name="legal_fragment_nga_privacy_policy_row_text">ASAM app</string>
     <string name="legal_fragment_nga_privacy_policy_label_text">NGA Privacy Policy</string>
+    <string name="legal_fragment_nga_open_source_licenses_label_text">Open Source Licenses</string>
     <string name="legal_details_title_text">License</string>
     <string name="legal_details_nga_disclaimer_title_text">NGA Disclaimer</string>
     <string name="legal_details_fragment_nga_disclaimer_license_text">
