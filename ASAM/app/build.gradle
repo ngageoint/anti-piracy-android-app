@@ -1,0 +1,29 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 21
+    buildToolsVersion "21.1.2"
+
+    defaultConfig {
+        applicationId "mil.nga.giat.asam"
+        minSdkVersion 10
+        targetSdkVersion 19
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+    }
+}
+
+dependencies {
+    compile 'com.android.support:appcompat-v7:21.0.3'
+    compile 'com.google.android.gms:play-services:+'
+    compile files('libs/jackson-annotations-2.3.3.jar')
+    compile files('libs/jackson-core-2.3.3.jar')
+    compile files('libs/jackson-databind-2.3.3.jar')
+    compile files('libs/jts-1.8.jar')
+    compile files('libs/poffen_cluster_1.1.jar')
+}
