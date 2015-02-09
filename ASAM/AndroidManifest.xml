@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="mil.nga.giat.asam"
-      android:versionCode="3"
-      android:versionName="1.0.0">
+      android:versionCode="4"
+      android:versionName="1.0.1">
       
     <uses-sdk android:minSdkVersion="10" android:targetSdkVersion="19"/>
     
@@ -109,6 +109,12 @@
         
         <activity android:name=".LegalDetailsActivity"
             android:label="@string/legal_details_title_text"
+            android:theme="@style/asam_theme"
+            android:configChanges="orientation|keyboardHidden|screenSize">
+        </activity>
+        
+        <activity android:name=".OpenSourceDetailsActivity"
+            android:label="@string/legal_fragment_nga_open_source_licenses_label_text"
             android:theme="@style/asam_theme"
             android:configChanges="orientation|keyboardHidden|screenSize">
         </activity>
