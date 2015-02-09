@@ -46,9 +46,7 @@ android {
 dependencies {
     compile 'com.android.support:appcompat-v7:21.0.3'
     compile 'com.google.android.gms:play-services:6.5.87'
-    compile files('libs/jackson-annotations-2.3.3.jar')
-    compile files('libs/jackson-core-2.3.3.jar')
-    compile files('libs/jackson-databind-2.3.3.jar')
-    compile files('libs/jts-1.8.jar')
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.4.2'
+    compile 'com.vividsolutions:jts:1.8'
     compile files('libs/poffen_cluster_1.1.jar')
 }
