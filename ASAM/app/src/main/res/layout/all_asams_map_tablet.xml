@@ -1,76 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView android:id="@+id/all_asams_map_query_feedback_text_ui"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textIsSelectable="false"
+        android:paddingLeft="10dp"
+        />
+
     <fragment android:id="@+id/all_asams_map_tablet_map_view_ui"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         class="com.google.android.gms.maps.SupportMapFragment"
         />
-    
-    <LinearLayout android:id="@+id/all_asams_map_tablet_query_mode_message_container_ui"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:paddingTop="5dp"
-        android:paddingBottom="5dp"
-        android:paddingRight="5dp"
-        android:paddingLeft="5dp"
-        android:orientation="vertical"
-        android:background="#99000000"
-        android:visibility="invisible">
-        
-        <TextView android:id="@+id/all_asams_map_tablet_query_mode_message_text_view_ui"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/empty_content_description"
-            />
-        
-    </LinearLayout>
 
-    <RelativeLayout android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_marginLeft="50dp"
-        android:layout_marginRight="50dp"
-        android:layout_marginBottom="20dp"
-        android:paddingTop="7dp"
-        android:paddingBottom="7dp"
-        android:paddingRight="5dp"
-        android:paddingLeft="5dp"
-        android:background="@drawable/all_asams_map_tablet_timeslider_background">
-    
-        <TextView android:id="@+id/all_asams_map_tablet_date_range_text_view_ui"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:text="@string/all_asams_map_tablet_date_range_text"
-            />
-        
-        <SeekBar android:id="@+id/all_asams_map_tablet_time_slider_ui"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/all_asams_map_tablet_date_range_text_view_ui"
-            android:layout_toLeftOf="@+id/all_asams_map_tablet_total_asams_text_view_ui"
-            android:max="999"
-            android:progress="100"
-            android:paddingLeft="15dp"
-            android:paddingRight="15dp"
-            />
-        
-        <TextView android:id="@+id/all_asams_map_tablet_total_asams_text_view_ui"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:text="@string/all_asams_map_tablet_total_asams_text"
-            />
-        
-    </RelativeLayout>
-    
-</RelativeLayout>
+</LinearLayout>

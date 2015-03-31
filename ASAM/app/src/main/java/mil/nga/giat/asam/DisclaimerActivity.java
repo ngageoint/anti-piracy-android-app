@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 
+import mil.nga.giat.asam.map.AllAsamsMapTabletActivity;
+
 
 public class DisclaimerActivity extends ActionBarActivity {
 
@@ -19,7 +21,7 @@ public class DisclaimerActivity extends ActionBarActivity {
     }
     
     public void disclaimerAgreeButtonClicked(View view) {
-        Intent intent = new Intent(this, LaunchScreenActivity.class);
+        Intent intent = new Intent(this, AllAsamsMapTabletActivity.class);
         startActivity(intent);
         finish();
     }

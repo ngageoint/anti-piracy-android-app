@@ -1,11 +1,5 @@
 package mil.nga.giat.asam;
 
-import java.io.IOException;
-
-import mil.nga.giat.asam.db.AsamDbHelper;
-import mil.nga.giat.asam.map.AllAsamsMapTabletActivity;
-import mil.nga.giat.asam.util.AsamConstants;
-import mil.nga.giat.asam.util.AsamLog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -14,6 +8,13 @@ import android.support.v4.app.FragmentActivity;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
+
+import java.io.IOException;
+
+import mil.nga.giat.asam.db.AsamDbHelper;
+import mil.nga.giat.asam.map.AllAsamsMapTabletActivity;
+import mil.nga.giat.asam.util.AsamConstants;
+import mil.nga.giat.asam.util.AsamLog;
 
 
 public class MainActivity extends FragmentActivity {
@@ -67,22 +68,11 @@ public class MainActivity extends FragmentActivity {
         // Launch to the correct screen.
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean hideDisclaimer = preferences.getBoolean(AsamConstants.HIDE_DISCLAIMER_KEY, false);
-        Intent intent = null;
-        if (isTablet()) {
-            intent = new Intent(this, AllAsamsMapTabletActivity.class);
-            intent.putExtra(AsamConstants.TABLET_IS_LAUNCHING_KEY, true);
-        }
-        else if (!hideDisclaimer) {
-            intent = new Intent(this, DisclaimerActivity.class);
-        }
-        else {
-            intent = new Intent(this, LaunchScreenActivity.class);
-        }
+        Intent intent = hideDisclaimer ?
+                new Intent(this, AllAsamsMapTabletActivity.class) :
+                new Intent(this, DisclaimerActivity.class);
+
         startActivity(intent);
         finish();
-    }
-
-    private boolean isTablet() {
-        return getResources().getBoolean(R.bool.is_tablet);
     }
 }

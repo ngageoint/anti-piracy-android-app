@@ -1,5 +1,13 @@
 package mil.nga.giat.asam.db;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteStatement;
+import android.provider.BaseColumns;
+
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,13 +24,6 @@ import mil.nga.giat.asam.model.AsamBean;
 import mil.nga.giat.asam.model.TextQueryParametersBean;
 import mil.nga.giat.asam.util.AsamLog;
 import mil.nga.giat.asam.util.AsamUtils;
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
-import android.database.sqlite.SQLiteStatement;
-import android.provider.BaseColumns;
 
 
 @SuppressLint("SdCardPath")
@@ -167,6 +168,51 @@ public class AsamDbHelper extends SQLiteOpenHelper {
         }
         AsamLog.i(AsamDbHelper.class.getName() + ":Exiting removeDuplicates");
         return asamsNotInDB;
+    }
+
+    public List<AsamBean> queryAll(SQLiteDatabase db) {
+        List<AsamBean> asams = new ArrayList<AsamBean>();
+        db.beginTransaction();
+        try {
+            String sql = "SELECT " +
+                    ID + ", " +
+                    DATE_OF_OCCURRENCE + ", " +
+                    REFERENCE_NUMBER +  ", " +
+                    SUBREGION + ", " +
+                    LATITUDE + ", " +
+                    LONGITUDE + ", " +
+                    AGGRESSOR + ", " +
+                    VICTIM + ", " +
+                    DESCRIPTION +
+                    " FROM " +
+                    TABLE_NAME;
+            AsamLog.i(AsamDbHelper.class.getName() + ":" + sql);
+            Cursor cursor = db.rawQuery(sql, new String[] {});
+            while (cursor.moveToNext()) {
+                AsamBean asam = new AsamBean();
+                try {
+                    asam.setId(cursor.getInt(cursor.getColumnIndex(AsamDbHelper.ID)));
+                    asam.setOccurrenceDate(AsamDbHelper.SQLITE_DATE_FORMAT.parse(cursor.getString(cursor.getColumnIndex(AsamDbHelper.DATE_OF_OCCURRENCE))));
+                    asam.setReferenceNumber(cursor.getString(cursor.getColumnIndex(AsamDbHelper.REFERENCE_NUMBER)));
+                    asam.setGeographicalSubregion(cursor.getString(cursor.getColumnIndex(AsamDbHelper.SUBREGION)));
+                    asam.setLatitude(cursor.getDouble(cursor.getColumnIndex(AsamDbHelper.LATITUDE)));
+                    asam.setLongitude(cursor.getDouble(cursor.getColumnIndex(AsamDbHelper.LONGITUDE)));
+                    asam.setAggressor(cursor.getString(cursor.getColumnIndex(AsamDbHelper.AGGRESSOR)));
+                    asam.setVictim(cursor.getString(cursor.getColumnIndex(AsamDbHelper.VICTIM)));
+                    asam.setDescription(cursor.getString(cursor.getColumnIndex(AsamDbHelper.DESCRIPTION)));
+                    asams.add(asam);
+                }
+                catch (Exception caught) {
+                    AsamLog.e(AsamDbHelper.class.getName() + ":Error querying ASAMs", caught);
+                }
+            }
+            cursor.close();
+            db.setTransactionSuccessful();
+        }
+        finally {
+            db.endTransaction();
+        }
+        return asams;
     }
     
     public List<AsamBean> queryByTime(SQLiteDatabase db, Calendar timePeriod) {

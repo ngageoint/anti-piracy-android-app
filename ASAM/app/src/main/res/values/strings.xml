@@ -10,7 +10,10 @@
     <string name="map_type_offline_50m_text">Offline 1:50m</string>
     <string name="offline_map_progress_dialog_title_text">Please wait...</string>
     <string name="offline_map_progress_dialog_content_text">Loading offline map data</string>
+    <string name="asam_map_label">ASAM</string>
     <string name="all_asams_list_title_text">List View</string>
+    <string name="all_asams_about_title_text">About</string>
+    <string name="all_asams_settings_title_text">Settings</string>
     <string name="all_asams_map_title_text">ASAM</string>
     <string name="all_asams_map_query_error_text">There was an error retrieving new ASAMs.</string>
     <string name="all_asams_map_no_asams_text">No ASAM activity found</string>
@@ -26,7 +29,6 @@
     <string name="all_asams_map_query_progress_dialog_content_text">Checking for new ASAMs</string>
     <string name="all_asams_map_menu_list_view_text">List View</string>
     <string name="all_asams_map_menu_query_text">Query</string>
-    <string name="all_asams_map_menu_zoom_text">Center Map</string>
     <string name="all_asams_map_menu_map_type_text">Map Type</string>
     <string name="all_asams_map_menu_60_days_text">60 days</string>
     <string name="all_asams_map_menu_90_days_text">90 days</string>
@@ -34,7 +36,7 @@
     <string name="all_asams_map_menu_1_year_text">1 year</string>
     <string name="all_asams_map_menu_5_years_text">5 years</string>
     <string name="all_asams_map_menu_all_text">All</string>
-    <string name="all_asams_map_tablet_title_text">Anti-Shipping Activity Messages</string>
+    <string name="all_asams_map_menu_custom_text">Custom</string>
     <string name="all_asams_map_tablet_query_error_text">There was an error retrieving new ASAMs.</string>
     <string name="all_asams_map_tablet_no_asams_text">No ASAM activity found</string>
     <string name="all_asams_map_tablet_query_progress_dialog_title_text">ASAM Query</string>
@@ -105,7 +107,6 @@
     <string name="launch_screen_text_query_label_text">ASAM Query</string>
     <string name="launch_screen_settings_label_text">Settings</string>
     <string name="launch_screen_sync_text">* Go to Settings and select \"Sync Now\" to view the most recent reports.</string>
-    <string name="launch_screen_menu_information_text">About</string>
     <string name="legal_title_text">Legal</string>
     <string name="legal_fragment_nga_disclaimer_label_text">NGA Disclaimer</string>
     <string name="legal_fragment_nga_privacy_policy_label_text">NGA Privacy Policy</string>
