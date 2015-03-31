@@ -12,7 +12,7 @@
         android:orderInCategory="100"
         />
 
-    <item android:id="@+id/all_asams_map_tablet_menu_list_view_ui"
+    <item android:id="@+id/all_asams_map_menu_list_view_ui"
         android:title="@string/all_asams_map_tablet_menu_list_view_text"
         asam:showAsAction="always"
         android:icon="@drawable/ic_action_bar_list_view"

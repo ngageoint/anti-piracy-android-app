@@ -3,11 +3,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-    
-    <ListView android:id="@+id/asam_list_list_view_ui"
+
+    <fragment android:id="@+id/asam_list_report_tablet_asam_list_fragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fastScrollEnabled="true"
-        />
+        android:layout_weight="1"
+        class="mil.nga.giat.asam.AsamListFragment"/>
     
 </LinearLayout>

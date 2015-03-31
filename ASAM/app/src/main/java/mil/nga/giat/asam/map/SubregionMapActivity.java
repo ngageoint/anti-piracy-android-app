@@ -1,19 +1,5 @@
 package mil.nga.giat.asam.map;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import mil.nga.giat.asam.Asam;
-import mil.nga.giat.asam.R;
-import mil.nga.giat.asam.connectivity.OfflineBannerFragment;
-import mil.nga.giat.asam.model.SubregionBean;
-import mil.nga.giat.asam.model.SubregionTextParser;
-import mil.nga.giat.asam.util.AsamConstants;
-import mil.nga.giat.asam.util.AsamLog;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -38,6 +24,21 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
 import com.vividsolutions.jts.geom.Geometry;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import mil.nga.giat.asam.Asam;
+import mil.nga.giat.asam.R;
+import mil.nga.giat.asam.connectivity.OfflineBannerFragment;
+import mil.nga.giat.asam.model.SubregionBean;
+import mil.nga.giat.asam.model.SubregionTextParser;
+import mil.nga.giat.asam.util.AsamConstants;
+import mil.nga.giat.asam.util.AsamLog;
 
 
 public class SubregionMapActivity extends ActionBarActivity implements OnMapClickListener, Asam.OnOfflineFeaturesListener, OfflineBannerFragment.OnOfflineBannerClick {
@@ -315,7 +316,7 @@ public class SubregionMapActivity extends ActionBarActivity implements OnMapClic
             intent = getIntent();
         }
         else {
-            intent = new Intent(this, AsamMapActivity.class);
+            intent = new Intent(this, AllAsamsMapTabletActivity.class);
         }
         intent.putExtra(AsamConstants.QUERY_TYPE_KEY, AsamConstants.SUBREGION_QUERY);
         intent.putExtra(AsamConstants.SUBREGION_QUERY_TIME_SPAN_KEY, timeSpan);

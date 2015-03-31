@@ -52,7 +52,6 @@ import java.util.List;
 import java.util.Locale;
 
 import mil.nga.giat.asam.Asam;
-import mil.nga.giat.asam.AsamListActivity;
 import mil.nga.giat.asam.AsamListReportTabletActivity;
 import mil.nga.giat.asam.InfoActivity;
 import mil.nga.giat.asam.InfoDialogFragment;
@@ -272,7 +271,7 @@ public class AllAsamsMapTabletActivity extends ActionBarActivity implements OnCa
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.all_asams_map_tablet_menu, menu);
 
-        mListViewMenuItemUI = menu.findItem(R.id.all_asams_map_tablet_menu_list_view_ui);
+        mListViewMenuItemUI = menu.findItem(R.id.all_asams_map_menu_list_view_ui);
         mSettingsMenuItemUI = menu.findItem(R.id.all_asams_map_tablet_menu_settings_ui);
         mTextQueryMenuItemUI = menu.findItem(R.id.all_asams_map_tablet_menu_text_query_ui);
         mInfoMenuItemUI = menu.findItem(R.id.all_asams_map_tablet_menu_info_ui);
@@ -382,16 +381,15 @@ public class AllAsamsMapTabletActivity extends ActionBarActivity implements OnCa
                 runQuery(getString(R.string.query_all_text), null);
                 return true;
             }
-            case R.id.all_asams_map_tablet_menu_list_view_ui: {
+//            case R.id.all_asams_map_tablet_menu_list_view_ui: {
+//                AsamListContainer.mAsams = mAsams;
+//                Intent intent = new Intent(this, AsamListReportTabletActivity.class);
+//                startActivity(intent);
+//                return true;
+//            }
+            case R.id.all_asams_map_menu_list_view_ui: {
                 AsamListContainer.mAsams = mAsams;
                 Intent intent = new Intent(this, AsamListReportTabletActivity.class);
-                startActivity(intent);
-                return true;
-            }
-            case R.id.all_asams_map_menu_list_view_ui: {
-                //TODO should launch same activity as above but layout should be different
-                AsamListContainer.mAsams = mAsams;
-                Intent intent = new Intent(this, AsamListActivity.class);
                 startActivity(intent);
                 return true;
             }

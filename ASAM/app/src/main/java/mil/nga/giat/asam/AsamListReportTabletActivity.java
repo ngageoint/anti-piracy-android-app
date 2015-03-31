@@ -1,16 +1,17 @@
 package mil.nga.giat.asam;
 
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
+import android.view.MenuItem;
+import android.view.View;
+
 import java.util.Collections;
 
 import mil.nga.giat.asam.model.AsamBean;
 import mil.nga.giat.asam.util.AsamConstants;
 import mil.nga.giat.asam.util.AsamListContainer;
 import mil.nga.giat.asam.util.AsamLog;
-import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.ActionBarActivity;
-import android.view.MenuItem;
-import android.view.View;
 
 public class AsamListReportTabletActivity extends ActionBarActivity implements AsamListFragment.OnAsamSelectedListener, SortAsamListDialogFragment.OnSortAsamListListener {    
     
@@ -18,21 +19,24 @@ public class AsamListReportTabletActivity extends ActionBarActivity implements A
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         AsamLog.i(AsamListReportTabletActivity.class.getName() + ":onCreate");
-        setContentView(R.layout.asam_list_report_tablet);
+        setContentView(R.layout.asam_list);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         
         // Pick the first item in the list.
-        if (AsamListContainer.mAsams.size() > 0) {
+        AsamReportFragment asamReportFragment = (AsamReportFragment) getSupportFragmentManager().findFragmentById(R.id.asam_list_report_tablet_asam_report_fragment);
+        if (asamReportFragment != null && AsamListContainer.mAsams.size() > 0) {
             Collections.sort(AsamListContainer.mAsams, new AsamBean.DescendingOccurrenceDateComparator());
-            AsamReportFragment asamReportFragment = new AsamReportFragment();
-            Bundle args = new Bundle();
-            args.putSerializable(AsamConstants.ASAM_KEY, AsamListContainer.mAsams.get(0));
-            asamReportFragment.setArguments(args);
-            
-            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.asam_list_report_tablet_asam_report_fragment, asamReportFragment);
-            fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-            fragmentTransaction.commit();
+            asamReportFragment.updateContent(AsamListContainer.mAsams.get(0));
+            //TODO select first item in list
+//            AsamReportFragment asamReportFragment = new AsamReportFragment();
+//            Bundle args = new Bundle();
+//            args.putSerializable(AsamConstants.ASAM_KEY, AsamListContainer.mAsams.get(0));
+//            asamReportFragment.setArguments(args);
+//
+//            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+//            fragmentTransaction.replace(R.id.asam_list_report_tablet_asam_report_fragment, asamReportFragment);
+//            fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+//            fragmentTransaction.commit();
         }
     }
 
@@ -49,15 +53,25 @@ public class AsamListReportTabletActivity extends ActionBarActivity implements A
     @Override
     public void onAsamSelected(AsamBean asam) {
         AsamLog.i(AsamListReportTabletActivity.class.getName() + ":onAsamSelected");
-        AsamReportFragment asamReportFragment = new AsamReportFragment();
-        Bundle args = new Bundle();
-        args.putSerializable(AsamConstants.ASAM_KEY, asam);
-        asamReportFragment.setArguments(args);
-        
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.asam_list_report_tablet_asam_report_fragment, asamReportFragment);
-        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-        fragmentTransaction.commit();
+        AsamReportFragment asamReportFragment = (AsamReportFragment) getSupportFragmentManager().findFragmentById(R.id.asam_list_report_tablet_asam_report_fragment);
+        if (asamReportFragment == null) {
+            Intent intent = new Intent(this, AsamReportActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putSerializable(AsamConstants.ASAM_KEY, asam);
+            intent.putExtras(bundle);
+            startActivity(intent);
+        } else {
+            asamReportFragment.updateContent(asam);
+        }
+
+//        Bundle args = new Bundle();
+//        args.putSerializable(AsamConstants.ASAM_KEY, asam);
+//        asamReportFragment.setArguments(args);
+//
+//        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+//        fragmentTransaction.replace(R.id.asam_list_report_tablet_asam_report_fragment, asamReportFragment);
+//        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+//        fragmentTransaction.commit();
     }
     
     @Override

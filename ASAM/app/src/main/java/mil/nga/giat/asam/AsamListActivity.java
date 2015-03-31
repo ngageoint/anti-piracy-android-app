@@ -1,12 +1,5 @@
 package mil.nga.giat.asam;
 
-import java.util.List;
-
-import mil.nga.giat.asam.model.AsamBean;
-import mil.nga.giat.asam.util.AsamConstants;
-import mil.nga.giat.asam.util.AsamListContainer;
-import mil.nga.giat.asam.util.AsamLog;
-import mil.nga.giat.asam.widget.AsamArrayAdapter;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -25,6 +18,14 @@ import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import java.util.List;
+
+import mil.nga.giat.asam.model.AsamBean;
+import mil.nga.giat.asam.util.AsamConstants;
+import mil.nga.giat.asam.util.AsamListContainer;
+import mil.nga.giat.asam.util.AsamLog;
+import mil.nga.giat.asam.widget.AsamArrayAdapter;
 
 
 public class AsamListActivity extends ActionBarActivity implements AdapterView.OnItemClickListener {
@@ -46,7 +47,7 @@ public class AsamListActivity extends ActionBarActivity implements AdapterView.O
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         
         mAsams = AsamListContainer.mAsams;
-        mAsamListViewUI = (ListView)findViewById(R.id.asam_list_list_view_ui);
+//        mAsamListViewUI = (ListView)findViewById(R.id.asam_list_list_view_ui);
         mAsamArrayAdapter = new AsamArrayAdapter(this, R.layout.asam_list_row, mAsams);
         mSortDirection = AsamConstants.SORT_DESCENDING;
         mSortPopupSpinnerSelection = AsamConstants.OCURRENCE_DATE_SORT;

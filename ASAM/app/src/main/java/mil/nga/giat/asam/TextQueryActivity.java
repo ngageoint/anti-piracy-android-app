@@ -1,18 +1,5 @@
 package mil.nga.giat.asam;
 
-import java.text.ParseException;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-
-import mil.nga.giat.asam.db.AsamDbHelper;
-import mil.nga.giat.asam.map.AsamMapActivity;
-import mil.nga.giat.asam.model.SubregionTextParser;
-import mil.nga.giat.asam.model.TextQueryParametersBean;
-import mil.nga.giat.asam.util.AsamConstants;
-import mil.nga.giat.asam.util.AsamLog;
-import mil.nga.giat.asam.util.AsamUtils;
-import mil.nga.giat.asam.util.CurrentSubregionHelper;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -27,6 +14,20 @@ import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
+
+import java.text.ParseException;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+
+import mil.nga.giat.asam.db.AsamDbHelper;
+import mil.nga.giat.asam.map.AllAsamsMapTabletActivity;
+import mil.nga.giat.asam.model.SubregionTextParser;
+import mil.nga.giat.asam.model.TextQueryParametersBean;
+import mil.nga.giat.asam.util.AsamConstants;
+import mil.nga.giat.asam.util.AsamLog;
+import mil.nga.giat.asam.util.AsamUtils;
+import mil.nga.giat.asam.util.CurrentSubregionHelper;
 
 
 public class TextQueryActivity extends ActionBarActivity {
@@ -173,7 +174,7 @@ public class TextQueryActivity extends ActionBarActivity {
             parameters.mReferenceNumber = mReferenceNumberYearUI.getText().toString() + "-" + mReferenceNumberIdUI.getText().toString();
         }
         
-        Intent intent = new Intent(this, AsamMapActivity.class);
+        Intent intent = new Intent(this, AllAsamsMapTabletActivity.class);
         intent.putExtra(AsamConstants.QUERY_TYPE_KEY, AsamConstants.TEXT_QUERY);
         intent.putExtra(AsamConstants.TEXT_QUERY_PARAMETERS_KEY, parameters);
         startActivity(intent);

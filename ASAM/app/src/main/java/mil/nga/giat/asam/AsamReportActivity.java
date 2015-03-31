@@ -1,11 +1,12 @@
 package mil.nga.giat.asam;
 
-import mil.nga.giat.asam.util.AsamConstants;
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
 import android.view.View;
+
+import mil.nga.giat.asam.model.AsamBean;
+import mil.nga.giat.asam.util.AsamConstants;
 
 
 public class AsamReportActivity extends ActionBarActivity {
@@ -17,16 +18,10 @@ public class AsamReportActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.asam_report);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        
-        mAsamReportFragment = new AsamReportFragment();
-        Bundle args = new Bundle();
-        args.putSerializable(AsamConstants.ASAM_KEY, getIntent().getSerializableExtra(AsamConstants.ASAM_KEY));
-        mAsamReportFragment.setArguments(args);
-        
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.asam_report_asam_report_fragment, mAsamReportFragment);
-        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-        fragmentTransaction.commit();
+
+        AsamBean asam = (AsamBean) getIntent().getSerializableExtra(AsamConstants.ASAM_KEY);
+        AsamReportFragment asamReportFragment = (AsamReportFragment) getSupportFragmentManager().findFragmentById(R.id.asam_list_report_tablet_asam_report_fragment);
+        asamReportFragment.updateContent(asam);
     }
     
     public void mapAsamLocation(View view) {

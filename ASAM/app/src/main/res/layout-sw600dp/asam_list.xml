@@ -2,12 +2,19 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="horizontal"
+    android:baselineAligned="false">
+
+    <fragment android:id="@+id/asam_list_report_tablet_asam_list_fragment"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        class="mil.nga.giat.asam.AsamListFragment"/>
 
     <fragment android:id="@+id/asam_list_report_tablet_asam_report_fragment"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
         class="mil.nga.giat.asam.AsamReportFragment"/>
-    
+
 </LinearLayout>
