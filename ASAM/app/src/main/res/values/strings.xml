@@ -53,7 +53,7 @@
     <string name="all_asams_map_tablet_menu_info_text">Info</string>
     <string name="asam_list_report_tablet_title_text">ASAM List</string>
     <string name="asam_list_fragment_menu_sort_text">Sort</string>
-    <string name="asam_list_title_text">List View</string>
+    <string name="asam_list_title_text">ASAMs</string>
     <string name="asam_list_empty_list_text">There are no ASAMs.</string>
     <string name="asam_list_menu_sort_text">Sort</string>
     <string name="asam_list_map_menu_zoom_menu_item_text">Zoom</string>

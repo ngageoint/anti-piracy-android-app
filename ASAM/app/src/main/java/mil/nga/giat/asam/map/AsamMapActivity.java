@@ -52,7 +52,7 @@ import java.util.List;
 import java.util.Locale;
 
 import mil.nga.giat.asam.Asam;
-import mil.nga.giat.asam.AsamListReportTabletActivity;
+import mil.nga.giat.asam.AsamListActivity;
 import mil.nga.giat.asam.InfoActivity;
 import mil.nga.giat.asam.InfoDialogFragment;
 import mil.nga.giat.asam.LegalTabletActivity;
@@ -79,89 +79,89 @@ import mil.nga.giat.poffencluster.PoffenClusterCalculator;
 import mil.nga.giat.poffencluster.PoffenPoint;
 
 
-public class AllAsamsMapTabletActivity extends ActionBarActivity implements OnCameraChangeListener, OnMarkerClickListener, CancelableCallback, OnTextQueryListener, OnPreferencesDialogDismissedListener, Asam.OnOfflineFeaturesListener, OfflineBannerFragment.OnOfflineBannerClick {
+public class AsamMapActivity extends ActionBarActivity implements OnCameraChangeListener, OnMarkerClickListener, CancelableCallback, OnTextQueryListener, OnPreferencesDialogDismissedListener, Asam.OnOfflineFeaturesListener, OfflineBannerFragment.OnOfflineBannerClick {
 
     private static class QueryHandler extends Handler {
 
-        WeakReference<AllAsamsMapTabletActivity> mAllAsamsMapTabletActivity;
+        WeakReference<AsamMapActivity> mAllAsamsMapTabletActivity;
 
-        QueryHandler(AllAsamsMapTabletActivity allAsamsMapTabletActivity) {
-            mAllAsamsMapTabletActivity = new WeakReference<AllAsamsMapTabletActivity>(allAsamsMapTabletActivity);
+        QueryHandler(AsamMapActivity asamMapActivity) {
+            mAllAsamsMapTabletActivity = new WeakReference<AsamMapActivity>(asamMapActivity);
         }
 
         @Override
         public void handleMessage(Message message) {
-            AllAsamsMapTabletActivity allAsamsMapTabletActivity = mAllAsamsMapTabletActivity.get();
+            AsamMapActivity asamMapActivity = mAllAsamsMapTabletActivity.get();
 
-            allAsamsMapTabletActivity.setFilterStatus(allAsamsMapTabletActivity.mDateRangeText, allAsamsMapTabletActivity.mTotalAsamsText);
+            asamMapActivity.setFilterStatus(asamMapActivity.mDateRangeText, asamMapActivity.mTotalAsamsText);
 
-            allAsamsMapTabletActivity.mQueryProgressDialog.dismiss();
-            if (allAsamsMapTabletActivity.mQueryError) {
-                allAsamsMapTabletActivity.mQueryError = false;
-                Toast.makeText(allAsamsMapTabletActivity, allAsamsMapTabletActivity.getString(R.string.all_asams_map_tablet_query_error_text), Toast.LENGTH_LONG).show();
+            asamMapActivity.mQueryProgressDialog.dismiss();
+            if (asamMapActivity.mQueryError) {
+                asamMapActivity.mQueryError = false;
+                Toast.makeText(asamMapActivity, asamMapActivity.getString(R.string.all_asams_map_tablet_query_error_text), Toast.LENGTH_LONG).show();
             }
 
-            allAsamsMapTabletActivity.clearAsamMarkers();
-            if (allAsamsMapTabletActivity.mAsams.size() == 1) {
+            asamMapActivity.clearAsamMarkers();
+            if (asamMapActivity.mAsams.size() == 1) {
 
                 // Camera position changing so redraw will be triggered in onCameraChange.
-                if (allAsamsMapTabletActivity.mPerformBoundsAdjustmentWithQuery) {
-                    allAsamsMapTabletActivity.mPerformMapClustering = true;
-                    AsamBean asam = allAsamsMapTabletActivity.mAsams.get(0);
-                    allAsamsMapTabletActivity.mMapUI.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder().target(new LatLng(asam.getLatitude(), asam.getLongitude())).zoom(AsamConstants.SINGLE_ASAM_ZOOM_LEVEL).build()));
+                if (asamMapActivity.mPerformBoundsAdjustmentWithQuery) {
+                    asamMapActivity.mPerformMapClustering = true;
+                    AsamBean asam = asamMapActivity.mAsams.get(0);
+                    asamMapActivity.mMapUI.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder().target(new LatLng(asam.getLatitude(), asam.getLongitude())).zoom(AsamConstants.SINGLE_ASAM_ZOOM_LEVEL).build()));
                 }
             }
-            else if (allAsamsMapTabletActivity.mAsams.size() > 1) {
+            else if (asamMapActivity.mAsams.size() > 1) {
 
                 // Camera position changing so redraw will be triggered in onCameraChange.
-                if (allAsamsMapTabletActivity.mPerformBoundsAdjustmentWithQuery) {
-                    allAsamsMapTabletActivity.mPerformMapClustering = true;
+                if (asamMapActivity.mPerformBoundsAdjustmentWithQuery) {
+                    asamMapActivity.mPerformMapClustering = true;
                     LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
-                    for (AsamBean asam : allAsamsMapTabletActivity.mAsams) {
+                    for (AsamBean asam : asamMapActivity.mAsams) {
                         boundsBuilder = boundsBuilder.include(new LatLng(asam.getLatitude(), asam.getLongitude()));
                     }
-                    allAsamsMapTabletActivity.mMapUI.animateCamera(CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), 0), allAsamsMapTabletActivity);
+                    asamMapActivity.mMapUI.animateCamera(CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), 0), asamMapActivity);
                 }
             }
             else {
-                Toast.makeText(allAsamsMapTabletActivity, allAsamsMapTabletActivity.getString(R.string.all_asams_map_no_asams_text), Toast.LENGTH_LONG).show();
+                Toast.makeText(asamMapActivity, asamMapActivity.getString(R.string.all_asams_map_no_asams_text), Toast.LENGTH_LONG).show();
             }
 
             // Camera position not changing so redraw won't be triggered in onCameraChange.
-            if (!allAsamsMapTabletActivity.mPerformBoundsAdjustmentWithQuery && allAsamsMapTabletActivity.mAsams.size() > 0) {
+            if (!asamMapActivity.mPerformBoundsAdjustmentWithQuery && asamMapActivity.mAsams.size() > 0) {
 
                 // Use the PoffenCluster library to calculate the clusters.
-                int zoomLevel = Math.round(allAsamsMapTabletActivity.mMapUI.getCameraPosition().zoom);
-                LatLngBounds bounds = allAsamsMapTabletActivity.mMapUI.getProjection().getVisibleRegion().latLngBounds;
+                int zoomLevel = Math.round(asamMapActivity.mMapUI.getCameraPosition().zoom);
+                LatLngBounds bounds = asamMapActivity.mMapUI.getProjection().getVisibleRegion().latLngBounds;
                 int numLatitudeCells = (int)(Math.round(Math.pow(2, zoomLevel)));
                 int numLongitudeCells = (int)(Math.round(Math.pow(2, zoomLevel)));
                 PoffenClusterCalculator<AsamBean> calculator = new PoffenClusterCalculator.Builder<AsamBean>(numLatitudeCells, numLongitudeCells).mergeLargeClusters(false).build();
-                for (AsamBean asam : allAsamsMapTabletActivity.mAsams) {
+                for (AsamBean asam : asamMapActivity.mAsams) {
                     calculator.add(asam, new PoffenPoint(asam.getLatitude(), asam.getLongitude()));
                 }
 
-                allAsamsMapTabletActivity.mMapClusters = Collections.synchronizedList(new ArrayList<AsamMapClusterBean>());
-                synchronized (allAsamsMapTabletActivity.Mutex) {
-                    allAsamsMapTabletActivity.mVisibleClusters = new ArrayList<AsamMapClusterBean>();
+                asamMapActivity.mMapClusters = Collections.synchronizedList(new ArrayList<AsamMapClusterBean>());
+                synchronized (asamMapActivity.Mutex) {
+                    asamMapActivity.mVisibleClusters = new ArrayList<AsamMapClusterBean>();
                 }
                 List<PoffenCluster<AsamBean>> poffenClusters = calculator.getPoffenClusters();
-                synchronized (allAsamsMapTabletActivity.Mutex) {
+                synchronized (asamMapActivity.Mutex) {
                     for (PoffenCluster<AsamBean> poffenCluster : poffenClusters) {
                         PoffenPoint poffenPoint = poffenCluster.getClusterCoordinateClosestToMean();
                         AsamMapClusterBean cluster = new AsamMapClusterBean(poffenCluster.getClusterItems(), new LatLng(poffenPoint.getLatitude(), poffenPoint.getLongitude()));
-                        allAsamsMapTabletActivity.mMapClusters.add(cluster);
+                        asamMapActivity.mMapClusters.add(cluster);
 
                         if (bounds.contains(cluster.getClusteredMapPosition()) || zoomLevel <= AsamConstants.ZOOM_LEVEL_TO_DRAW_ALL_CLUSTERS) {
-                            allAsamsMapTabletActivity.mVisibleClusters.add(cluster);
+                            asamMapActivity.mVisibleClusters.add(cluster);
 
                             // Now draw it on the map.
                             Marker marker;
                             if (poffenCluster.getClusterItems().size() == 1) {
-                                marker = allAsamsMapTabletActivity.mMapUI.addMarker(new MarkerOptions().position(cluster.getClusteredMapPosition()).icon(AsamConstants.PIRATE_MARKER).anchor(0.5f, 0.5f));
+                                marker = asamMapActivity.mMapUI.addMarker(new MarkerOptions().position(cluster.getClusteredMapPosition()).icon(AsamConstants.PIRATE_MARKER).anchor(0.5f, 0.5f));
                             }
                             else {
-                                BitmapDescriptor bitmapDescriptor = BitmapDescriptorFactory.fromBitmap(AsamUtils.drawNumberOnClusterMarker(allAsamsMapTabletActivity, poffenCluster.getClusterItems().size()));
-                                marker = allAsamsMapTabletActivity.mMapUI.addMarker(new MarkerOptions().position(cluster.getClusteredMapPosition()).icon(bitmapDescriptor).anchor(0.5f, 0.5f));
+                                BitmapDescriptor bitmapDescriptor = BitmapDescriptorFactory.fromBitmap(AsamUtils.drawNumberOnClusterMarker(asamMapActivity, poffenCluster.getClusterItems().size()));
+                                marker = asamMapActivity.mMapUI.addMarker(new MarkerOptions().position(cluster.getClusteredMapPosition()).icon(bitmapDescriptor).anchor(0.5f, 0.5f));
                             }
                             cluster.setMapMarker(marker);
                         }
@@ -222,7 +222,7 @@ public class AllAsamsMapTabletActivity extends ActionBarActivity implements OnCa
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        AsamLog.i(AllAsamsMapTabletActivity.class.getName() + ":onCreate");
+        AsamLog.i(AsamMapActivity.class.getName() + ":onCreate");
         setContentView(R.layout.all_asams_map_tablet);
 
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -381,15 +381,9 @@ public class AllAsamsMapTabletActivity extends ActionBarActivity implements OnCa
                 runQuery(getString(R.string.query_all_text), null);
                 return true;
             }
-//            case R.id.all_asams_map_tablet_menu_list_view_ui: {
-//                AsamListContainer.mAsams = mAsams;
-//                Intent intent = new Intent(this, AsamListReportTabletActivity.class);
-//                startActivity(intent);
-//                return true;
-//            }
             case R.id.all_asams_map_menu_list_view_ui: {
                 AsamListContainer.mAsams = mAsams;
-                Intent intent = new Intent(this, AsamListReportTabletActivity.class);
+                Intent intent = new Intent(this, AsamListActivity.class);
                 startActivity(intent);
                 return true;
             }
@@ -441,7 +435,7 @@ public class AllAsamsMapTabletActivity extends ActionBarActivity implements OnCa
             for (AsamMapClusterBean mapCluster : mVisibleClusters) {
                 if (marker.equals(mapCluster.getMapMarker())) {
                     AsamListContainer.mAsams = mapCluster.getAsams();
-                    Intent intent = new Intent(this, AsamListReportTabletActivity.class);
+                    Intent intent = new Intent(this, AsamListActivity.class);
                     startActivity(intent);
                     break;
                 }
@@ -452,7 +446,7 @@ public class AllAsamsMapTabletActivity extends ActionBarActivity implements OnCa
 
     @Override
     public void onCameraChange(CameraPosition position) {
-        AsamLog.i(AllAsamsMapTabletActivity.class.getName() + ":onCameraChange");
+        AsamLog.i(AsamMapActivity.class.getName() + ":onCameraChange");
 
         if (mPerformMapClustering) {
             mPerformMapClustering = false;
@@ -721,7 +715,7 @@ public class AllAsamsMapTabletActivity extends ActionBarActivity implements OnCa
                         marker = mMapUI.addMarker(new MarkerOptions().position(mapCluster.getClusteredMapPosition()).icon(AsamConstants.PIRATE_MARKER).anchor(0.5f, 0.5f));
                     }
                     else {
-                        BitmapDescriptor bitmapDescriptor = BitmapDescriptorFactory.fromBitmap(AsamUtils.drawNumberOnClusterMarker(AllAsamsMapTabletActivity.this, mapCluster.getAsams().size()));
+                        BitmapDescriptor bitmapDescriptor = BitmapDescriptorFactory.fromBitmap(AsamUtils.drawNumberOnClusterMarker(AsamMapActivity.this, mapCluster.getAsams().size()));
                         marker = mMapUI.addMarker(new MarkerOptions().position(mapCluster.getClusteredMapPosition()).icon(bitmapDescriptor).anchor(0.5f, 0.5f));
                     }
                     mapCluster.setMapMarker(marker);
@@ -862,7 +856,7 @@ public class AllAsamsMapTabletActivity extends ActionBarActivity implements OnCa
 
         @Override
         public void run() {
-            Context context = AllAsamsMapTabletActivity.this;
+            Context context = AsamMapActivity.this;
             String json = null;
             SQLiteDatabase db = null;
             if (!SyncTime.isSynched(context)) {
@@ -884,7 +878,7 @@ public class AllAsamsMapTabletActivity extends ActionBarActivity implements OnCa
                     SyncTime.finishedSync(context);
                 }
                 catch (Exception caught) {
-                    AsamLog.e(AllAsamsMapTabletActivity.class.getName() + ":There was an error parsing ASAM feed", caught);
+                    AsamLog.e(AsamMapActivity.class.getName() + ":There was an error parsing ASAM feed", caught);
                     mQueryError = true;
                 }
                 finally {
@@ -902,10 +896,10 @@ public class AllAsamsMapTabletActivity extends ActionBarActivity implements OnCa
                     public void run() {
                         mQueryProgressDialog.dismiss();
                         if (!mQueryError) {
-                            Toast.makeText(AllAsamsMapTabletActivity.this, getString(R.string.preferences_sync_complete_description_text), Toast.LENGTH_LONG).show();
+                            Toast.makeText(AsamMapActivity.this, getString(R.string.preferences_sync_complete_description_text), Toast.LENGTH_LONG).show();
                         }
                         else {
-                            Toast.makeText(AllAsamsMapTabletActivity.this, getString(R.string.preferences_error_sync_description_text), Toast.LENGTH_LONG).show();
+                            Toast.makeText(AsamMapActivity.this, getString(R.string.preferences_error_sync_description_text), Toast.LENGTH_LONG).show();
                         }
                     }
                 });
@@ -1092,7 +1086,7 @@ public class AllAsamsMapTabletActivity extends ActionBarActivity implements OnCa
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                mQueryProgressDialog = ProgressDialog.show(AllAsamsMapTabletActivity.this, getString(R.string.all_asams_map_tablet_query_progress_dialog_title_text), getString(R.string.all_asams_map_tablet_query_progress_dialog_content_text), true);
+                mQueryProgressDialog = ProgressDialog.show(AsamMapActivity.this, getString(R.string.all_asams_map_tablet_query_progress_dialog_title_text), getString(R.string.all_asams_map_tablet_query_progress_dialog_content_text), true);
                 new QueryThread(seekBar.getProgress()).start();
             }
 

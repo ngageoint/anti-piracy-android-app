@@ -316,7 +316,7 @@ public class SubregionMapActivity extends ActionBarActivity implements OnMapClic
             intent = getIntent();
         }
         else {
-            intent = new Intent(this, AllAsamsMapTabletActivity.class);
+            intent = new Intent(this, AsamMapActivity.class);
         }
         intent.putExtra(AsamConstants.QUERY_TYPE_KEY, AsamConstants.SUBREGION_QUERY);
         intent.putExtra(AsamConstants.SUBREGION_QUERY_TIME_SPAN_KEY, timeSpan);

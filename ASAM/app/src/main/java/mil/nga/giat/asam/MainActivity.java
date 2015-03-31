@@ -12,7 +12,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import java.io.IOException;
 
 import mil.nga.giat.asam.db.AsamDbHelper;
-import mil.nga.giat.asam.map.AllAsamsMapTabletActivity;
+import mil.nga.giat.asam.map.AsamMapActivity;
 import mil.nga.giat.asam.util.AsamConstants;
 import mil.nga.giat.asam.util.AsamLog;
 
@@ -69,7 +69,7 @@ public class MainActivity extends FragmentActivity {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean hideDisclaimer = preferences.getBoolean(AsamConstants.HIDE_DISCLAIMER_KEY, false);
         Intent intent = hideDisclaimer ?
-                new Intent(this, AllAsamsMapTabletActivity.class) :
+                new Intent(this, AsamMapActivity.class) :
                 new Intent(this, DisclaimerActivity.class);
 
         startActivity(intent);

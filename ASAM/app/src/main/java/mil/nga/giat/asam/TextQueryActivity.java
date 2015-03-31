@@ -21,7 +21,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 import mil.nga.giat.asam.db.AsamDbHelper;
-import mil.nga.giat.asam.map.AllAsamsMapTabletActivity;
+import mil.nga.giat.asam.map.AsamMapActivity;
 import mil.nga.giat.asam.model.SubregionTextParser;
 import mil.nga.giat.asam.model.TextQueryParametersBean;
 import mil.nga.giat.asam.util.AsamConstants;
@@ -174,7 +174,7 @@ public class TextQueryActivity extends ActionBarActivity {
             parameters.mReferenceNumber = mReferenceNumberYearUI.getText().toString() + "-" + mReferenceNumberIdUI.getText().toString();
         }
         
-        Intent intent = new Intent(this, AllAsamsMapTabletActivity.class);
+        Intent intent = new Intent(this, AsamMapActivity.class);
         intent.putExtra(AsamConstants.QUERY_TYPE_KEY, AsamConstants.TEXT_QUERY);
         intent.putExtra(AsamConstants.TEXT_QUERY_PARAMETERS_KEY, parameters);
         startActivity(intent);

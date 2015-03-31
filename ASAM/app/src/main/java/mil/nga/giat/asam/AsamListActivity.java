@@ -13,12 +13,12 @@ import mil.nga.giat.asam.util.AsamConstants;
 import mil.nga.giat.asam.util.AsamListContainer;
 import mil.nga.giat.asam.util.AsamLog;
 
-public class AsamListReportTabletActivity extends ActionBarActivity implements AsamListFragment.OnAsamSelectedListener, SortAsamListDialogFragment.OnSortAsamListListener {    
+public class AsamListActivity extends ActionBarActivity implements AsamListFragment.OnAsamSelectedListener, SortAsamListDialogFragment.OnSortAsamListListener {
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        AsamLog.i(AsamListReportTabletActivity.class.getName() + ":onCreate");
+        AsamLog.i(AsamListActivity.class.getName() + ":onCreate");
         setContentView(R.layout.asam_list);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         
@@ -27,16 +27,15 @@ public class AsamListReportTabletActivity extends ActionBarActivity implements A
         if (asamReportFragment != null && AsamListContainer.mAsams.size() > 0) {
             Collections.sort(AsamListContainer.mAsams, new AsamBean.DescendingOccurrenceDateComparator());
             asamReportFragment.updateContent(AsamListContainer.mAsams.get(0));
-            //TODO select first item in list
-//            AsamReportFragment asamReportFragment = new AsamReportFragment();
-//            Bundle args = new Bundle();
-//            args.putSerializable(AsamConstants.ASAM_KEY, AsamListContainer.mAsams.get(0));
-//            asamReportFragment.setArguments(args);
-//
-//            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-//            fragmentTransaction.replace(R.id.asam_list_report_tablet_asam_report_fragment, asamReportFragment);
-//            fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-//            fragmentTransaction.commit();
+        }
+
+        if (asamReportFragment == null && AsamListContainer.mAsams.size() == 1) {
+            Intent intent = new Intent(this, AsamReportActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putSerializable(AsamConstants.ASAM_KEY, AsamListContainer.mAsams.get(0));
+            intent.putExtras(bundle);
+            startActivity(intent);
+            finish();
         }
     }
 
@@ -52,7 +51,7 @@ public class AsamListReportTabletActivity extends ActionBarActivity implements A
 
     @Override
     public void onAsamSelected(AsamBean asam) {
-        AsamLog.i(AsamListReportTabletActivity.class.getName() + ":onAsamSelected");
+        AsamLog.i(AsamListActivity.class.getName() + ":onAsamSelected");
         AsamReportFragment asamReportFragment = (AsamReportFragment) getSupportFragmentManager().findFragmentById(R.id.asam_list_report_tablet_asam_report_fragment);
         if (asamReportFragment == null) {
             Intent intent = new Intent(this, AsamReportActivity.class);
@@ -63,20 +62,11 @@ public class AsamListReportTabletActivity extends ActionBarActivity implements A
         } else {
             asamReportFragment.updateContent(asam);
         }
-
-//        Bundle args = new Bundle();
-//        args.putSerializable(AsamConstants.ASAM_KEY, asam);
-//        asamReportFragment.setArguments(args);
-//
-//        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-//        fragmentTransaction.replace(R.id.asam_list_report_tablet_asam_report_fragment, asamReportFragment);
-//        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-//        fragmentTransaction.commit();
     }
     
     @Override
     public void onSortAsamList(int sortDirection, int sortPopupSpinnerSelection) {
-        AsamLog.i(AsamListReportTabletActivity.class.getName() + ":onSortAsamList");
+        AsamLog.i(AsamListActivity.class.getName() + ":onSortAsamList");
         AsamListFragment fragment = (AsamListFragment)getSupportFragmentManager().findFragmentById(R.id.asam_list_report_tablet_asam_list_fragment);
         fragment.onSortAsamList(sortDirection, sortPopupSpinnerSelection);
     }

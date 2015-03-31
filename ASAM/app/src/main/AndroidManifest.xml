@@ -46,9 +46,9 @@
             android:theme="@style/asam_theme"
             android:configChanges="orientation|keyboardHidden|screenSize">
         </activity>
-        
+
         <activity android:name=".map.AsamMapActivity"
-            android:label="@string/all_asams_map_title_text"
+            android:label="@string/asam_map_label"
             android:theme="@style/asam_theme"
             android:configChanges="orientation|keyboardHidden|screenSize">
         </activity>
@@ -58,7 +58,7 @@
             android:theme="@style/asam_theme"
             android:configChanges="orientation|keyboardHidden|screenSize">
         </activity>
-        
+
         <activity android:name="mil.nga.giat.asam.map.SubregionMapActivity"
             android:label="@string/subregion_map_title_text"
             android:theme="@style/asam_theme"
@@ -109,18 +109,6 @@
         
         <activity android:name=".OpenSourceDetailsActivity"
             android:label="@string/legal_fragment_nga_open_source_licenses_label_text"
-            android:theme="@style/asam_theme"
-            android:configChanges="orientation|keyboardHidden|screenSize">
-        </activity>
-        
-        <activity android:name="mil.nga.giat.asam.map.AllAsamsMapTabletActivity"
-            android:label="@string/asam_map_label"
-            android:theme="@style/asam_theme"
-            android:configChanges="orientation|keyboardHidden|screenSize">
-        </activity>
-        
-        <activity android:name=".AsamListReportTabletActivity"
-            android:label="@string/asam_list_report_tablet_title_text"
             android:theme="@style/asam_theme"
             android:configChanges="orientation|keyboardHidden|screenSize">
         </activity>
