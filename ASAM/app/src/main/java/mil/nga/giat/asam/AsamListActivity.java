@@ -14,7 +14,9 @@ import mil.nga.giat.asam.util.AsamListContainer;
 import mil.nga.giat.asam.util.AsamLog;
 
 public class AsamListActivity extends ActionBarActivity implements AsamListFragment.OnAsamSelectedListener, SortAsamListDialogFragment.OnSortAsamListListener {
-    
+
+    public static final String ALWAYS_SHOW_LIST_KEY = "ALWAYS_SHOW_LIST";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,11 +31,10 @@ public class AsamListActivity extends ActionBarActivity implements AsamListFragm
             asamReportFragment.updateContent(AsamListContainer.mAsams.get(0));
         }
 
-        if (asamReportFragment == null && AsamListContainer.mAsams.size() == 1) {
+        Boolean alwaysShowList = getIntent().getBooleanExtra(ALWAYS_SHOW_LIST_KEY, false);
+        if (asamReportFragment == null && alwaysShowList == false && AsamListContainer.mAsams.size() == 1) {
             Intent intent = new Intent(this, AsamReportActivity.class);
-            Bundle bundle = new Bundle();
-            bundle.putSerializable(AsamConstants.ASAM_KEY, AsamListContainer.mAsams.get(0));
-            intent.putExtras(bundle);
+            intent.putExtra(AsamConstants.ASAM_KEY, AsamListContainer.mAsams.get(0));
             startActivity(intent);
             finish();
         }

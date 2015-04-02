@@ -9,6 +9,7 @@
         android:layout_height="wrap_content"
         android:textIsSelectable="false"
         android:paddingLeft="10dp"
+        android:gravity="center"
         />
 
     <fragment android:id="@+id/all_asams_map_tablet_map_view_ui"

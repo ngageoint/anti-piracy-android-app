@@ -384,6 +384,7 @@ public class AsamMapActivity extends ActionBarActivity implements OnCameraChange
             case R.id.all_asams_map_menu_list_view_ui: {
                 AsamListContainer.mAsams = mAsams;
                 Intent intent = new Intent(this, AsamListActivity.class);
+                intent.putExtra(AsamListActivity.ALWAYS_SHOW_LIST_KEY, true);
                 startActivity(intent);
                 return true;
             }
