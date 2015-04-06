@@ -39,7 +39,7 @@ public class AsamReportFragment extends Fragment {
 
         return view;
     }
-    
+
     public void mapAsamLocation(View view) {
         Intent intent = new Intent(getActivity(), SingleAsamMapActivity.class);
         intent.putExtra(AsamConstants.ASAM_KEY, mAsam);

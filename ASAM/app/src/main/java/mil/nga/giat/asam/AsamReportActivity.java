@@ -19,7 +19,7 @@ public class AsamReportActivity extends ActionBarActivity {
         setContentView(R.layout.asam_report);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        AsamBean asam = (AsamBean) getIntent().getSerializableExtra(AsamConstants.ASAM_KEY);
+        AsamBean asam = (AsamBean) getIntent().getParcelableExtra(AsamConstants.ASAM_KEY);
         AsamReportFragment asamReportFragment = (AsamReportFragment) getSupportFragmentManager().findFragmentById(R.id.asam_list_report_tablet_asam_report_fragment);
         asamReportFragment.updateContent(asam);
     }

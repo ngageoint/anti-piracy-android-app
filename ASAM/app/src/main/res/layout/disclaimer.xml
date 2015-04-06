@@ -6,15 +6,12 @@
     android:orientation="vertical"
     android:windowSoftInputMode="stateVisible" >
 
-    <!--<include layout="@layout/mage_header" />-->
-
     <ImageView android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_launcher_pirate"
+        android:src="@drawable/ic_logo"
         android:layout_gravity="center"
         android:paddingTop="25dp"
-        android:paddingBottom="15dp"
-        android:contentDescription="@string/info_fragment_image_content_description_text"
+        android:paddingBottom="25dp"
         />
 
     <LinearLayout
@@ -24,17 +21,17 @@
         android:orientation="vertical"
         android:paddingBottom="24dip"
         android:paddingLeft="24dip"
-        android:paddingRight="24dip"
-        android:paddingTop="20dip" >
+        android:paddingRight="24dip">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:paddingBottom="20dip"
+            android:paddingBottom="10dip"
             android:text="Disclaimer"
             android:textColor="#EEEEEE"
-            android:textSize="26sp" />
+            android:textSize="22sp"
+            android:textIsSelectable="true" />
 
         <ScrollView
             android:layout_width="match_parent"
@@ -47,7 +44,8 @@
                 android:gravity="center_vertical|left"
                 android:text="@string/disclaimer_text"
                 android:textColor="#DDDDDD"
-                android:textSize="14dp" />
+                android:textSize="15sp"
+                android:textIsSelectable="true" />
         </ScrollView>
 
         <LinearLayout

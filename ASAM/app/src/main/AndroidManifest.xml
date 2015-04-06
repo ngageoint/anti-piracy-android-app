@@ -55,8 +55,7 @@
         
         <activity android:name=".AsamListActivity"
             android:label="@string/asam_list_title_text"
-            android:theme="@style/asam_theme"
-            android:configChanges="orientation|keyboardHidden|screenSize">
+            android:theme="@style/asam_theme">
         </activity>
 
         <activity android:name="mil.nga.giat.asam.map.SubregionMapActivity"

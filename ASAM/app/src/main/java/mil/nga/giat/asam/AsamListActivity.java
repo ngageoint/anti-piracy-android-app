@@ -2,6 +2,7 @@ package mil.nga.giat.asam;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,26 +18,36 @@ public class AsamListActivity extends ActionBarActivity implements AsamListFragm
 
     public static final String ALWAYS_SHOW_LIST_KEY = "ALWAYS_SHOW_LIST";
 
+    private AsamListFragment listFragment = null;
+    private AsamReportFragment reportFragment = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        AsamLog.i(AsamListActivity.class.getName() + ":onCreate");
         setContentView(R.layout.asam_list);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         
         // Pick the first item in the list.
-        AsamReportFragment asamReportFragment = (AsamReportFragment) getSupportFragmentManager().findFragmentById(R.id.asam_list_report_tablet_asam_report_fragment);
-        if (asamReportFragment != null && AsamListContainer.mAsams.size() > 0) {
+        if (reportFragment != null && AsamListContainer.mAsams.size() > 0) {
             Collections.sort(AsamListContainer.mAsams, new AsamBean.DescendingOccurrenceDateComparator());
-            asamReportFragment.updateContent(AsamListContainer.mAsams.get(0));
+            reportFragment.updateContent(AsamListContainer.mAsams.get(0));
         }
 
         Boolean alwaysShowList = getIntent().getBooleanExtra(ALWAYS_SHOW_LIST_KEY, false);
-        if (asamReportFragment == null && alwaysShowList == false && AsamListContainer.mAsams.size() == 1) {
+        if (reportFragment == null && alwaysShowList == false && AsamListContainer.mAsams.size() == 1) {
             Intent intent = new Intent(this, AsamReportActivity.class);
             intent.putExtra(AsamConstants.ASAM_KEY, AsamListContainer.mAsams.get(0));
             startActivity(intent);
             finish();
+        }
+    }
+
+    @Override
+    public void onAttachFragment(Fragment fragment) {
+        if (fragment instanceof  AsamReportFragment) {
+            reportFragment = (AsamReportFragment) fragment;
+        } else if (fragment instanceof  AsamListFragment) {
+            listFragment = (AsamListFragment) fragment;
         }
     }
 
@@ -53,27 +64,22 @@ public class AsamListActivity extends ActionBarActivity implements AsamListFragm
     @Override
     public void onAsamSelected(AsamBean asam) {
         AsamLog.i(AsamListActivity.class.getName() + ":onAsamSelected");
-        AsamReportFragment asamReportFragment = (AsamReportFragment) getSupportFragmentManager().findFragmentById(R.id.asam_list_report_tablet_asam_report_fragment);
-        if (asamReportFragment == null) {
+        if (reportFragment == null) {
             Intent intent = new Intent(this, AsamReportActivity.class);
-            Bundle bundle = new Bundle();
-            bundle.putSerializable(AsamConstants.ASAM_KEY, asam);
-            intent.putExtras(bundle);
+            intent.putExtra(AsamConstants.ASAM_KEY, asam);
             startActivity(intent);
         } else {
-            asamReportFragment.updateContent(asam);
+            reportFragment.updateContent(asam);
         }
     }
     
     @Override
     public void onSortAsamList(int sortDirection, int sortPopupSpinnerSelection) {
         AsamLog.i(AsamListActivity.class.getName() + ":onSortAsamList");
-        AsamListFragment fragment = (AsamListFragment)getSupportFragmentManager().findFragmentById(R.id.asam_list_report_tablet_asam_list_fragment);
-        fragment.onSortAsamList(sortDirection, sortPopupSpinnerSelection);
+        listFragment.onSortAsamList(sortDirection, sortPopupSpinnerSelection);
     }
     
     public void mapAsamLocation(View view) {
-        AsamReportFragment fragment = (AsamReportFragment)getSupportFragmentManager().findFragmentById(R.id.asam_list_report_tablet_asam_report_fragment);
-        fragment.mapAsamLocation(view);
+        reportFragment.mapAsamLocation(view);
     }
 }
