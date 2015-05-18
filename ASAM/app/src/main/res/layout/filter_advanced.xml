@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="match_parent">
+
+    <ScrollView
+        android:id="@+id/scroll"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="vertical"
+            android:layout_marginTop="16dp"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp">
+
+            <TextView android:id="@+id/searchLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Text"
+                android:textSize="18sp"
+                android:textColor="@color/asam_highlight_color"/>
+
+            <EditText android:id="@+id/keyword"
+                android:inputType="text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"/>
+
+            <LinearLayout android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp">
+
+                <TextView android:text="@string/text_query_date_from_text"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="left"
+                    android:textColor="@color/asam_highlight_color"
+                    android:textSize="18sp"/>
+
+                <TextView android:text="@string/text_query_date_to_text"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="left"
+                    android:textColor="@color/asam_highlight_color"
+                    android:textSize="18sp"/>
+
+            </LinearLayout>
+
+            <LinearLayout android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <EditText android:id="@+id/text_query_date_from_edit_text_ui"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:inputType="date"
+                    android:gravity="left"
+                    android:hint="@string/text_query_date_hint_text"
+                    android:focusable="false"/>
+
+                <TextView android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/hyphen_text"/>
+
+                <EditText android:id="@+id/text_query_date_to_edit_text_ui"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:inputType="date"
+                    android:hint="@string/text_query_date_hint_text"
+                    android:focusable="false"/>
+
+            </LinearLayout>
+
+            <TextView android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/text_query_select_subregion_label_text"
+                android:layout_marginTop="10dp"
+                android:textColor="@color/asam_highlight_color"
+                android:textSize="18sp"/>
+
+            <Spinner android:id="@+id/text_query_subregion_spinner_ui"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:prompt="@string/text_query_select_subregion_prompt_text"/>
+
+            <TextView android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/text_query_reference_number_label_text"
+                android:layout_marginTop="10dp"
+                android:textColor="@color/asam_highlight_color"
+                android:textSize="18sp"/>
+
+            <LinearLayout android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <EditText android:id="@+id/text_query_reference_number_year_edit_text_ui"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:inputType="number"
+                    android:hint="@string/text_query_year_hint_text"/>
+
+                <TextView android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/hyphen_text"/>
+
+                <EditText android:id="@+id/text_query_reference_number_id_edit_text_ui"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:inputType="number"
+                    android:hint="@string/text_query_number_hint_text"/>
+
+            </LinearLayout>
+
+
+            <TextView android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/text_query_victim_label_text"
+                android:layout_marginTop="10dp"
+                android:textColor="@color/asam_highlight_color"
+                android:textSize="18sp"/>
+
+            <EditText android:id="@+id/text_query_victim_edit_text_ui"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:contentDescription="@string/text_query_victim_content_description_text"/>
+
+            <TextView android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/text_query_aggressor_label_text"
+                android:layout_marginTop="10dp"
+                android:textColor="@color/asam_highlight_color"
+                android:textSize="18sp"/>
+
+            <EditText android:id="@+id/text_query_aggressor_edit_text_ui"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:contentDescription="@string/text_query_aggressor_content_description_text"/>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_vertical">
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dip"
+            android:background="?android:attr/dividerHorizontal" />
+
+        <LinearLayout
+            style="?android:attr/buttonBarStyle"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingTop="0dip"
+            android:paddingLeft="2dip"
+            android:paddingRight="2dip"
+            android:measureWithLargestChild="true">
+
+            <Button
+                android:id="@+id/cancel"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="0dip"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@android:string/cancel"/>
+
+            <View android:layout_height="fill_parent"
+                android:layout_width="1dip"
+                android:background="?android:attr/dividerHorizontal"/>
+
+            <Button
+                android:id="@+id/apply"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="0dip"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Apply"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

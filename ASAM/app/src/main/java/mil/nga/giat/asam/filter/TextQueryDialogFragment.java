@@ -1,15 +1,5 @@
-package mil.nga.giat.asam;
+package mil.nga.giat.asam.filter;
 
-import java.text.ParseException;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-
-import mil.nga.giat.asam.db.AsamDbHelper;
-import mil.nga.giat.asam.model.SubregionTextParser;
-import mil.nga.giat.asam.model.TextQueryParametersBean;
-import mil.nga.giat.asam.util.AsamUtils;
-import mil.nga.giat.asam.util.CurrentSubregionHelper;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
@@ -25,6 +15,18 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
+
+import java.text.ParseException;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+
+import mil.nga.giat.asam.R;
+import mil.nga.giat.asam.db.AsamDbHelper;
+import mil.nga.giat.asam.model.SubregionTextParser;
+import mil.nga.giat.asam.model.TextQueryParametersBean;
+import mil.nga.giat.asam.util.AsamUtils;
+import mil.nga.giat.asam.util.CurrentSubregionHelper;
 
 
 public class TextQueryDialogFragment extends DialogFragment {
@@ -147,7 +149,7 @@ public class TextQueryDialogFragment extends DialogFragment {
             
             @Override
             public void onClick(View view) {
-                TextQueryParametersBean parameters = new TextQueryParametersBean();
+                TextQueryParametersBean parameters = new TextQueryParametersBean(TextQueryParametersBean.Type.ADVANCED);
                 parameters.mDateFrom = mDateFromEditTextUI.getText().toString();
                 parameters.mDateTo = mDateToEditTextUI.getText().toString();
                 if (mSubregionSpinnerUI.getSelectedItemPosition() == SUBREGION_SPINNER_CURRENT_LOCATION_POSITION) {

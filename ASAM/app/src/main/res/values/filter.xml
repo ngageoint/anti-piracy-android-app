@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="filter_interval_labels">
+        <item></item>
+        <item>60 days</item>
+        <item>90 days</item>
+        <item>180 days</item>
+        <item>1 year</item>
+        <item>5 years</item>
+    </string-array>
+    <integer-array name="filter_interval_values">
+        <item>0</item>
+        <item>60</item>
+        <item>90</item>
+        <item>180</item>
+        <item>365</item>
+        <item>1300</item>
+    </integer-array>
+</resources>

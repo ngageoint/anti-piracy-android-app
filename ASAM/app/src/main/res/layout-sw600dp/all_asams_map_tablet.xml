@@ -11,7 +11,7 @@
         />
 
     <LinearLayout android:id="@+id/all_asams_map_tablet_query_mode_message_container_ui"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"

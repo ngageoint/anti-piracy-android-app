@@ -11,6 +11,7 @@
     <string name="offline_map_progress_dialog_title_text">Please wait...</string>
     <string name="offline_map_progress_dialog_content_text">Loading offline map data</string>
     <string name="asam_map_label">ASAM</string>
+    <string name="asam_search_label">Filters</string>
     <string name="all_asams_list_title_text">List View</string>
     <string name="all_asams_about_title_text">About</string>
     <string name="all_asams_settings_title_text">Settings</string>
@@ -44,11 +45,11 @@
     <string name="all_asams_map_tablet_date_range_text">--/--/---- to --/--/----</string>
     <string name="all_asams_map_tablet_total_asams_text">----- of ---- ASAMs</string>
     <string name="all_asams_map_tablet_subregions_query_mode_message_text"><![CDATA[<u><b>Selected Subregion(s)</b></u><p>&nbsp;&nbsp;&nbsp;%s</p>Click <i>Menu->Reset</i> to return to "All ASAMs" mode.]]></string>
-    <string name="all_asams_map_tablet_text_query_mode_message_text"><![CDATA[<u><b>Text Query</b></u><br/>%s<br/><br/>Click <i>Menu->Reset</i> to return to "All ASAMs" mode.]]></string>
+    <string name="all_asams_map_tablet_text_query_mode_message_text"><![CDATA[<u><b>Filters</b></u><br/>%s<br/><br/>]]></string>
     <string name="all_asams_map_tablet_menu_list_view_text">List View</string>
     <string name="all_asams_map_tablet_menu_subregions_text">Subregions</string>
     <string name="all_asams_map_tablet_menu_settings_text">Settings</string>
-    <string name="all_asams_map_tablet_menu_text_query_text">Text Query</string>
+    <string name="all_asams_map_tablet_menu_text_filter_text">Filters</string>
     <string name="all_asams_map_tablet_menu_reset_text">Reset</string>
     <string name="all_asams_map_tablet_menu_info_text">Info</string>
     <string name="asam_list_report_tablet_title_text">ASAM List</string>

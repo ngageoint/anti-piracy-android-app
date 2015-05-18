@@ -1,9 +1,10 @@
-package mil.nga.giat.asam;
+package mil.nga.giat.asam.filter;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -20,20 +21,22 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import mil.nga.giat.asam.R;
 import mil.nga.giat.asam.db.AsamDbHelper;
 import mil.nga.giat.asam.map.AsamMapActivity;
 import mil.nga.giat.asam.model.SubregionTextParser;
 import mil.nga.giat.asam.model.TextQueryParametersBean;
-import mil.nga.giat.asam.util.AsamConstants;
 import mil.nga.giat.asam.util.AsamLog;
 import mil.nga.giat.asam.util.AsamUtils;
 import mil.nga.giat.asam.util.CurrentSubregionHelper;
 
 
-public class TextQueryActivity extends ActionBarActivity {
+public class FilterAdvancedActivity extends AppCompatActivity implements OnClickListener {
 
     private static final int SUBREGION_SPINNER_EMPTY_POSITION = 0;
     private static final int SUBREGION_SPINNER_CURRENT_LOCATION_POSITION = 1;
+
+    private EditText mSearchText;
     private EditText mDateFromUI;
     private EditText mDateToUI;
     private Spinner mSubregionSpinnerUI;
@@ -46,8 +49,8 @@ public class TextQueryActivity extends ActionBarActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        AsamLog.i(TextQueryActivity.class.getName() + ":onCreate");
-        setContentView(R.layout.text_query);
+        AsamLog.i(FilterAdvancedActivity.class.getName() + ":onCreate");
+        setContentView(R.layout.filter_advanced);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getWindow().setSoftInputMode(LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
                 
@@ -58,19 +61,63 @@ public class TextQueryActivity extends ActionBarActivity {
         
         mReferenceNumberYearUI = (EditText)findViewById(R.id.text_query_reference_number_year_edit_text_ui);
         mReferenceNumberIdUI = (EditText)findViewById(R.id.text_query_reference_number_id_edit_text_ui);
-        
+
+        mSearchText = (EditText) findViewById(R.id.keyword);
         mDateFromUI = (EditText)findViewById(R.id.text_query_date_from_edit_text_ui);
         mDateToUI = (EditText)findViewById(R.id.text_query_date_to_edit_text_ui);
         mVictimUI = (EditText)findViewById(R.id.text_query_victim_edit_text_ui);
         mAggressorUI = (EditText)findViewById(R.id.text_query_aggressor_edit_text_ui);
-        
-        mDateFromUI.setOnClickListener(new OnClickListener() {
 
-            @Override
-            public void onClick(View view) {
-                DatePickerDialog.OnDateSetListener listener;
-                listener = new DatePickerDialog.OnDateSetListener() {
-                    
+        mDateFromUI.setOnClickListener(this);
+        mDateToUI.setOnClickListener(this);
+
+        findViewById(R.id.apply).setOnClickListener(this);
+        findViewById(R.id.cancel).setOnClickListener(this);
+
+        mCurrentSubregionHelper = new CurrentSubregionHelper(this, new SubregionTextParser().parseSubregions(this));
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+            case R.id.reset:
+                clearFields();
+                return true;
+            default: {
+                return super.onOptionsItemSelected(item);
+            }
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu items for use in the action bar
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.filter_menu, menu);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.apply: {
+                Intent intent = new Intent();
+                TextQueryParametersBean parameters = parseParameters();
+                intent.putExtra(AsamMapActivity.SEARCH_PARAMETERS, parameters);
+                setResult(Activity.RESULT_OK, intent);
+                finish();
+                break;
+            }
+            case R.id.cancel: {
+                finish();
+                break;
+            }
+            case R.id.text_query_date_from_edit_text_ui: {
+                DatePickerDialog.OnDateSetListener listener = new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                         GregorianCalendar calendar = new GregorianCalendar(year, monthOfYear, dayOfMonth);
@@ -88,18 +135,12 @@ public class TextQueryActivity extends ActionBarActivity {
                 int year = calendar.get(Calendar.YEAR);
                 int month = calendar.get(Calendar.MONTH);
                 int day = calendar.get(Calendar.DAY_OF_MONTH);
-                DatePickerDialog dialog = new DatePickerDialog(TextQueryActivity.this,  listener,  year, month, day);
+                DatePickerDialog dialog = new DatePickerDialog(FilterAdvancedActivity.this, listener, year, month, day);
                 dialog.show();
+                break;
             }
-        });
-        
-        mDateToUI.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View view) {
-                DatePickerDialog.OnDateSetListener listener;
-                listener = new DatePickerDialog.OnDateSetListener() {
-                    
+            case R.id.text_query_date_to_edit_text_ui: {
+                DatePickerDialog.OnDateSetListener listener = new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                         GregorianCalendar calendar = new GregorianCalendar(year, monthOfYear, dayOfMonth);
@@ -117,55 +158,22 @@ public class TextQueryActivity extends ActionBarActivity {
                 int year = calendar.get(Calendar.YEAR);
                 int month = calendar.get(Calendar.MONTH);
                 int day = calendar.get(Calendar.DAY_OF_MONTH);
-                DatePickerDialog dialog = new DatePickerDialog(TextQueryActivity.this,  listener,  year, month, day);
+                DatePickerDialog dialog = new DatePickerDialog(FilterAdvancedActivity.this, listener, year, month, day);
                 dialog.show();
+                break;
             }
-        });
+        }
+    }
 
-        mCurrentSubregionHelper = new CurrentSubregionHelper(this, new SubregionTextParser().parseSubregions(this));
-    }
-    
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.text_query_menu, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-    
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int itemId = item.getItemId();
-        if (itemId == android.R.id.home) {
-            finish();
-            return true;
-        }
-        else if (itemId == R.id.text_query_menu_query_ui) {
-            showQueryOnMap();
-            return true;
-        }
-        else if (itemId == R.id.text_query_menu_reset_ui) {
-            clearFields();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-    
-    public void queryButtonClicked(View view) {
-        showQueryOnMap();
-    }
-    
-    public void clearButtonClicked(View view) {
-        clearFields();
-    }
-    
-    private void showQueryOnMap() {
-        TextQueryParametersBean parameters = new TextQueryParametersBean();
+    private TextQueryParametersBean parseParameters() {
+        TextQueryParametersBean parameters = new TextQueryParametersBean(TextQueryParametersBean.Type.ADVANCED);
+        parameters.mKeyword = mSearchText.getText().toString();
+
         parameters.mDateFrom = mDateFromUI.getText().toString();
         parameters.mDateTo = mDateToUI.getText().toString();
         if (mSubregionSpinnerUI.getSelectedItemPosition() == SUBREGION_SPINNER_CURRENT_LOCATION_POSITION) {
             parameters.mSubregion = mCurrentSubregionHelper.getCurrentSubregion() + "";
-        }
-        else if (mSubregionSpinnerUI.getSelectedItemPosition() != SUBREGION_SPINNER_EMPTY_POSITION) {
+        } else if (mSubregionSpinnerUI.getSelectedItemPosition() != SUBREGION_SPINNER_EMPTY_POSITION) {
             parameters.mSubregion = ((String)mSubregionSpinnerUI.getSelectedItem()).split(" ")[1]; // Looks like "Subregion 32".
         }
         parameters.mAggressor = mAggressorUI.getText().toString();
@@ -173,15 +181,13 @@ public class TextQueryActivity extends ActionBarActivity {
         if (!AsamUtils.isEmpty(mReferenceNumberYearUI.getText().toString()) && !AsamUtils.isEmpty(mReferenceNumberIdUI.getText().toString())) {
             parameters.mReferenceNumber = mReferenceNumberYearUI.getText().toString() + "-" + mReferenceNumberIdUI.getText().toString();
         }
-        
-        Intent intent = new Intent(this, AsamMapActivity.class);
-        intent.putExtra(AsamConstants.QUERY_TYPE_KEY, AsamConstants.TEXT_QUERY);
-        intent.putExtra(AsamConstants.TEXT_QUERY_PARAMETERS_KEY, parameters);
-        startActivity(intent);
+
+        return parameters;
     }
-    
+
     private void clearFields() {
         mSubregionSpinnerUI.setSelection(SUBREGION_SPINNER_EMPTY_POSITION);
+        mSearchText.setText("");
         mDateFromUI.setText("");
         mDateToUI.setText("");
         mVictimUI.setText("");

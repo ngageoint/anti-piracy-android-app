@@ -60,8 +60,9 @@ import mil.nga.giat.asam.PreferencesActivity;
 import mil.nga.giat.asam.PreferencesDialogFragment;
 import mil.nga.giat.asam.PreferencesDialogFragment.OnPreferencesDialogDismissedListener;
 import mil.nga.giat.asam.R;
-import mil.nga.giat.asam.TextQueryDialogFragment;
-import mil.nga.giat.asam.TextQueryDialogFragment.OnTextQueryListener;
+import mil.nga.giat.asam.filter.FilterActivity;
+import mil.nga.giat.asam.filter.FilterAdvancedActivity;
+import mil.nga.giat.asam.filter.TextQueryDialogFragment.OnTextQueryListener;
 import mil.nga.giat.asam.connectivity.OfflineBannerFragment;
 import mil.nga.giat.asam.db.AsamDbHelper;
 import mil.nga.giat.asam.model.AsamBean;
@@ -174,11 +175,16 @@ public class AsamMapActivity extends ActionBarActivity implements OnCameraChange
     private static final int ALL_QUERY_MODE = 0;
     private static final int SUBREGION_QUERY_MODE = 1;
     private static final int TEXT_QUERY_MODE = 2;
-    private static final int SUBREGION_MAP_TABLET_ACTIVITY_REQUEST_CODE = 0;
+    private static final int SEARCH_ACTIVITY_REQUEST_CODE = 0;
+    private static final int SUBREGION_MAP_TABLET_ACTIVITY_REQUEST_CODE = 1;
+    public static final String SEARCH_PARAMETERS = "SEARCH_PARAMETERS";
+
     private static final int TOTAL_TIME_SLIDER_TICKS = 1000;
     private static final SimpleDateFormat DATE_RANGE_FORMAT = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
     private static final String DATE_RANGE_PATTERN = "%s to %s";
     private static final String TOTAL_ASAMS_PATTERN = "%5d of %d ASAMs";
+
+
     private String mDateRangeText;
     private String mTotalAsamsText;
     private final Object Mutex = new Object();
@@ -190,6 +196,7 @@ public class AsamMapActivity extends ActionBarActivity implements OnCameraChange
     private GoogleMap mMapUI;
     private int mMapType;
     private Collection<Geometry> offlineGeometries = null;
+
     private TextView mDateRangeTextViewUI;
     private TextView mTotalAsamsTextViewUI;
     private TextView mQueryModeMessageTextViewUI;
@@ -199,8 +206,8 @@ public class AsamMapActivity extends ActionBarActivity implements OnCameraChange
     private MenuItem mListViewMenuItemUI;
     private MenuItem mSubregionsMenuItemUI;
     private MenuItem mSettingsMenuItemUI;
-    private MenuItem mTextQueryMenuItemUI;
     private MenuItem mInfoMenuItemUI;
+
     private Date mEarliestAsamDate;
     private ProgressDialog mQueryProgressDialog;
     private QueryHandler mQueryHandler;
@@ -208,7 +215,6 @@ public class AsamMapActivity extends ActionBarActivity implements OnCameraChange
     private TextQueryParametersBean mTextQueryParametersBean;
     private Date mTextQueryDateEarliest;
     private Date mTextQueryDateLatest;
-    private int mQueryMode;
     private int mPreviousZoomLevel;
     private List<AsamMapClusterBean> mVisibleClusters;
     private SharedPreferences mSharedPreferences;
@@ -258,12 +264,11 @@ public class AsamMapActivity extends ActionBarActivity implements OnCameraChange
 
         mFilterStatus = (TextView)findViewById(R.id.all_asams_map_query_feedback_text_ui);
 
-        mQueryMode = ALL_QUERY_MODE;
-
-        // Called to handle the UI after the query has run.
         mQueryHandler = new QueryHandler(this);
-        new QueryThread(timePeriod).start();
-        mQueryProgressDialog = ProgressDialog.show(this, getString(R.string.all_asams_map_tablet_query_progress_dialog_title_text), getString(R.string.all_asams_map_tablet_query_progress_dialog_content_text), true);
+
+        TextQueryParametersBean queryParameters = new TextQueryParametersBean(TextQueryParametersBean.Type.SIMPLE);
+        queryParameters.mTimeInterval = 365;
+        onTextQuery(queryParameters);
     }
 
     @Override
@@ -273,7 +278,6 @@ public class AsamMapActivity extends ActionBarActivity implements OnCameraChange
 
         mListViewMenuItemUI = menu.findItem(R.id.all_asams_map_menu_list_view_ui);
         mSettingsMenuItemUI = menu.findItem(R.id.all_asams_map_tablet_menu_settings_ui);
-        mTextQueryMenuItemUI = menu.findItem(R.id.all_asams_map_tablet_menu_text_query_ui);
         mInfoMenuItemUI = menu.findItem(R.id.all_asams_map_tablet_menu_info_ui);
 
         int mapType = mSharedPreferences.getInt(AsamConstants.MAP_TYPE_KEY, 1);
@@ -357,40 +361,11 @@ public class AsamMapActivity extends ActionBarActivity implements OnCameraChange
                 item.setChecked(!item.isChecked());
                 onMapTypeChanged(AsamConstants.MAP_TYPE_OFFLINE_110M);
                 return true;
-            case R.id.all_asams_map_menu_60_days_ui: {
-                runQuery(getString(R.string.query_60_days_text), -60);
-                return true;
-            }
-            case R.id.all_asams_map_menu_90_days_ui: {
-                runQuery(getString(R.string.query_90_days_text), -90);
-                return true;
-            }
-            case R.id.all_asams_map_menu_180_days_ui: {
-                runQuery(getString(R.string.query_180_days_text), -180);
-                return true;
-            }
-            case R.id.all_asams_map_menu_1_year_ui: {
-                runQuery(getString(R.string.query_1_year_text), -365);
-                return true;
-            }
-            case R.id.all_asams_map_menu_5_years_ui: {
-                runQuery(getString(R.string.query_5_years_text), -1825);
-                return true;
-            }
-            case R.id.all_asams_map_menu_all_ui: {
-                runQuery(getString(R.string.query_all_text), null);
-                return true;
-            }
             case R.id.all_asams_map_menu_list_view_ui: {
                 AsamListContainer.mAsams = mAsams;
                 Intent intent = new Intent(this, AsamListActivity.class);
                 intent.putExtra(AsamListActivity.ALWAYS_SHOW_LIST_KEY, true);
                 startActivity(intent);
-                return true;
-            }
-            case R.id.all_asams_map_tablet_menu_text_query_ui: {
-                DialogFragment dialogFragment = TextQueryDialogFragment.newInstance();
-                dialogFragment.show(getSupportFragmentManager(), AsamConstants.TEXT_QUERY_DIALOG_TAG);
                 return true;
             }
             case R.id.all_asams_map_tablet_menu_settings_ui: {
@@ -413,6 +388,15 @@ public class AsamMapActivity extends ActionBarActivity implements OnCameraChange
                 //TODO should launch same preference as tablet, use different layout
                 Intent intent = new Intent(this, PreferencesActivity.class);
                 startActivity(intent);
+                return true;
+            }
+            case R.id.all_asams_map_menu_search_ui: {
+                Intent intent = lanchAdvancedFilter() ?
+                    new Intent(this, FilterAdvancedActivity.class) :
+                    new Intent(this, FilterActivity.class);
+
+                intent.putExtra(SEARCH_PARAMETERS, mTextQueryParametersBean);
+                startActivityForResult(intent, SEARCH_ACTIVITY_REQUEST_CODE);
                 return true;
             }
             //TODO reset in filter page
@@ -539,41 +523,48 @@ public class AsamMapActivity extends ActionBarActivity implements OnCameraChange
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
-            case SUBREGION_MAP_TABLET_ACTIVITY_REQUEST_CODE:
+            case (SEARCH_ACTIVITY_REQUEST_CODE) : {
                 if (resultCode == Activity.RESULT_OK) {
-                    mQueryMode = SUBREGION_QUERY_MODE;
-                    mSelectedSubregionIds = data.getIntegerArrayListExtra(AsamConstants.SUBREGION_QUERY_SUBREGIONS_LIST_KEY);
-
-                    // TODO phone only, needs to be in fragment
-                    if (mSelectedSubregionIds.size() == 1) {
-                        mSubregionsTitleText = getString(R.string.all_asams_map_1_subregion_text);
-                    }
-                    else {
-                        mSubregionsTitleText = String.format(getString(R.string.all_asams_map_multiple_subregions_text), mSelectedSubregionIds.size());
-                    }
-
-                    // TODO tablet only
-                    Calendar timePeriod = new GregorianCalendar();
-                    int timeSpan = data.getIntExtra(AsamConstants.SUBREGION_QUERY_TIME_SPAN_KEY, AsamConstants.TIME_SPAN_60_DAYS);
-                    if (timeSpan == AsamConstants.TIME_SPAN_1_YEAR) {
-                        timePeriod.add(Calendar.YEAR, -1);
-                    }
-                    else if (timeSpan == AsamConstants.TIME_SPAN_5_YEARS) {
-                        timePeriod.add(Calendar.YEAR, -5);
-                    }
-                    else if (timeSpan == AsamConstants.TIME_SPAN_ALL) {
-                        timePeriod.setTime(initAndGetEarliestAsamDate());
-                    }
-                    else {
-                        timePeriod.add(Calendar.DAY_OF_YEAR, -timeSpan);
-                    }
-                    mQueryModeMessageContainerUI.setVisibility(View.VISIBLE);
-                    mQueryModeMessageTextViewUI.setText(Html.fromHtml(String.format(getResources().getString(R.string.all_asams_map_tablet_subregions_query_mode_message_text), AsamUtils.getCommaSeparatedStringFromIntegerList(mSelectedSubregionIds))));
-                    setTimeSlider(timePeriod.getTime());
-                    mQueryProgressDialog = ProgressDialog.show(this, getString(R.string.all_asams_map_tablet_query_progress_dialog_title_text), getString(R.string.all_asams_map_tablet_query_progress_dialog_content_text), true);
-                    new QueryThread(timePeriod).start();
+                    TextQueryParametersBean parameters = data.getParcelableExtra(SEARCH_PARAMETERS);
+                    onTextQuery(parameters);
                 }
                 break;
+            }
+//            case SUBREGION_MAP_TABLET_ACTIVITY_REQUEST_CODE:
+//                if (resultCode == Activity.RESULT_OK) {
+//                    mQueryMode = SUBREGION_QUERY_MODE;
+//                    mSelectedSubregionIds = data.getIntegerArrayListExtra(AsamConstants.SUBREGION_QUERY_SUBREGIONS_LIST_KEY);
+//
+//                    // TODO phone only, needs to be in fragment
+//                    if (mSelectedSubregionIds.size() == 1) {
+//                        mSubregionsTitleText = getString(R.string.all_asams_map_1_subregion_text);
+//                    }
+//                    else {
+//                        mSubregionsTitleText = String.format(getString(R.string.all_asams_map_multiple_subregions_text), mSelectedSubregionIds.size());
+//                    }
+//
+//                    // TODO tablet only
+//                    Calendar timePeriod = new GregorianCalendar();
+//                    int timeSpan = data.getIntExtra(AsamConstants.SUBREGION_QUERY_TIME_SPAN_KEY, AsamConstants.TIME_SPAN_60_DAYS);
+//                    if (timeSpan == AsamConstants.TIME_SPAN_1_YEAR) {
+//                        timePeriod.add(Calendar.YEAR, -1);
+//                    }
+//                    else if (timeSpan == AsamConstants.TIME_SPAN_5_YEARS) {
+//                        timePeriod.add(Calendar.YEAR, -5);
+//                    }
+//                    else if (timeSpan == AsamConstants.TIME_SPAN_ALL) {
+//                        timePeriod.setTime(initAndGetEarliestAsamDate());
+//                    }
+//                    else {
+//                        timePeriod.add(Calendar.DAY_OF_YEAR, -timeSpan);
+//                    }
+//                    mQueryModeMessageContainerUI.setVisibility(View.VISIBLE);
+//                    mQueryModeMessageTextViewUI.setText(Html.fromHtml(String.format(getResources().getString(R.string.all_asams_map_tablet_subregions_query_mode_message_text), AsamUtils.getCommaSeparatedStringFromIntegerList(mSelectedSubregionIds))));
+//                    setTimeSlider(timePeriod.getTime());
+//                    mQueryProgressDialog = ProgressDialog.show(this, getString(R.string.all_asams_map_tablet_query_progress_dialog_title_text), getString(R.string.all_asams_map_tablet_query_progress_dialog_content_text), true);
+//                    new QueryThread(timePeriod).start();
+//                }
+//                break;
         }
     }
 
@@ -584,49 +575,89 @@ public class AsamMapActivity extends ActionBarActivity implements OnCameraChange
             dialogFragment.dismiss();
         }
         mTextQueryParametersBean = textQueryParameters;
-        mQueryMode = TEXT_QUERY_MODE;
 
-        // Populate the from and to dates for the text query.
-        if (!AsamUtils.isEmpty(textQueryParameters.mDateFrom)) {
-            try {
-                mTextQueryDateEarliest = AsamDbHelper.TEXT_QUERY_DATE_FORMAT.parse(textQueryParameters.mDateFrom);
+        if (mTextQueryParametersBean.mType == TextQueryParametersBean.Type.SIMPLE) {
+            if (mTextQueryParametersBean.mTimeInterval != null) {
+                mTextQueryDateLatest = null;
+                switch (mTextQueryParametersBean.mTimeInterval) {
+                    case 0: {
+                        mTimeSpanTitleText = getString(R.string.query_all_text);
+                        mTextQueryDateEarliest = null;
+                        break;
+                    }
+                    case 60: {
+                        mTimeSpanTitleText = getString(R.string.query_60_days_text);
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.add(Calendar.DAY_OF_MONTH, mTextQueryParametersBean.mTimeInterval * -1);
+                        mTextQueryDateEarliest = calendar.getTime();
+                        break;
+                    }
+                    case 90: {
+                        mTimeSpanTitleText = getString(R.string.query_90_days_text);
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.add(Calendar.DAY_OF_MONTH, mTextQueryParametersBean.mTimeInterval * -1);
+                        mTextQueryDateEarliest = calendar.getTime();
+                        break;
+                    }
+                    case 180: {
+                        mTimeSpanTitleText = getString(R.string.query_180_days_text);
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.add(Calendar.DAY_OF_MONTH, mTextQueryParametersBean.mTimeInterval * -1);
+                        mTextQueryDateEarliest = calendar.getTime();
+                        break;
+                    }
+                    case 365: {
+                        mTimeSpanTitleText = getString(R.string.query_1_year_text);
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.add(Calendar.YEAR, -1);
+                        mTextQueryDateEarliest = calendar.getTime();
+                        break;
+                    }
+                    case 1300: {
+                        mTimeSpanTitleText = getString(R.string.query_5_years_text);
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.add(Calendar.YEAR, -5);
+                        mTextQueryDateEarliest = calendar.getTime();
+                        break;
+                    }
+                }
+
+                mTextQueryDateLatest = new Date();
             }
-            catch (ParseException caught) {
+        } else {
+            // Populate the from and to dates for the text query.
+            if (!AsamUtils.isEmpty(textQueryParameters.mDateFrom)) {
+                try {
+                    mTextQueryDateEarliest = AsamDbHelper.TEXT_QUERY_DATE_FORMAT.parse(textQueryParameters.mDateFrom);
+                } catch (ParseException caught) {
+                    mTextQueryDateEarliest = initAndGetEarliestAsamDate();
+                }
+            } else {
                 mTextQueryDateEarliest = initAndGetEarliestAsamDate();
             }
-        }
-        else {
-            mTextQueryDateEarliest = initAndGetEarliestAsamDate();
-        }
-        if (!AsamUtils.isEmpty(textQueryParameters.mDateTo)) {
-            try {
-                mTextQueryDateLatest = AsamDbHelper.TEXT_QUERY_DATE_FORMAT.parse(textQueryParameters.mDateTo);
-            }
-            catch (ParseException caught) {
+
+            if (!AsamUtils.isEmpty(textQueryParameters.mDateTo)) {
+                try {
+                    mTextQueryDateLatest = AsamDbHelper.TEXT_QUERY_DATE_FORMAT.parse(textQueryParameters.mDateTo);
+                } catch (ParseException caught) {
+                    mTextQueryDateLatest = new Date();
+                }
+            } else {
                 mTextQueryDateLatest = new Date();
             }
         }
-        else {
-            mTextQueryDateLatest = new Date();
+
+        if (mQueryModeMessageContainerUI != null) {
+            mQueryModeMessageContainerUI.setVisibility(View.VISIBLE);
         }
-        mQueryModeMessageContainerUI.setVisibility(View.VISIBLE);
-        mQueryModeMessageTextViewUI.setText(Html.fromHtml(String.format(getResources().getString(R.string.all_asams_map_tablet_text_query_mode_message_text), textQueryParameters.getParametersAsFormattedHtml())));
+
+        if (mQueryModeMessageContainerUI != null) {
+            mQueryModeMessageTextViewUI.setText(Html.fromHtml(String.format(getResources().getString(R.string.all_asams_map_tablet_text_query_mode_message_text), textQueryParameters.getParametersAsFormattedHtml())));
+        }
+
         setTimeSlider(null);
         mQueryProgressDialog = ProgressDialog.show(this, getString(R.string.all_asams_map_tablet_query_progress_dialog_title_text), getString(R.string.all_asams_map_tablet_query_progress_dialog_content_text), true);
         new QueryThread().start();
-    }
-
-    private void runQuery(String timeSpanText, Integer timeSpan) {
-        mTimeSpanTitleText = timeSpanText;
-        mQueryProgressDialog = ProgressDialog.show(this, getString(R.string.all_asams_map_query_progress_dialog_title_text), getString(R.string.all_asams_map_query_progress_dialog_content_text), true);
-
-        if (timeSpan != null) {
-            Calendar calendar = new GregorianCalendar();
-            calendar.add(Calendar.DAY_OF_MONTH, timeSpan);
-            new QueryThread(calendar).start();
-        } else {
-            new QueryThread().start();
-        }
     }
 
     public void onPreferencesDialogDismissed(boolean hideDisclaimer) {
@@ -638,10 +669,6 @@ public class AsamMapActivity extends ActionBarActivity implements OnCameraChange
         SharedPreferences.Editor editor = preferences.edit();
         editor.putBoolean(AsamConstants.HIDE_DISCLAIMER_KEY, hideDisclaimer);
         editor.commit();
-    }
-
-    public void disclaimerButtonClicked(View view) {
-        // no-op. Taken care of by onDisclaimerDialogDismissed and onPreferencesDialogDismissed.
     }
 
     public void syncButtonClicked(View view) {
@@ -677,14 +704,6 @@ public class AsamMapActivity extends ActionBarActivity implements OnCameraChange
         intent.putExtra(android.content.Intent.EXTRA_SUBJECT, getString(R.string.info_fragment_email_subject_text));
         intent.setType("plain/text");
         startActivity(intent);
-    }
-
-    private void setMenuItemsState(boolean enabled) {
-        mListViewMenuItemUI.setEnabled(enabled);
-        mSubregionsMenuItemUI.setEnabled(enabled);
-        mSettingsMenuItemUI.setEnabled(enabled);
-        mTextQueryMenuItemUI.setEnabled(enabled);
-        mInfoMenuItemUI.setEnabled(enabled);
     }
 
     private void redrawMarkersOnMapBasedOnVisibleRegion() {
@@ -927,54 +946,51 @@ public class AsamMapActivity extends ActionBarActivity implements OnCameraChange
                     else if (mQueryType == TIME_PERIOD_QUERY) {
                         timePeriod = mTimePeriod;
                     }
-                    if (mQueryMode == ALL_QUERY_MODE) {
-                        List<AsamBean> asams = timePeriod == null ? dbHelper.queryAll(db) : dbHelper.queryByTime(db, timePeriod);
-                        mAsams.addAll(asams);
-                    }
-                    else if (mQueryMode == SUBREGION_QUERY_MODE) {
-                        mAsams.addAll(dbHelper.queryByTimeAndSubregions(db, timePeriod, mSelectedSubregionIds));
-                    }
-                    else if (mQueryMode == TEXT_QUERY_MODE) {
-                        TextQueryParametersBean parameters = TextQueryParametersBean.newInstance(mTextQueryParametersBean);
+
+
+                    TextQueryParametersBean parameters = TextQueryParametersBean.newInstance(mTextQueryParametersBean);
+
+                    if (mTextQueryDateLatest != null) {
                         parameters.mDateTo = AsamDbHelper.TEXT_QUERY_DATE_FORMAT.format(mTextQueryDateLatest);
-                        if (mQueryType == STANDARD_QUERY) {
+                    }
+
+                    if (mQueryType == STANDARD_QUERY ) {
+                        if (mTextQueryDateEarliest != null) {
                             parameters.mDateFrom = AsamDbHelper.TEXT_QUERY_DATE_FORMAT.format(mTextQueryDateEarliest);
                         }
-                        else if (mQueryType == TIME_SLIDER_QUERY) {
-                            if (mTimeSliderTick == 0) {
-                                parameters.mDateFrom = AsamDbHelper.TEXT_QUERY_DATE_FORMAT.format(mTextQueryDateLatest);
-                            }
-                            else if (mTimeSliderTick == TOTAL_TIME_SLIDER_TICKS - 1) {
-                                parameters.mDateFrom = AsamDbHelper.TEXT_QUERY_DATE_FORMAT.format(mTextQueryDateEarliest);
-                            }
-                            else {
-                                parameters.mDateFrom = AsamDbHelper.TEXT_QUERY_DATE_FORMAT.format(calculateTextQueryDateFromTimeSlider(mTimeSliderTick));
-                            }
+                    } else if (mQueryType == TIME_SLIDER_QUERY) {
+                        if (mTimeSliderTick == 0) {
+                            parameters.mDateFrom = AsamDbHelper.TEXT_QUERY_DATE_FORMAT.format(mTextQueryDateLatest);
                         }
-                        mAsams.addAll(dbHelper.queryByText(db, parameters));
+                        else if (mTimeSliderTick == TOTAL_TIME_SLIDER_TICKS - 1) {
+                            parameters.mDateFrom = AsamDbHelper.TEXT_QUERY_DATE_FORMAT.format(mTextQueryDateEarliest);
+                        }
+                        else {
+                            Date dateFromSlider = mTextQueryDateEarliest != null && mTextQueryDateLatest != null ? calculateTextQueryDateFromTimeSlider(mTimeSliderTick) : calculateQueryDateFromTimeSlider(mTimeSliderTick);
+                            parameters.mDateFrom = AsamDbHelper.TEXT_QUERY_DATE_FORMAT.format(dateFromSlider);
+                        }
                     }
+                    mAsams.addAll(dbHelper.queryByText(db, parameters));
 
                     // TODO tablet specific, needs to move to a fragment
                     if (mDateRangeTextViewUI != null) {
-                        if (mQueryMode == TEXT_QUERY_MODE) {
-                            if (mQueryType == STANDARD_QUERY) {
-                                mDateRangeText = String.format(DATE_RANGE_PATTERN, DATE_RANGE_FORMAT.format(mTextQueryDateLatest), DATE_RANGE_FORMAT.format(mTextQueryDateEarliest));
-                            }
-                            else if (mQueryType == TIME_SLIDER_QUERY) {
-                                if (mTimeSliderTick == 0) {
-                                    mDateRangeText = String.format(DATE_RANGE_PATTERN, DATE_RANGE_FORMAT.format(mTextQueryDateLatest), DATE_RANGE_FORMAT.format(mTextQueryDateLatest));
-                                }
-                                else if (mTimeSliderTick == TOTAL_TIME_SLIDER_TICKS - 1) {
-                                    mDateRangeText = String.format(DATE_RANGE_PATTERN, DATE_RANGE_FORMAT.format(mTextQueryDateLatest), DATE_RANGE_FORMAT.format(mTextQueryDateEarliest));
-                                }
-                                else {
-                                    mDateRangeText = String.format(DATE_RANGE_PATTERN, DATE_RANGE_FORMAT.format(mTextQueryDateLatest), DATE_RANGE_FORMAT.format(calculateTextQueryDateFromTimeSlider(mTimeSliderTick)));
-                                }
+                        Date earliest = mTextQueryDateEarliest != null ? mTextQueryDateEarliest : initAndGetEarliestAsamDate();
+                        Date latest = mTextQueryDateLatest != null ? mTextQueryDateLatest : new Date();
+                        if (mQueryType == STANDARD_QUERY) {
+                            mDateRangeText = String.format(DATE_RANGE_PATTERN, DATE_RANGE_FORMAT.format(latest), DATE_RANGE_FORMAT.format(earliest));
+                        } else if (mQueryType == TIME_SLIDER_QUERY) {
+                            if (mTimeSliderTick == 0) {
+                                mDateRangeText = String.format(DATE_RANGE_PATTERN, DATE_RANGE_FORMAT.format(latest), DATE_RANGE_FORMAT.format(latest));
+                            } else if (mTimeSliderTick == TOTAL_TIME_SLIDER_TICKS - 1) {
+                                mDateRangeText = String.format(DATE_RANGE_PATTERN, DATE_RANGE_FORMAT.format(latest), DATE_RANGE_FORMAT.format(earliest));
+                            } else {
+                                Date dateFromSlider = mTextQueryDateEarliest != null && mTextQueryDateLatest != null ? calculateTextQueryDateFromTimeSlider(mTimeSliderTick) : calculateQueryDateFromTimeSlider(mTimeSliderTick);
+                                mDateRangeText = String.format(DATE_RANGE_PATTERN, DATE_RANGE_FORMAT.format(latest), DATE_RANGE_FORMAT.format(dateFromSlider));
                             }
                         }
-                        else {
-                            mDateRangeText = String.format(DATE_RANGE_PATTERN, DATE_RANGE_FORMAT.format(new Date()), DATE_RANGE_FORMAT.format(timePeriod.getTime()));
-                        }
+//                        else { NOT TEXT_QUERY_MODE
+//                            mDateRangeText = String.format(DATE_RANGE_PATTERN, DATE_RANGE_FORMAT.format(new Date()), DATE_RANGE_FORMAT.format(timePeriod.getTime()));
+//                        }
                         mTotalAsamsText = String.format(TOTAL_ASAMS_PATTERN, mAsams.size(), totalNumberOfAsams);
                     }
 
@@ -1049,6 +1065,10 @@ public class AsamMapActivity extends ActionBarActivity implements OnCameraChange
         supportInvalidateOptionsMenu();
     }
 
+    private boolean lanchAdvancedFilter() {
+        return mTextQueryParametersBean != null && mTextQueryParametersBean.mType == TextQueryParametersBean.Type.ADVANCED;
+    }
+
     private void setupDateRangeView(View dateRangeView) {
         mDateRangeTextViewUI = (TextView)dateRangeView.findViewById(R.id.all_asams_map_tablet_date_range_text_view_ui);
         mTotalAsamsTextViewUI = (TextView)findViewById(R.id.all_asams_map_tablet_total_asams_text_view_ui);
@@ -1057,28 +1077,27 @@ public class AsamMapActivity extends ActionBarActivity implements OnCameraChange
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (mQueryMode == TEXT_QUERY_MODE) {
+                Date earliest = mTextQueryDateEarliest != null ? mTextQueryDateEarliest : initAndGetEarliestAsamDate();
+                Date latest = mTextQueryDateLatest != null ? mTextQueryDateLatest : new Date();
+
+//                if (mQueryMode == TEXT_QUERY_MODE) {
                     if (progress == TOTAL_TIME_SLIDER_TICKS - 1) {
-                        mDateRangeTextViewUI.setText(String.format(DATE_RANGE_PATTERN, DATE_RANGE_FORMAT.format(mTextQueryDateLatest), DATE_RANGE_FORMAT.format(mTextQueryDateEarliest)));
+                        mDateRangeTextViewUI.setText(String.format(DATE_RANGE_PATTERN, DATE_RANGE_FORMAT.format(latest), DATE_RANGE_FORMAT.format(earliest)));
+                    } else if (progress == 0) {
+                        mDateRangeTextViewUI.setText(String.format(DATE_RANGE_PATTERN, DATE_RANGE_FORMAT.format(latest), DATE_RANGE_FORMAT.format(latest)));
+                    } else {
+                        Date dateFromSlider = mTextQueryDateEarliest != null && mTextQueryDateLatest != null ? calculateTextQueryDateFromTimeSlider(progress) : calculateQueryDateFromTimeSlider(progress);
+                        mDateRangeTextViewUI.setText(String.format(DATE_RANGE_PATTERN, DATE_RANGE_FORMAT.format(latest), DATE_RANGE_FORMAT.format(dateFromSlider)));
                     }
-                    else if (progress == 0) {
-                        mDateRangeTextViewUI.setText(String.format(DATE_RANGE_PATTERN, DATE_RANGE_FORMAT.format(mTextQueryDateLatest), DATE_RANGE_FORMAT.format(mTextQueryDateLatest)));
-                    }
-                    else {
-                        mDateRangeTextViewUI.setText(String.format(DATE_RANGE_PATTERN, DATE_RANGE_FORMAT.format(mTextQueryDateLatest), DATE_RANGE_FORMAT.format(calculateTextQueryDateFromTimeSlider(progress))));
-                    }
-                }
-                else {
-                    if (progress == TOTAL_TIME_SLIDER_TICKS - 1) {
-                        mDateRangeTextViewUI.setText(String.format(DATE_RANGE_PATTERN, DATE_RANGE_FORMAT.format(new Date()), DATE_RANGE_FORMAT.format(initAndGetEarliestAsamDate())));
-                    }
-                    else if (progress == 0) {
-                        mDateRangeTextViewUI.setText(String.format(DATE_RANGE_PATTERN, DATE_RANGE_FORMAT.format(new Date()), DATE_RANGE_FORMAT.format(new Date())));
-                    }
-                    else {
-                        mDateRangeTextViewUI.setText(String.format(DATE_RANGE_PATTERN, DATE_RANGE_FORMAT.format(new Date()), DATE_RANGE_FORMAT.format(calculateQueryDateFromTimeSlider(progress))));
-                    }
-                }
+//                } else {
+//                    if (progress == TOTAL_TIME_SLIDER_TICKS - 1) {
+//                        mDateRangeTextViewUI.setText(String.format(DATE_RANGE_PATTERN, DATE_RANGE_FORMAT.format(new Date()), DATE_RANGE_FORMAT.format(initAndGetEarliestAsamDate())));
+//                    } else if (progress == 0) {
+//                        mDateRangeTextViewUI.setText(String.format(DATE_RANGE_PATTERN, DATE_RANGE_FORMAT.format(new Date()), DATE_RANGE_FORMAT.format(new Date())));
+//                    } else {
+//                        mDateRangeTextViewUI.setText(String.format(DATE_RANGE_PATTERN, DATE_RANGE_FORMAT.format(new Date()), DATE_RANGE_FORMAT.format(calculateQueryDateFromTimeSlider(progress))));
+//                    }
+//                }
             }
 
             @Override
@@ -1116,27 +1135,19 @@ public class AsamMapActivity extends ActionBarActivity implements OnCameraChange
         if (mFilterStatus != null) {
             // Now set the feedback title.
             StringBuilder feedbackText = new StringBuilder("");
-            if (mQueryMode == ALL_QUERY_MODE) {
+//            if (mQueryMode == ALL_QUERY_MODE) {
                 if (mAsams.size() == 1) {
                     feedbackText.append(String.format(getString(R.string.all_asams_map_1_asam_text_with_timespan), mTimeSpanTitleText));
                 } else {
                     feedbackText.append(String.format(getString(R.string.all_asams_map_multiple_asams_text_with_timespan), mAsams.size(), mTimeSpanTitleText));
                 }
-            }
-            else if (mQueryMode == SUBREGION_QUERY_MODE) {
-                if (mAsams.size() == 1) {
-                    feedbackText.append(String.format(getString(R.string.all_asams_map_1_asam_text_with_timespan_with_subregions), mTimeSpanTitleText, mSubregionsTitleText));
-                } else {
-                    feedbackText.append(String.format(getString(R.string.all_asams_map_multiple_asams_text_with_timespan_with_subregions), mAsams.size(), mTimeSpanTitleText, mSubregionsTitleText));
-                }
-            }
-            else if (mQueryMode == TEXT_QUERY_MODE) {
-                if (mAsams.size() == 1) {
-                    feedbackText.append(getString(R.string.all_asams_map_1_asam_text));
-                } else {
-                    feedbackText.append(String.format(getString(R.string.all_asams_map_multiple_asams_text), mAsams.size()));
-                }
-            }
+//            } else if (mQueryMode == TEXT_QUERY_MODE) {
+//                if (mAsams.size() == 1) {
+//                    feedbackText.append(getString(R.string.all_asams_map_1_asam_text));
+//                } else {
+//                    feedbackText.append(String.format(getString(R.string.all_asams_map_multiple_asams_text), mAsams.size()));
+//                }
+//            }
             mFilterStatus.setText(feedbackText.toString());
         }
     }
