@@ -62,13 +62,12 @@ import mil.nga.giat.asam.PreferencesDialogFragment.OnPreferencesDialogDismissedL
 import mil.nga.giat.asam.R;
 import mil.nga.giat.asam.filter.FilterActivity;
 import mil.nga.giat.asam.filter.FilterAdvancedActivity;
-import mil.nga.giat.asam.filter.TextQueryDialogFragment.OnTextQueryListener;
+import mil.nga.giat.asam.filter.FilterParameters;
 import mil.nga.giat.asam.connectivity.OfflineBannerFragment;
 import mil.nga.giat.asam.db.AsamDbHelper;
 import mil.nga.giat.asam.model.AsamBean;
 import mil.nga.giat.asam.model.AsamJsonParser;
 import mil.nga.giat.asam.model.AsamMapClusterBean;
-import mil.nga.giat.asam.model.TextQueryParametersBean;
 import mil.nga.giat.asam.net.AsamWebService;
 import mil.nga.giat.asam.util.AsamConstants;
 import mil.nga.giat.asam.util.AsamListContainer;
@@ -80,7 +79,7 @@ import mil.nga.giat.poffencluster.PoffenClusterCalculator;
 import mil.nga.giat.poffencluster.PoffenPoint;
 
 
-public class AsamMapActivity extends ActionBarActivity implements OnCameraChangeListener, OnMarkerClickListener, CancelableCallback, OnTextQueryListener, OnPreferencesDialogDismissedListener, Asam.OnOfflineFeaturesListener, OfflineBannerFragment.OnOfflineBannerClick {
+public class AsamMapActivity extends ActionBarActivity implements OnCameraChangeListener, OnMarkerClickListener, CancelableCallback, OnPreferencesDialogDismissedListener, Asam.OnOfflineFeaturesListener, OfflineBannerFragment.OnOfflineBannerClick {
 
     private static class QueryHandler extends Handler {
 
@@ -212,7 +211,7 @@ public class AsamMapActivity extends ActionBarActivity implements OnCameraChange
     private ProgressDialog mQueryProgressDialog;
     private QueryHandler mQueryHandler;
     private List<Integer> mSelectedSubregionIds;
-    private TextQueryParametersBean mTextQueryParametersBean;
+    private FilterParameters mTextQueryParametersBean;
     private Date mTextQueryDateEarliest;
     private Date mTextQueryDateLatest;
     private int mPreviousZoomLevel;
@@ -266,7 +265,7 @@ public class AsamMapActivity extends ActionBarActivity implements OnCameraChange
 
         mQueryHandler = new QueryHandler(this);
 
-        TextQueryParametersBean queryParameters = new TextQueryParametersBean(TextQueryParametersBean.Type.SIMPLE);
+        FilterParameters queryParameters = new FilterParameters(FilterParameters.Type.SIMPLE);
         queryParameters.mTimeInterval = 365;
         onTextQuery(queryParameters);
     }
@@ -525,7 +524,7 @@ public class AsamMapActivity extends ActionBarActivity implements OnCameraChange
         switch (requestCode) {
             case (SEARCH_ACTIVITY_REQUEST_CODE) : {
                 if (resultCode == Activity.RESULT_OK) {
-                    TextQueryParametersBean parameters = data.getParcelableExtra(SEARCH_PARAMETERS);
+                    FilterParameters parameters = data.getParcelableExtra(SEARCH_PARAMETERS);
                     onTextQuery(parameters);
                 }
                 break;
@@ -568,15 +567,14 @@ public class AsamMapActivity extends ActionBarActivity implements OnCameraChange
         }
     }
 
-    @Override
-    public void onTextQuery(TextQueryParametersBean textQueryParameters) {
+    public void onTextQuery(FilterParameters textQueryParameters) {
         DialogFragment dialogFragment = (DialogFragment)getSupportFragmentManager().findFragmentByTag(AsamConstants.TEXT_QUERY_DIALOG_TAG);
         if (dialogFragment != null) {
             dialogFragment.dismiss();
         }
         mTextQueryParametersBean = textQueryParameters;
 
-        if (mTextQueryParametersBean.mType == TextQueryParametersBean.Type.SIMPLE) {
+        if (mTextQueryParametersBean.mType == FilterParameters.Type.SIMPLE) {
             if (mTextQueryParametersBean.mTimeInterval != null) {
                 mTextQueryDateLatest = null;
                 switch (mTextQueryParametersBean.mTimeInterval) {
@@ -948,7 +946,7 @@ public class AsamMapActivity extends ActionBarActivity implements OnCameraChange
                     }
 
 
-                    TextQueryParametersBean parameters = TextQueryParametersBean.newInstance(mTextQueryParametersBean);
+                    FilterParameters parameters = FilterParameters.newInstance(mTextQueryParametersBean);
 
                     if (mTextQueryDateLatest != null) {
                         parameters.mDateTo = AsamDbHelper.TEXT_QUERY_DATE_FORMAT.format(mTextQueryDateLatest);
@@ -970,7 +968,7 @@ public class AsamMapActivity extends ActionBarActivity implements OnCameraChange
                             parameters.mDateFrom = AsamDbHelper.TEXT_QUERY_DATE_FORMAT.format(dateFromSlider);
                         }
                     }
-                    mAsams.addAll(dbHelper.queryByText(db, parameters));
+                    mAsams.addAll(dbHelper.queryWithFilters(db, parameters));
 
                     // TODO tablet specific, needs to move to a fragment
                     if (mDateRangeTextViewUI != null) {
@@ -1066,7 +1064,7 @@ public class AsamMapActivity extends ActionBarActivity implements OnCameraChange
     }
 
     private boolean lanchAdvancedFilter() {
-        return mTextQueryParametersBean != null && mTextQueryParametersBean.mType == TextQueryParametersBean.Type.ADVANCED;
+        return mTextQueryParametersBean != null && mTextQueryParametersBean.mType == FilterParameters.Type.ADVANCED;
     }
 
     private void setupDateRangeView(View dateRangeView) {

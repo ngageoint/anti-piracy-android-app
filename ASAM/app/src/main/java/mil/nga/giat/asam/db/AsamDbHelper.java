@@ -8,6 +8,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteStatement;
 import android.provider.BaseColumns;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,12 +18,13 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import mil.nga.giat.asam.filter.FilterParameters;
 import mil.nga.giat.asam.model.AsamBean;
-import mil.nga.giat.asam.model.TextQueryParametersBean;
 import mil.nga.giat.asam.util.AsamLog;
 import mil.nga.giat.asam.util.AsamUtils;
 
@@ -186,6 +189,7 @@ public class AsamDbHelper extends SQLiteOpenHelper {
                     DESCRIPTION +
                     " FROM " +
                     TABLE_NAME;
+
             AsamLog.i(AsamDbHelper.class.getName() + ":" + sql);
             Cursor cursor = db.rawQuery(sql, new String[] {});
             while (cursor.moveToNext()) {
@@ -261,95 +265,169 @@ public class AsamDbHelper extends SQLiteOpenHelper {
         }
         return asams;
     }
-    
-    public List<AsamBean> queryByText(SQLiteDatabase db, TextQueryParametersBean textQueryParameters) {
-        final List<String> whereClauses = new ArrayList<String>();
-        
+
+    public List<AsamBean> queryWithFilters(SQLiteDatabase db, FilterParameters filterParameters) {
+        return filterParameters.mType == FilterParameters.Type.SIMPLE ?
+            simpleFilter(db, filterParameters) :
+            advancedFilter(db, filterParameters);
+    }
+
+    private List<AsamBean> simpleFilter(SQLiteDatabase db, FilterParameters filterParameters) {
+        Collection<String> clauses = new ArrayList<String>();
+        String textClause = null;
+        if (!AsamUtils.isEmpty(filterParameters.mKeyword)) {
+            List<String> textClauses = new ArrayList<String>();
+            textClauses.add("LOWER(" + AsamDbHelper.VICTIM + ") LIKE '%" + filterParameters.mKeyword.toLowerCase(Locale.US) + "%'");
+            textClauses.add("LOWER(" + AsamDbHelper.AGGRESSOR + ") LIKE '%" + filterParameters.mKeyword.toLowerCase(Locale.US) + "%'");
+            if (StringUtils.isNumeric(filterParameters.mKeyword)) {
+                textClauses.add(AsamDbHelper.SUBREGION + " == " + filterParameters.mKeyword);
+            }
+            textClauses.add(AsamDbHelper.REFERENCE_NUMBER + " == '" + filterParameters.mKeyword + "'");
+            textClauses.add("LOWER(" + AsamDbHelper.DESCRIPTION + ") LIKE '%" + filterParameters.mKeyword.toLowerCase(Locale.US) + "%'");
+
+
+            clauses.add("(" + StringUtils.join(textClauses, " OR ") + ")");
+        }
+
         // From and to dates.
-        if (!AsamUtils.isEmpty(textQueryParameters.mDateFrom)) {
+        List<String> dateClauses = new ArrayList<String>();
+        if (!AsamUtils.isEmpty(filterParameters.mDateFrom)) {
             try {
-                whereClauses.add(AsamDbHelper.DATE_OF_OCCURRENCE + " >= '" + AsamDbHelper.SQLITE_DATE_FORMAT.format(TEXT_QUERY_DATE_FORMAT.parse(textQueryParameters.mDateFrom).getTime()) + "'");
-            }
-            catch (ParseException caught) {
+                dateClauses.add(AsamDbHelper.DATE_OF_OCCURRENCE + " >= '" + AsamDbHelper.SQLITE_DATE_FORMAT.format(TEXT_QUERY_DATE_FORMAT.parse(filterParameters.mDateFrom).getTime()) + "'");
+            } catch (ParseException caught) {
                 AsamLog.e(AsamDbHelper.class.getName() + ":" + caught.getMessage(), caught);
             }
         }
-        if (!AsamUtils.isEmpty(textQueryParameters.mDateTo)) {
+        if (!AsamUtils.isEmpty(filterParameters.mDateTo)) {
             try {
-                whereClauses.add(AsamDbHelper.DATE_OF_OCCURRENCE + " <= '" + AsamDbHelper.SQLITE_DATE_FORMAT.format(TEXT_QUERY_DATE_FORMAT.parse(textQueryParameters.mDateTo).getTime()) + "'");
-            }
-            catch (ParseException caught) {
+                dateClauses.add(AsamDbHelper.DATE_OF_OCCURRENCE + " <= '" + AsamDbHelper.SQLITE_DATE_FORMAT.format(TEXT_QUERY_DATE_FORMAT.parse(filterParameters.mDateTo).getTime()) + "'");
+            } catch (ParseException caught) {
                 AsamLog.e(AsamDbHelper.class.getName() + ":" + caught.getMessage(), caught);
             }
         }
-        
-        if (!AsamUtils.isEmpty(textQueryParameters.mVictim)) {
-            whereClauses.add("LOWER(" + AsamDbHelper.VICTIM + ") LIKE '%" + textQueryParameters.mVictim.toLowerCase(Locale.US) + "%'");
+
+        if (!dateClauses.isEmpty()) {
+            clauses.add("(" + StringUtils.join(dateClauses, " AND ") + ")");
         }
-        
-        if (!AsamUtils.isEmpty(textQueryParameters.mAggressor)) {
-            whereClauses.add("LOWER(" + AsamDbHelper.AGGRESSOR + ") LIKE '%" + textQueryParameters.mAggressor.toLowerCase(Locale.US) + "%'");
+
+        String sql = "SELECT " +
+                ID + ", " +
+                DATE_OF_OCCURRENCE + ", " +
+                REFERENCE_NUMBER +  ", " +
+                SUBREGION + ", " +
+                LATITUDE + ", " +
+                LONGITUDE + ", " +
+                AGGRESSOR + ", " +
+                VICTIM + ", " +
+                DESCRIPTION +
+                " FROM " + TABLE_NAME;
+
+        if (!clauses.isEmpty()) {
+            String where = StringUtils.join(clauses, " AND ");
+            sql += " WHERE " + where;
         }
-        
-        if (!AsamUtils.isEmpty(textQueryParameters.mSubregion)) {
-            whereClauses.add(AsamDbHelper.SUBREGION + " == " + textQueryParameters.mSubregion);
-        }
-        
-        if (!AsamUtils.isEmpty(textQueryParameters.mReferenceNumber)) {
-            whereClauses.add(AsamDbHelper.REFERENCE_NUMBER + " == '" + textQueryParameters.mReferenceNumber + "'");
-        }
-        
-        List<AsamBean> asams = new ArrayList<AsamBean>();
-        db.beginTransaction();
+
         try {
-            String sql = "SELECT " +
-                         ID + ", " +
-                         DATE_OF_OCCURRENCE + ", " +
-                         REFERENCE_NUMBER +  ", " +
-                         SUBREGION + ", " +
-                         LATITUDE + ", " +
-                         LONGITUDE + ", " +
-                         AGGRESSOR + ", " +
-                         VICTIM + ", " +
-                         DESCRIPTION +
-                         " FROM " +
-                         TABLE_NAME;
-            StringBuilder whereClause = new StringBuilder(" WHERE ");
-            for (int i = 0; i < whereClauses.size(); i++) {
-                whereClause.append(whereClauses.get(i));
-                if (i != whereClauses.size() - 1) {
-                    whereClause.append(" AND ");
-                }
-            }
-            if (whereClauses.size() > 0) {
-                sql += whereClause.toString();
-            }
+            db.beginTransaction();
             AsamLog.i(AsamDbHelper.class.getName() + ":" + sql);
             Cursor cursor = db.rawQuery(sql, new String[] {});
-            while (cursor.moveToNext()) {
-                AsamBean asam = new AsamBean();
-                try {
-                    asam.setId(cursor.getInt(cursor.getColumnIndex(AsamDbHelper.ID)));
-                    asam.setOccurrenceDate(AsamDbHelper.SQLITE_DATE_FORMAT.parse(cursor.getString(cursor.getColumnIndex(AsamDbHelper.DATE_OF_OCCURRENCE))));
-                    asam.setReferenceNumber(cursor.getString(cursor.getColumnIndex(AsamDbHelper.REFERENCE_NUMBER)));
-                    asam.setGeographicalSubregion(cursor.getString(cursor.getColumnIndex(AsamDbHelper.SUBREGION)));
-                    asam.setLatitude(cursor.getDouble(cursor.getColumnIndex(AsamDbHelper.LATITUDE)));
-                    asam.setLongitude(cursor.getDouble(cursor.getColumnIndex(AsamDbHelper.LONGITUDE)));
-                    asam.setAggressor(cursor.getString(cursor.getColumnIndex(AsamDbHelper.AGGRESSOR)));
-                    asam.setVictim(cursor.getString(cursor.getColumnIndex(AsamDbHelper.VICTIM)));
-                    asam.setDescription(cursor.getString(cursor.getColumnIndex(AsamDbHelper.DESCRIPTION)));
-                    asams.add(asam);
-                }
-                catch (Exception caught) {
-                    AsamLog.e(AsamDbHelper.class.getName() + ":Error querying ASAMs", caught);
-                }
-            }
+            List<AsamBean> asams = translate(cursor);
             cursor.close();
             db.setTransactionSuccessful();
-        }
-        finally {
+            return asams;
+        } finally {
             db.endTransaction();
         }
+    }
+
+    private List<AsamBean> advancedFilter(SQLiteDatabase db, FilterParameters filterParameters) {
+        List<String> whereClauses = new ArrayList<String>();
+
+        // From and to dates.
+        if (!AsamUtils.isEmpty(filterParameters.mDateFrom)) {
+            try {
+                whereClauses.add(AsamDbHelper.DATE_OF_OCCURRENCE + " >= '" + AsamDbHelper.SQLITE_DATE_FORMAT.format(TEXT_QUERY_DATE_FORMAT.parse(filterParameters.mDateFrom).getTime()) + "'");
+            } catch (ParseException caught) {
+                AsamLog.e(AsamDbHelper.class.getName() + ":" + caught.getMessage(), caught);
+            }
+        }
+        if (!AsamUtils.isEmpty(filterParameters.mDateTo)) {
+            try {
+                whereClauses.add(AsamDbHelper.DATE_OF_OCCURRENCE + " <= '" + AsamDbHelper.SQLITE_DATE_FORMAT.format(TEXT_QUERY_DATE_FORMAT.parse(filterParameters.mDateTo).getTime()) + "'");
+            } catch (ParseException caught) {
+                AsamLog.e(AsamDbHelper.class.getName() + ":" + caught.getMessage(), caught);
+            }
+        }
+        
+        if (!AsamUtils.isEmpty(filterParameters.mVictim)) {
+            whereClauses.add("LOWER(" + AsamDbHelper.VICTIM + ") LIKE '%" + filterParameters.mVictim.toLowerCase(Locale.US) + "%'");
+        }
+        
+        if (!AsamUtils.isEmpty(filterParameters.mAggressor)) {
+            whereClauses.add("LOWER(" + AsamDbHelper.AGGRESSOR + ") LIKE '%" + filterParameters.mAggressor.toLowerCase(Locale.US) + "%'");
+        }
+        
+        if (!AsamUtils.isEmpty(filterParameters.mSubregion)) {
+            whereClauses.add(AsamDbHelper.SUBREGION + " == " + filterParameters.mSubregion);
+        }
+        
+        if (!AsamUtils.isEmpty(filterParameters.mReferenceNumber)) {
+            whereClauses.add(AsamDbHelper.REFERENCE_NUMBER + " == '" + filterParameters.mReferenceNumber + "'");
+        }
+
+        String sql = "SELECT " +
+                ID + ", " +
+                DATE_OF_OCCURRENCE + ", " +
+                REFERENCE_NUMBER +  ", " +
+                SUBREGION + ", " +
+                LATITUDE + ", " +
+                LONGITUDE + ", " +
+                AGGRESSOR + ", " +
+                VICTIM + ", " +
+                DESCRIPTION +
+                " FROM " + TABLE_NAME;
+
+        if (whereClauses.size() > 0) {
+            StringBuilder whereClause = new StringBuilder(" WHERE ");
+            whereClause.append(StringUtils.join(whereClauses, " AND "));
+            sql += whereClause.toString();
+        }
+        
+        try {
+            db.beginTransaction();
+            AsamLog.i(AsamDbHelper.class.getName() + ":" + sql);
+            Cursor cursor = db.rawQuery(sql, new String[] {});
+            List<AsamBean> asams = translate(cursor);
+            cursor.close();
+            db.setTransactionSuccessful();
+            return asams;
+        } finally {
+            db.endTransaction();
+        }
+    }
+
+    private List<AsamBean> translate(Cursor cursor) {
+        List<AsamBean> asams = new ArrayList<AsamBean>();
+
+        while (cursor.moveToNext()) {
+            AsamBean asam = new AsamBean();
+            try {
+                asam.setId(cursor.getInt(cursor.getColumnIndex(AsamDbHelper.ID)));
+                asam.setOccurrenceDate(AsamDbHelper.SQLITE_DATE_FORMAT.parse(cursor.getString(cursor.getColumnIndex(AsamDbHelper.DATE_OF_OCCURRENCE))));
+                asam.setReferenceNumber(cursor.getString(cursor.getColumnIndex(AsamDbHelper.REFERENCE_NUMBER)));
+                asam.setGeographicalSubregion(cursor.getString(cursor.getColumnIndex(AsamDbHelper.SUBREGION)));
+                asam.setLatitude(cursor.getDouble(cursor.getColumnIndex(AsamDbHelper.LATITUDE)));
+                asam.setLongitude(cursor.getDouble(cursor.getColumnIndex(AsamDbHelper.LONGITUDE)));
+                asam.setAggressor(cursor.getString(cursor.getColumnIndex(AsamDbHelper.AGGRESSOR)));
+                asam.setVictim(cursor.getString(cursor.getColumnIndex(AsamDbHelper.VICTIM)));
+                asam.setDescription(cursor.getString(cursor.getColumnIndex(AsamDbHelper.DESCRIPTION)));
+                asams.add(asam);
+            }
+            catch (Exception caught) {
+                AsamLog.e(AsamDbHelper.class.getName() + ":Error querying ASAMs", caught);
+            }
+        }
+
         return asams;
     }
     

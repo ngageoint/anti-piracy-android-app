@@ -1,4 +1,4 @@
-package mil.nga.giat.asam.model;
+package mil.nga.giat.asam.filter;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -7,7 +7,7 @@ import java.util.Calendar;
 
 import mil.nga.giat.asam.util.AsamUtils;
 
-public class TextQueryParametersBean implements Parcelable {
+public class FilterParameters implements Parcelable {
 
     public enum Type {
         SIMPLE,
@@ -26,8 +26,8 @@ public class TextQueryParametersBean implements Parcelable {
     public String mVictim;
     public String mAggressor;
     
-    public static TextQueryParametersBean newInstance(TextQueryParametersBean parameters) {
-        TextQueryParametersBean copy = new TextQueryParametersBean(parameters.mType);
+    public static FilterParameters newInstance(FilterParameters parameters) {
+        FilterParameters copy = new FilterParameters(parameters.mType);
         copy.mKeyword = parameters.mKeyword;
         copy.mTimeInterval = parameters.mTimeInterval;
         copy.mDateFrom = parameters.mDateFrom;
@@ -39,7 +39,7 @@ public class TextQueryParametersBean implements Parcelable {
         return copy;
     }
 
-    public TextQueryParametersBean(Type type) {
+    public FilterParameters(Type type) {
         this.mType = type;
     }
     
@@ -57,7 +57,7 @@ public class TextQueryParametersBean implements Parcelable {
     public String getParametersAsFormattedHtml() {
         StringBuilder html = new StringBuilder();
         if (!AsamUtils.isEmpty(mKeyword)) {
-            html.append(String.format("<br/>&nbsp;&nbsp;- <b>Text:</b> %s", mKeyword));
+            html.append(String.format("<br/>&nbsp;&nbsp;- <b>Keyword:</b> %s", mKeyword));
         }
         if (mTimeInterval != null) {
             Calendar calendar = Calendar.getInstance();
@@ -106,16 +106,16 @@ public class TextQueryParametersBean implements Parcelable {
     /**
      * Creator required for class implementing the parcelable interface.
      */
-    public static final Parcelable.Creator<TextQueryParametersBean> CREATOR = new Creator<TextQueryParametersBean>() {
+    public static final Parcelable.Creator<FilterParameters> CREATOR = new Creator<FilterParameters>() {
 
         @Override
-        public TextQueryParametersBean createFromParcel(Parcel in) {
-            return new TextQueryParametersBean(in);
+        public FilterParameters createFromParcel(Parcel in) {
+            return new FilterParameters(in);
         }
 
         @Override
-        public TextQueryParametersBean[] newArray(int size) {
-            return new TextQueryParametersBean[size];
+        public FilterParameters[] newArray(int size) {
+            return new FilterParameters[size];
         }
 
     };
@@ -138,7 +138,7 @@ public class TextQueryParametersBean implements Parcelable {
         dest.writeString(mAggressor);
     }
 
-    private TextQueryParametersBean(Parcel in) {
+    private FilterParameters(Parcel in) {
         mType = Type.valueOf(in.readString());
         mTimeInterval = (Integer) in.readValue(Integer.class.getClassLoader());
         mKeyword = in.readString();

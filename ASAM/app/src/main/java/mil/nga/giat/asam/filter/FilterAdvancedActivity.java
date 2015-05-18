@@ -25,7 +25,6 @@ import mil.nga.giat.asam.R;
 import mil.nga.giat.asam.db.AsamDbHelper;
 import mil.nga.giat.asam.map.AsamMapActivity;
 import mil.nga.giat.asam.model.SubregionTextParser;
-import mil.nga.giat.asam.model.TextQueryParametersBean;
 import mil.nga.giat.asam.util.AsamLog;
 import mil.nga.giat.asam.util.AsamUtils;
 import mil.nga.giat.asam.util.CurrentSubregionHelper;
@@ -106,7 +105,7 @@ public class FilterAdvancedActivity extends AppCompatActivity implements OnClick
         switch (v.getId()) {
             case R.id.apply: {
                 Intent intent = new Intent();
-                TextQueryParametersBean parameters = parseParameters();
+                FilterParameters parameters = parseParameters();
                 intent.putExtra(AsamMapActivity.SEARCH_PARAMETERS, parameters);
                 setResult(Activity.RESULT_OK, intent);
                 finish();
@@ -165,8 +164,8 @@ public class FilterAdvancedActivity extends AppCompatActivity implements OnClick
         }
     }
 
-    private TextQueryParametersBean parseParameters() {
-        TextQueryParametersBean parameters = new TextQueryParametersBean(TextQueryParametersBean.Type.ADVANCED);
+    private FilterParameters parseParameters() {
+        FilterParameters parameters = new FilterParameters(FilterParameters.Type.ADVANCED);
         parameters.mKeyword = mSearchText.getText().toString();
 
         parameters.mDateFrom = mDateFromUI.getText().toString();

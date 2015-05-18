@@ -16,13 +16,12 @@ import android.widget.Spinner;
 
 import mil.nga.giat.asam.R;
 import mil.nga.giat.asam.map.AsamMapActivity;
-import mil.nga.giat.asam.model.TextQueryParametersBean;
 
 public class FilterActivity extends AppCompatActivity implements Button.OnClickListener {
 
     private EditText keyword;
     private Spinner intervalSpinner;
-    private TextQueryParametersBean queryParameters;
+    private FilterParameters queryParameters;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,7 +81,7 @@ public class FilterActivity extends AppCompatActivity implements Button.OnClickL
             }
             case R.id.apply: {
                 Intent intent = new Intent();
-                TextQueryParametersBean parameters = parseFields();
+                FilterParameters parameters = parseFields();
                 intent.putExtra(AsamMapActivity.SEARCH_PARAMETERS, parameters);
                 setResult(Activity.RESULT_OK, intent);
                 finish();
@@ -95,8 +94,8 @@ public class FilterActivity extends AppCompatActivity implements Button.OnClickL
         }
     }
 
-    private TextQueryParametersBean parseFields() {
-        TextQueryParametersBean parameters = new TextQueryParametersBean(TextQueryParametersBean.Type.SIMPLE);
+    private FilterParameters parseFields() {
+        FilterParameters parameters = new FilterParameters(FilterParameters.Type.SIMPLE);
 
         parameters.mKeyword = keyword.getText().toString();
         parameters.mTimeInterval = getResources().getIntArray(R.array.filter_interval_values)[intervalSpinner.getSelectedItemPosition()];;
@@ -104,7 +103,7 @@ public class FilterActivity extends AppCompatActivity implements Button.OnClickL
         return parameters;
     }
 
-    private void populateFields(TextQueryParametersBean queryParameters) {
+    private void populateFields(FilterParameters queryParameters) {
         if (queryParameters == null) return;
 
         keyword.setText(queryParameters.mKeyword);
