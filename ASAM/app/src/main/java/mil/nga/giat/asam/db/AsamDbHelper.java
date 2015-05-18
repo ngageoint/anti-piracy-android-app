@@ -26,7 +26,6 @@ import java.util.Locale;
 import mil.nga.giat.asam.filter.FilterParameters;
 import mil.nga.giat.asam.model.AsamBean;
 import mil.nga.giat.asam.util.AsamLog;
-import mil.nga.giat.asam.util.AsamUtils;
 
 
 @SuppressLint("SdCardPath")
@@ -86,8 +85,7 @@ public class AsamDbHelper extends SQLiteOpenHelper {
                 out.flush();
                 in.close();
             }
-        }
-        finally {
+        } finally {
             if (out != null) {
                 out.close();
             }
@@ -98,8 +96,10 @@ public class AsamDbHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = null;
         try {
             db = SQLiteDatabase.openDatabase(DB_PATH + DB_NAME, null, SQLiteDatabase.OPEN_READONLY);
+        } catch (Exception caught) {
+
         }
-        catch (Exception caught) {}
+
         if (db != null) {
             db.close();
         }
@@ -110,22 +110,12 @@ public class AsamDbHelper extends SQLiteOpenHelper {
         AsamLog.i(AsamDbHelper.class.getName() + ":Entering insertAsams");
         db.beginTransaction();
         try {
-            String sql = "INSERT INTO " +
-                         TABLE_NAME +
-                         " (" +
-                         DATE_OF_OCCURRENCE + ", " +
-                         REFERENCE_NUMBER + ", " +
-                         SUBREGION + ", " +
-                         LATITUDE + ", " +
-                         LONGITUDE + ", " +
-                         AGGRESSOR + ", " +
-                         VICTIM + ", " +
-                         DESCRIPTION +
-                         ")" +
-                         " VALUES " +
-                         "(?, ?, ?, ?, ?, ?, ?, ?)";
-            AsamLog.i(sql);
-            SQLiteStatement pstmt = db.compileStatement(sql);
+            String columns = StringUtils.join(new String[] {DATE_OF_OCCURRENCE, REFERENCE_NUMBER, SUBREGION, LATITUDE, LONGITUDE, AGGRESSOR, VICTIM, DESCRIPTION}, ", ");
+            StringBuilder sql = new StringBuilder("INSERT INTO ").append(TABLE_NAME)
+                .append("(").append(columns).append(")")
+                .append(" VALUES ").append("(?, ?, ?, ?, ?, ?, ?, ?)");
+
+            SQLiteStatement pstmt = db.compileStatement(sql.toString());
             for (AsamBean asam : asams) {
                 bindString(pstmt, 1, (asam.getOccurrenceDate() == null) ? null : SQLITE_DATE_FORMAT.format(asam.getOccurrenceDate()));
                 bindString(pstmt, 2, asam.getReferenceNumber());
@@ -138,10 +128,10 @@ public class AsamDbHelper extends SQLiteOpenHelper {
                 pstmt.executeInsert();
             }
             db.setTransactionSuccessful();
-        }
-        finally {
+        } finally {
             db.endTransaction();
         }
+
         AsamLog.i(AsamDbHelper.class.getName() + ":Exiting insertAsams");
     }
     
@@ -165,8 +155,7 @@ public class AsamDbHelper extends SQLiteOpenHelper {
                 }
             }
             db.setTransactionSuccessful();
-        }
-        finally {
+        } finally {
             db.endTransaction();
         }
         AsamLog.i(AsamDbHelper.class.getName() + ":Exiting removeDuplicates");
@@ -174,96 +163,40 @@ public class AsamDbHelper extends SQLiteOpenHelper {
     }
 
     public List<AsamBean> queryAll(SQLiteDatabase db) {
-        List<AsamBean> asams = new ArrayList<AsamBean>();
-        db.beginTransaction();
         try {
-            String sql = "SELECT " +
-                    ID + ", " +
-                    DATE_OF_OCCURRENCE + ", " +
-                    REFERENCE_NUMBER +  ", " +
-                    SUBREGION + ", " +
-                    LATITUDE + ", " +
-                    LONGITUDE + ", " +
-                    AGGRESSOR + ", " +
-                    VICTIM + ", " +
-                    DESCRIPTION +
-                    " FROM " +
-                    TABLE_NAME;
+            db.beginTransaction();
+
+            String columns = StringUtils.join(new String[] {ID, DATE_OF_OCCURRENCE, REFERENCE_NUMBER, SUBREGION, LATITUDE, LONGITUDE, AGGRESSOR, VICTIM, DESCRIPTION}, ", ");
+            StringBuilder sql = new StringBuilder("SELECT ").append(columns).append(" FROM ").append(TABLE_NAME);
 
             AsamLog.i(AsamDbHelper.class.getName() + ":" + sql);
-            Cursor cursor = db.rawQuery(sql, new String[] {});
-            while (cursor.moveToNext()) {
-                AsamBean asam = new AsamBean();
-                try {
-                    asam.setId(cursor.getInt(cursor.getColumnIndex(AsamDbHelper.ID)));
-                    asam.setOccurrenceDate(AsamDbHelper.SQLITE_DATE_FORMAT.parse(cursor.getString(cursor.getColumnIndex(AsamDbHelper.DATE_OF_OCCURRENCE))));
-                    asam.setReferenceNumber(cursor.getString(cursor.getColumnIndex(AsamDbHelper.REFERENCE_NUMBER)));
-                    asam.setGeographicalSubregion(cursor.getString(cursor.getColumnIndex(AsamDbHelper.SUBREGION)));
-                    asam.setLatitude(cursor.getDouble(cursor.getColumnIndex(AsamDbHelper.LATITUDE)));
-                    asam.setLongitude(cursor.getDouble(cursor.getColumnIndex(AsamDbHelper.LONGITUDE)));
-                    asam.setAggressor(cursor.getString(cursor.getColumnIndex(AsamDbHelper.AGGRESSOR)));
-                    asam.setVictim(cursor.getString(cursor.getColumnIndex(AsamDbHelper.VICTIM)));
-                    asam.setDescription(cursor.getString(cursor.getColumnIndex(AsamDbHelper.DESCRIPTION)));
-                    asams.add(asam);
-                }
-                catch (Exception caught) {
-                    AsamLog.e(AsamDbHelper.class.getName() + ":Error querying ASAMs", caught);
-                }
-            }
+            Cursor cursor = db.rawQuery(sql.toString(), new String[] {});
+            List<AsamBean> asams = translate(cursor);
             cursor.close();
             db.setTransactionSuccessful();
-        }
-        finally {
+            return asams;
+        } finally {
             db.endTransaction();
         }
-        return asams;
     }
     
     public List<AsamBean> queryByTime(SQLiteDatabase db, Calendar timePeriod) {
-        List<AsamBean> asams = new ArrayList<AsamBean>();
         db.beginTransaction();
         try {
-            String sql = "SELECT " +
-                         ID + ", " +
-                         DATE_OF_OCCURRENCE + ", " +
-                         REFERENCE_NUMBER +  ", " +
-                         SUBREGION + ", " +
-                         LATITUDE + ", " +
-                         LONGITUDE + ", " +
-                         AGGRESSOR + ", " +
-                         VICTIM + ", " +
-                         DESCRIPTION +
-                         " FROM " +
-                         TABLE_NAME +
-                         " WHERE " +
-                         DATE_OF_OCCURRENCE + " >= '" + SQLITE_DATE_FORMAT.format(timePeriod.getTime()) + "'";
+            String columns = StringUtils.join(new String[] {ID, DATE_OF_OCCURRENCE, REFERENCE_NUMBER, SUBREGION, LATITUDE, LONGITUDE, AGGRESSOR, VICTIM, DESCRIPTION}, ", ");
+            StringBuilder sql = new StringBuilder("SELECT ")
+                    .append(columns).append(" FROM ").append(TABLE_NAME)
+                    .append(" WHERE ").append(DATE_OF_OCCURRENCE).append(" >= '").append(SQLITE_DATE_FORMAT.format(timePeriod.getTime())).append("'");
+
             AsamLog.i(AsamDbHelper.class.getName() + ":" + sql);
-            Cursor cursor = db.rawQuery(sql, new String[] {});
-            while (cursor.moveToNext()) {
-                AsamBean asam = new AsamBean();
-                try {
-                    asam.setId(cursor.getInt(cursor.getColumnIndex(AsamDbHelper.ID)));
-                    asam.setOccurrenceDate(AsamDbHelper.SQLITE_DATE_FORMAT.parse(cursor.getString(cursor.getColumnIndex(AsamDbHelper.DATE_OF_OCCURRENCE))));
-                    asam.setReferenceNumber(cursor.getString(cursor.getColumnIndex(AsamDbHelper.REFERENCE_NUMBER)));
-                    asam.setGeographicalSubregion(cursor.getString(cursor.getColumnIndex(AsamDbHelper.SUBREGION)));
-                    asam.setLatitude(cursor.getDouble(cursor.getColumnIndex(AsamDbHelper.LATITUDE)));
-                    asam.setLongitude(cursor.getDouble(cursor.getColumnIndex(AsamDbHelper.LONGITUDE)));
-                    asam.setAggressor(cursor.getString(cursor.getColumnIndex(AsamDbHelper.AGGRESSOR)));
-                    asam.setVictim(cursor.getString(cursor.getColumnIndex(AsamDbHelper.VICTIM)));
-                    asam.setDescription(cursor.getString(cursor.getColumnIndex(AsamDbHelper.DESCRIPTION)));
-                    asams.add(asam);
-                }
-                catch (Exception caught) {
-                    AsamLog.e(AsamDbHelper.class.getName() + ":Error querying ASAMs", caught);
-                }
-            }
+            Cursor cursor = db.rawQuery(sql.toString(), new String[] {});
+            List<AsamBean> asams = translate(cursor);
             cursor.close();
             db.setTransactionSuccessful();
-        }
-        finally {
+            return asams;
+        } finally {
             db.endTransaction();
         }
-        return asams;
     }
 
     public List<AsamBean> queryWithFilters(SQLiteDatabase db, FilterParameters filterParameters) {
@@ -275,7 +208,7 @@ public class AsamDbHelper extends SQLiteOpenHelper {
     private List<AsamBean> simpleFilter(SQLiteDatabase db, FilterParameters filterParameters) {
         Collection<String> clauses = new ArrayList<String>();
         String textClause = null;
-        if (!AsamUtils.isEmpty(filterParameters.mKeyword)) {
+        if (StringUtils.isNotBlank(filterParameters.mKeyword)) {
             List<String> textClauses = new ArrayList<String>();
             textClauses.add("LOWER(" + AsamDbHelper.VICTIM + ") LIKE '%" + filterParameters.mKeyword.toLowerCase(Locale.US) + "%'");
             textClauses.add("LOWER(" + AsamDbHelper.AGGRESSOR + ") LIKE '%" + filterParameters.mKeyword.toLowerCase(Locale.US) + "%'");
@@ -291,14 +224,14 @@ public class AsamDbHelper extends SQLiteOpenHelper {
 
         // From and to dates.
         List<String> dateClauses = new ArrayList<String>();
-        if (!AsamUtils.isEmpty(filterParameters.mDateFrom)) {
+        if (StringUtils.isNotBlank(filterParameters.mDateFrom)) {
             try {
                 dateClauses.add(AsamDbHelper.DATE_OF_OCCURRENCE + " >= '" + AsamDbHelper.SQLITE_DATE_FORMAT.format(TEXT_QUERY_DATE_FORMAT.parse(filterParameters.mDateFrom).getTime()) + "'");
             } catch (ParseException caught) {
                 AsamLog.e(AsamDbHelper.class.getName() + ":" + caught.getMessage(), caught);
             }
         }
-        if (!AsamUtils.isEmpty(filterParameters.mDateTo)) {
+        if (StringUtils.isNotBlank(filterParameters.mDateTo)) {
             try {
                 dateClauses.add(AsamDbHelper.DATE_OF_OCCURRENCE + " <= '" + AsamDbHelper.SQLITE_DATE_FORMAT.format(TEXT_QUERY_DATE_FORMAT.parse(filterParameters.mDateTo).getTime()) + "'");
             } catch (ParseException caught) {
@@ -310,27 +243,16 @@ public class AsamDbHelper extends SQLiteOpenHelper {
             clauses.add("(" + StringUtils.join(dateClauses, " AND ") + ")");
         }
 
-        String sql = "SELECT " +
-                ID + ", " +
-                DATE_OF_OCCURRENCE + ", " +
-                REFERENCE_NUMBER +  ", " +
-                SUBREGION + ", " +
-                LATITUDE + ", " +
-                LONGITUDE + ", " +
-                AGGRESSOR + ", " +
-                VICTIM + ", " +
-                DESCRIPTION +
-                " FROM " + TABLE_NAME;
-
+        String columns = StringUtils.join(new String[] {ID, DATE_OF_OCCURRENCE, REFERENCE_NUMBER, SUBREGION, LATITUDE, LONGITUDE, AGGRESSOR, VICTIM, DESCRIPTION}, ", ");
+        StringBuilder sql = new StringBuilder("SELECT ").append(columns).append(" FROM ").append(TABLE_NAME);
         if (!clauses.isEmpty()) {
-            String where = StringUtils.join(clauses, " AND ");
-            sql += " WHERE " + where;
+            sql.append(" WHERE ").append(StringUtils.join(clauses, " AND "));
         }
 
         try {
             db.beginTransaction();
             AsamLog.i(AsamDbHelper.class.getName() + ":" + sql);
-            Cursor cursor = db.rawQuery(sql, new String[] {});
+            Cursor cursor = db.rawQuery(sql.toString(), new String[] {});
             List<AsamBean> asams = translate(cursor);
             cursor.close();
             db.setTransactionSuccessful();
@@ -341,17 +263,32 @@ public class AsamDbHelper extends SQLiteOpenHelper {
     }
 
     private List<AsamBean> advancedFilter(SQLiteDatabase db, FilterParameters filterParameters) {
-        List<String> whereClauses = new ArrayList<String>();
 
+        String keywordClause = null;
+        if (StringUtils.isNotBlank(filterParameters.mKeyword)) {
+            List<String> textClauses = new ArrayList<String>();
+            textClauses.add("LOWER(" + AsamDbHelper.VICTIM + ") LIKE '%" + filterParameters.mKeyword.toLowerCase(Locale.US) + "%'");
+            textClauses.add("LOWER(" + AsamDbHelper.AGGRESSOR + ") LIKE '%" + filterParameters.mKeyword.toLowerCase(Locale.US) + "%'");
+            if (StringUtils.isNumeric(filterParameters.mKeyword)) {
+                textClauses.add(AsamDbHelper.SUBREGION + " == " + filterParameters.mKeyword);
+            }
+            textClauses.add(AsamDbHelper.REFERENCE_NUMBER + " == '" + filterParameters.mKeyword + "'");
+            textClauses.add("LOWER(" + AsamDbHelper.DESCRIPTION + ") LIKE '%" + filterParameters.mKeyword.toLowerCase(Locale.US) + "%'");
+
+
+           keywordClause = ("(" + StringUtils.join(textClauses, " OR ") + ")";
+        }
+
+        List<String> whereClauses = new ArrayList<String>();
         // From and to dates.
-        if (!AsamUtils.isEmpty(filterParameters.mDateFrom)) {
+        if (StringUtils.isNotBlank(filterParameters.mDateFrom)) {
             try {
                 whereClauses.add(AsamDbHelper.DATE_OF_OCCURRENCE + " >= '" + AsamDbHelper.SQLITE_DATE_FORMAT.format(TEXT_QUERY_DATE_FORMAT.parse(filterParameters.mDateFrom).getTime()) + "'");
             } catch (ParseException caught) {
                 AsamLog.e(AsamDbHelper.class.getName() + ":" + caught.getMessage(), caught);
             }
         }
-        if (!AsamUtils.isEmpty(filterParameters.mDateTo)) {
+        if (StringUtils.isNotBlank(filterParameters.mDateTo)) {
             try {
                 whereClauses.add(AsamDbHelper.DATE_OF_OCCURRENCE + " <= '" + AsamDbHelper.SQLITE_DATE_FORMAT.format(TEXT_QUERY_DATE_FORMAT.parse(filterParameters.mDateTo).getTime()) + "'");
             } catch (ParseException caught) {
@@ -359,44 +296,32 @@ public class AsamDbHelper extends SQLiteOpenHelper {
             }
         }
         
-        if (!AsamUtils.isEmpty(filterParameters.mVictim)) {
+        if (StringUtils.isNotBlank(filterParameters.mVictim)) {
             whereClauses.add("LOWER(" + AsamDbHelper.VICTIM + ") LIKE '%" + filterParameters.mVictim.toLowerCase(Locale.US) + "%'");
         }
         
-        if (!AsamUtils.isEmpty(filterParameters.mAggressor)) {
+        if (StringUtils.isNotBlank(filterParameters.mAggressor)) {
             whereClauses.add("LOWER(" + AsamDbHelper.AGGRESSOR + ") LIKE '%" + filterParameters.mAggressor.toLowerCase(Locale.US) + "%'");
         }
         
-        if (!AsamUtils.isEmpty(filterParameters.mSubregion)) {
+        if (StringUtils.isNotBlank(filterParameters.mSubregion)) {
             whereClauses.add(AsamDbHelper.SUBREGION + " == " + filterParameters.mSubregion);
         }
         
-        if (!AsamUtils.isEmpty(filterParameters.mReferenceNumber)) {
+        if (StringUtils.isNotBlank(filterParameters.mReferenceNumber)) {
             whereClauses.add(AsamDbHelper.REFERENCE_NUMBER + " == '" + filterParameters.mReferenceNumber + "'");
         }
 
-        String sql = "SELECT " +
-                ID + ", " +
-                DATE_OF_OCCURRENCE + ", " +
-                REFERENCE_NUMBER +  ", " +
-                SUBREGION + ", " +
-                LATITUDE + ", " +
-                LONGITUDE + ", " +
-                AGGRESSOR + ", " +
-                VICTIM + ", " +
-                DESCRIPTION +
-                " FROM " + TABLE_NAME;
-
+        String columns = StringUtils.join(new String[] {ID, DATE_OF_OCCURRENCE, REFERENCE_NUMBER, SUBREGION, LATITUDE, LONGITUDE, AGGRESSOR, VICTIM, DESCRIPTION}, ", ");
+        StringBuilder sql = new StringBuilder("SELECT ").append(columns).append(" FROM ").append(TABLE_NAME);
         if (whereClauses.size() > 0) {
-            StringBuilder whereClause = new StringBuilder(" WHERE ");
-            whereClause.append(StringUtils.join(whereClauses, " AND "));
-            sql += whereClause.toString();
+            sql.append(" WHERE ").append(StringUtils.join(whereClauses, " AND "));
         }
         
         try {
             db.beginTransaction();
             AsamLog.i(AsamDbHelper.class.getName() + ":" + sql);
-            Cursor cursor = db.rawQuery(sql, new String[] {});
+            Cursor cursor = db.rawQuery(sql.toString(), new String[] {});
             List<AsamBean> asams = translate(cursor);
             cursor.close();
             db.setTransactionSuccessful();
@@ -405,34 +330,8 @@ public class AsamDbHelper extends SQLiteOpenHelper {
             db.endTransaction();
         }
     }
-
-    private List<AsamBean> translate(Cursor cursor) {
-        List<AsamBean> asams = new ArrayList<AsamBean>();
-
-        while (cursor.moveToNext()) {
-            AsamBean asam = new AsamBean();
-            try {
-                asam.setId(cursor.getInt(cursor.getColumnIndex(AsamDbHelper.ID)));
-                asam.setOccurrenceDate(AsamDbHelper.SQLITE_DATE_FORMAT.parse(cursor.getString(cursor.getColumnIndex(AsamDbHelper.DATE_OF_OCCURRENCE))));
-                asam.setReferenceNumber(cursor.getString(cursor.getColumnIndex(AsamDbHelper.REFERENCE_NUMBER)));
-                asam.setGeographicalSubregion(cursor.getString(cursor.getColumnIndex(AsamDbHelper.SUBREGION)));
-                asam.setLatitude(cursor.getDouble(cursor.getColumnIndex(AsamDbHelper.LATITUDE)));
-                asam.setLongitude(cursor.getDouble(cursor.getColumnIndex(AsamDbHelper.LONGITUDE)));
-                asam.setAggressor(cursor.getString(cursor.getColumnIndex(AsamDbHelper.AGGRESSOR)));
-                asam.setVictim(cursor.getString(cursor.getColumnIndex(AsamDbHelper.VICTIM)));
-                asam.setDescription(cursor.getString(cursor.getColumnIndex(AsamDbHelper.DESCRIPTION)));
-                asams.add(asam);
-            }
-            catch (Exception caught) {
-                AsamLog.e(AsamDbHelper.class.getName() + ":Error querying ASAMs", caught);
-            }
-        }
-
-        return asams;
-    }
     
     public List<AsamBean> queryByTimeAndSubregions(SQLiteDatabase db, Calendar timePeriod, List<Integer> subregionIds) {
-        List<AsamBean> asams = new ArrayList<AsamBean>();
         db.beginTransaction();
         try {
             StringBuilder questionMarks = new StringBuilder("");
@@ -444,49 +343,23 @@ public class AsamDbHelper extends SQLiteOpenHelper {
                     questionMarks.append(", ");
                 }
             }
-            String sql = "SELECT " +
-                         ID + ", " +
-                         DATE_OF_OCCURRENCE + ", " +
-                         REFERENCE_NUMBER +  ", " +
-                         SUBREGION + ", " +
-                         LATITUDE + ", " +
-                         LONGITUDE + ", " +
-                         AGGRESSOR + ", " +
-                         VICTIM + ", " +
-                         DESCRIPTION +
-                         " FROM " +
-                         TABLE_NAME +
-                         " WHERE " +
-                         DATE_OF_OCCURRENCE + " >= '" + SQLITE_DATE_FORMAT.format(timePeriod.getTime()) + "'" +
-                         " AND " +
-                         SUBREGION + " IN ( " + questionMarks.toString() + " )";
+
+            String columns = StringUtils.join(new String[] {ID, DATE_OF_OCCURRENCE, REFERENCE_NUMBER, SUBREGION, LATITUDE, LONGITUDE, AGGRESSOR, VICTIM, DESCRIPTION}, ", ");
+            StringBuilder sql = new StringBuilder("SELECT ").append(columns).append(" FROM ").append(TABLE_NAME)
+                    .append(" WHERE ")
+                    .append(DATE_OF_OCCURRENCE).append(" >= '").append(SQLITE_DATE_FORMAT.format(timePeriod.getTime())).append("'")
+                    .append(" AND ")
+                    .append(SUBREGION).append(" IN ( ").append(questionMarks.toString()).append(" )");
+
             AsamLog.i(AsamDbHelper.class.getName() + ":" + sql);
-            Cursor cursor = db.rawQuery(sql, queryParameters);
-            while (cursor.moveToNext()) {
-                AsamBean asam = new AsamBean();
-                try {
-                    asam.setId(cursor.getInt(cursor.getColumnIndex(AsamDbHelper.ID)));
-                    asam.setOccurrenceDate(AsamDbHelper.SQLITE_DATE_FORMAT.parse(cursor.getString(cursor.getColumnIndex(AsamDbHelper.DATE_OF_OCCURRENCE))));
-                    asam.setReferenceNumber(cursor.getString(cursor.getColumnIndex(AsamDbHelper.REFERENCE_NUMBER)));
-                    asam.setGeographicalSubregion(cursor.getString(cursor.getColumnIndex(AsamDbHelper.SUBREGION)));
-                    asam.setLatitude(cursor.getDouble(cursor.getColumnIndex(AsamDbHelper.LATITUDE)));
-                    asam.setLongitude(cursor.getDouble(cursor.getColumnIndex(AsamDbHelper.LONGITUDE)));
-                    asam.setAggressor(cursor.getString(cursor.getColumnIndex(AsamDbHelper.AGGRESSOR)));
-                    asam.setVictim(cursor.getString(cursor.getColumnIndex(AsamDbHelper.VICTIM)));
-                    asam.setDescription(cursor.getString(cursor.getColumnIndex(AsamDbHelper.DESCRIPTION)));
-                    asams.add(asam);
-                }
-                catch (Exception caught) {
-                    AsamLog.e(AsamDbHelper.class.getName() + ":Error querying ASAMs", caught);
-                }
-            }
+            Cursor cursor = db.rawQuery(sql.toString(), queryParameters);
+            List<AsamBean> asams = translate(cursor);
             cursor.close();
             db.setTransactionSuccessful();
-        }
-        finally {
+            return asams;
+        } finally {
             db.endTransaction();
         }
-        return asams;
     }
     
     public Date getMaxOccurrenceDate(SQLiteDatabase db) {
@@ -500,20 +373,18 @@ public class AsamDbHelper extends SQLiteOpenHelper {
             AsamLog.i(AsamDbHelper.class.getName() + ":" + sql);
             SQLiteStatement pstmt = db.compileStatement(sql);
             String dateOfOccurrence = pstmt.simpleQueryForString();
-            if (!AsamUtils.isEmpty(dateOfOccurrence)) {
+            if (StringUtils.isNotBlank(dateOfOccurrence)) {
                 try {
                     maxDate = SQLITE_DATE_FORMAT.parse(dateOfOccurrence);
-                }
-                catch (ParseException caught) {
+                } catch (ParseException caught) {
                     AsamLog.e(AsamDbHelper.class.getName() + ":Error finding max date", caught);
                 }
             }
             db.setTransactionSuccessful();
-        }
-        finally {
+            return maxDate;
+        } finally {
             db.endTransaction();
         }
-        return maxDate;
     }
     
     public Date getMinOccurrenceDate(SQLiteDatabase db) {
@@ -527,7 +398,7 @@ public class AsamDbHelper extends SQLiteOpenHelper {
             AsamLog.i(AsamDbHelper.class.getName() + ":" + sql);
             SQLiteStatement pstmt = db.compileStatement(sql);
             String dateOfOccurrence = pstmt.simpleQueryForString();
-            if (!AsamUtils.isEmpty(dateOfOccurrence)) {
+            if (StringUtils.isNotBlank(dateOfOccurrence)) {
                 try {
                     maxDate = SQLITE_DATE_FORMAT.parse(dateOfOccurrence);
                 }
@@ -536,10 +407,10 @@ public class AsamDbHelper extends SQLiteOpenHelper {
                 }
             }
             db.setTransactionSuccessful();
-        }
-        finally {
+        } finally {
             db.endTransaction();
         }
+
         return maxDate;
     }
     
@@ -555,8 +426,7 @@ public class AsamDbHelper extends SQLiteOpenHelper {
             SQLiteStatement pstmt = db.compileStatement(sql);
             totalNumberOfAsams = pstmt.simpleQueryForLong();
             db.setTransactionSuccessful();
-        }
-        finally {
+        } finally {
             db.endTransaction();
         }
         return totalNumberOfAsams;
@@ -583,19 +453,43 @@ public class AsamDbHelper extends SQLiteOpenHelper {
             SQLiteStatement pstmt = db.compileStatement(sql);
             totalNumberOfAsams = pstmt.simpleQueryForLong();
             db.setTransactionSuccessful();
-        }
-        finally {
+        } finally {
             db.endTransaction();
         }
+
         return totalNumberOfAsams;
     }
     
     private void bindString(SQLiteStatement pstmt, int index, String value) {
         if (value == null) {
             pstmt.bindNull(index);
-        }
-        else {
+        } else {
             pstmt.bindString(index, value);
         }
+    }
+
+    private List<AsamBean> translate(Cursor cursor) {
+        List<AsamBean> asams = new ArrayList<AsamBean>();
+
+        while (cursor.moveToNext()) {
+            AsamBean asam = new AsamBean();
+            try {
+                asam.setId(cursor.getInt(cursor.getColumnIndex(AsamDbHelper.ID)));
+                asam.setOccurrenceDate(AsamDbHelper.SQLITE_DATE_FORMAT.parse(cursor.getString(cursor.getColumnIndex(AsamDbHelper.DATE_OF_OCCURRENCE))));
+                asam.setReferenceNumber(cursor.getString(cursor.getColumnIndex(AsamDbHelper.REFERENCE_NUMBER)));
+                asam.setGeographicalSubregion(cursor.getString(cursor.getColumnIndex(AsamDbHelper.SUBREGION)));
+                asam.setLatitude(cursor.getDouble(cursor.getColumnIndex(AsamDbHelper.LATITUDE)));
+                asam.setLongitude(cursor.getDouble(cursor.getColumnIndex(AsamDbHelper.LONGITUDE)));
+                asam.setAggressor(cursor.getString(cursor.getColumnIndex(AsamDbHelper.AGGRESSOR)));
+                asam.setVictim(cursor.getString(cursor.getColumnIndex(AsamDbHelper.VICTIM)));
+                asam.setDescription(cursor.getString(cursor.getColumnIndex(AsamDbHelper.DESCRIPTION)));
+                asams.add(asam);
+            }
+            catch (Exception caught) {
+                AsamLog.e(AsamDbHelper.class.getName() + ":Error querying ASAMs", caught);
+            }
+        }
+
+        return asams;
     }
 }

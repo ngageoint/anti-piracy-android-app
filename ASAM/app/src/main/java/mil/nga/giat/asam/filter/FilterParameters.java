@@ -3,9 +3,9 @@ package mil.nga.giat.asam.filter;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.Calendar;
+import org.apache.commons.lang3.StringUtils;
 
-import mil.nga.giat.asam.util.AsamUtils;
+import java.util.Calendar;
 
 public class FilterParameters implements Parcelable {
 
@@ -44,19 +44,19 @@ public class FilterParameters implements Parcelable {
     }
     
     public boolean isEmpty() {
-        return AsamUtils.isEmpty(mKeyword) &&
+        return StringUtils.isBlank(mKeyword) &&
                mTimeInterval == null &&
-               AsamUtils.isEmpty(mDateFrom) &&
-               AsamUtils.isEmpty(mDateTo) &&
-               AsamUtils.isEmpty(mSubregion) &&
-               AsamUtils.isEmpty(mReferenceNumber) &&
-               AsamUtils.isEmpty(mVictim) &&
-               AsamUtils.isEmpty(mAggressor);
+                StringUtils.isBlank(mDateFrom) &&
+                StringUtils.isBlank(mDateTo) &&
+                StringUtils.isBlank(mSubregion) &&
+                StringUtils.isBlank(mReferenceNumber) &&
+                StringUtils.isBlank(mVictim) &&
+                StringUtils.isBlank(mAggressor);
     }
     
     public String getParametersAsFormattedHtml() {
         StringBuilder html = new StringBuilder();
-        if (!AsamUtils.isEmpty(mKeyword)) {
+        if (StringUtils.isNotBlank(mKeyword)) {
             html.append(String.format("<br/>&nbsp;&nbsp;- <b>Keyword:</b> %s", mKeyword));
         }
         if (mTimeInterval != null) {
@@ -79,25 +79,25 @@ public class FilterParameters implements Parcelable {
             }
         }
 
-        if (!AsamUtils.isEmpty(mDateFrom) && !AsamUtils.isEmpty(mDateTo)) {
+        if (StringUtils.isNotBlank(mDateFrom) && StringUtils.isNotBlank(mDateTo)) {
             html.append(String.format("<br/>&nbsp;&nbsp;- <b>Date:</b> %s - %s", mDateFrom, mDateTo));
-        } else if (!AsamUtils.isEmpty(mDateTo)) {
+        } else if (StringUtils.isNotBlank(mDateTo)) {
             html.append(String.format("<br/>&nbsp;&nbsp;- <b>Date To:</b> %s", mDateTo));
-        } else if (!AsamUtils.isEmpty(mDateFrom)){
+        } else if (StringUtils.isNotBlank(mDateFrom)){
             html.append(String.format("<br/>&nbsp;&nbsp;- <b>Date From:</b> %s", mDateFrom));
         }
 
-        if (!AsamUtils.isEmpty(mSubregion)) {
+        if (StringUtils.isNotBlank(mSubregion)) {
             html.append(String.format("<br/>&nbsp;&nbsp;- <b>Subregion:</b> %s", mSubregion));
         }
 
-        if (!AsamUtils.isEmpty(mReferenceNumber)) {
+        if (StringUtils.isNotBlank(mReferenceNumber)) {
             html.append(String.format("<br/>&nbsp;&nbsp;- <b>Reference Number:</b> %s", mReferenceNumber));
         }
-        if (!AsamUtils.isEmpty(mVictim)) {
+        if (StringUtils.isNotBlank(mVictim)) {
             html.append(String.format("<br/>&nbsp;&nbsp;- <b>Victim:</b> %s", mVictim));
         }
-        if (!AsamUtils.isEmpty(mAggressor)) {
+        if (StringUtils.isNotBlank(mAggressor)) {
             html.append(String.format("<br/>&nbsp;&nbsp;- <b>Aggressor:</b> %s", mAggressor));
         }
         return html.toString();

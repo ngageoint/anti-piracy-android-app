@@ -16,6 +16,8 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
@@ -26,7 +28,6 @@ import mil.nga.giat.asam.db.AsamDbHelper;
 import mil.nga.giat.asam.map.AsamMapActivity;
 import mil.nga.giat.asam.model.SubregionTextParser;
 import mil.nga.giat.asam.util.AsamLog;
-import mil.nga.giat.asam.util.AsamUtils;
 import mil.nga.giat.asam.util.CurrentSubregionHelper;
 
 
@@ -124,7 +125,7 @@ public class FilterAdvancedActivity extends AppCompatActivity implements OnClick
                     }
                 };
                 Calendar calendar = Calendar.getInstance();
-                if (mDateFromUI != null && !AsamUtils.isEmpty(mDateFromUI.getText().toString())) {
+                if (mDateFromUI != null && StringUtils.isNotBlank(mDateFromUI.getText().toString())) {
                     try {
                         Date date = AsamDbHelper.TEXT_QUERY_DATE_FORMAT.parse(mDateFromUI.getText().toString());
                         calendar.setTime(date);
@@ -147,7 +148,7 @@ public class FilterAdvancedActivity extends AppCompatActivity implements OnClick
                     }
                 };
                 Calendar calendar = Calendar.getInstance();
-                if (mDateToUI != null && !AsamUtils.isEmpty(mDateToUI.getText().toString())) {
+                if (mDateToUI != null && StringUtils.isNotBlank(mDateToUI.getText().toString())) {
                     try {
                         Date date = AsamDbHelper.TEXT_QUERY_DATE_FORMAT.parse(mDateToUI.getText().toString());
                         calendar.setTime(date);
@@ -177,7 +178,7 @@ public class FilterAdvancedActivity extends AppCompatActivity implements OnClick
         }
         parameters.mAggressor = mAggressorUI.getText().toString();
         parameters.mVictim = mVictimUI.getText().toString();
-        if (!AsamUtils.isEmpty(mReferenceNumberYearUI.getText().toString()) && !AsamUtils.isEmpty(mReferenceNumberIdUI.getText().toString())) {
+        if (StringUtils.isNotBlank(mReferenceNumberYearUI.getText().toString()) && StringUtils.isNotBlank(mReferenceNumberIdUI.getText().toString())) {
             parameters.mReferenceNumber = mReferenceNumberYearUI.getText().toString() + "-" + mReferenceNumberIdUI.getText().toString();
         }
 

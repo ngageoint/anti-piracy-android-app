@@ -1,12 +1,5 @@
 package mil.nga.giat.asam.util;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.List;
-
-import mil.nga.giat.asam.R;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -15,6 +8,13 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
+import mil.nga.giat.asam.R;
 
 
 public class AsamUtils {
@@ -28,25 +28,7 @@ public class AsamUtils {
         }
         return contents.toString();
     }
-    
-    public static boolean isEmpty(String string) {
-        if (string == null || string.trim().equals("")) {
-            return true;
-        }
-        return false;
-    }
-    
-    public static String getCommaSeparatedStringFromIntegerList(List<Integer> mIntegers) {
-        StringBuilder text = new StringBuilder();
-        for (int i = 0; i < mIntegers.size(); i++) {
-            text.append(mIntegers.get(i));
-            if (i < mIntegers.size() - 1) {
-                text.append(", ");
-            }
-        }
-        return text.toString();
-    }
-    
+
     public static Bitmap drawNumberOnClusterMarker(Context context, int number) {
         String numberOfPoints = "" + number;
         float scale = context.getResources().getDisplayMetrics().density;

@@ -8,10 +8,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import org.apache.commons.lang3.StringUtils;
+
 import mil.nga.giat.asam.map.SingleAsamMapActivity;
 import mil.nga.giat.asam.model.AsamBean;
 import mil.nga.giat.asam.util.AsamConstants;
-import mil.nga.giat.asam.util.AsamUtils;
 
 
 public class AsamReportFragment extends Fragment {
@@ -51,11 +52,11 @@ public class AsamReportFragment extends Fragment {
 
         // Sometimes eye sore if there is no entry. Just make a single " ".
         mOccurrenceDateUI.setText(AsamBean.OCCURRENCE_DATE_FORMAT.format(mAsam.getOccurrenceDate()));
-        mAggressorUI.setText(AsamUtils.isEmpty(mAsam.getAggressor()) ? " " : mAsam.getAggressor());
-        mVictimUI.setText(AsamUtils.isEmpty(mAsam.getVictim()) ? " " : mAsam.getVictim());
-        mSubregionUI.setText(AsamUtils.isEmpty(mAsam.getGeographicalSubregion()) ? " " : mAsam.getGeographicalSubregion());
-        mReferenceNumberUI.setText(AsamUtils.isEmpty(mAsam.getReferenceNumber()) ? " " : mAsam.getReferenceNumber());
+        mAggressorUI.setText(StringUtils.isBlank(mAsam.getAggressor()) ? " " : mAsam.getAggressor());
+        mVictimUI.setText(StringUtils.isBlank(mAsam.getVictim()) ? " " : mAsam.getVictim());
+        mSubregionUI.setText(StringUtils.isBlank(mAsam.getGeographicalSubregion()) ? " " : mAsam.getGeographicalSubregion());
+        mReferenceNumberUI.setText(StringUtils.isBlank(mAsam.getReferenceNumber()) ? " " : mAsam.getReferenceNumber());
         mLocationUI.setText(mAsam.formatLatitutdeDegMinSec() + ", " + mAsam.formatLongitudeDegMinSec());
-        mDescriptionUI.setText(AsamUtils.isEmpty(mAsam.getDescription()) ? " " : mAsam.getDescription());
+        mDescriptionUI.setText(StringUtils.isBlank(mAsam.getDescription()) ? " " : mAsam.getDescription());
     }
 }

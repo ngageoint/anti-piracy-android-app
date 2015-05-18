@@ -1,16 +1,5 @@
 package mil.nga.giat.asam;
 
-import java.lang.ref.WeakReference;
-import java.util.List;
-
-import mil.nga.giat.asam.db.AsamDbHelper;
-import mil.nga.giat.asam.model.AsamBean;
-import mil.nga.giat.asam.model.AsamJsonParser;
-import mil.nga.giat.asam.net.AsamWebService;
-import mil.nga.giat.asam.util.AsamConstants;
-import mil.nga.giat.asam.util.AsamLog;
-import mil.nga.giat.asam.util.AsamUtils;
-import mil.nga.giat.asam.util.SyncTime;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -26,6 +15,19 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.TextView;
+
+import org.apache.commons.lang3.StringUtils;
+
+import java.lang.ref.WeakReference;
+import java.util.List;
+
+import mil.nga.giat.asam.db.AsamDbHelper;
+import mil.nga.giat.asam.model.AsamBean;
+import mil.nga.giat.asam.model.AsamJsonParser;
+import mil.nga.giat.asam.net.AsamWebService;
+import mil.nga.giat.asam.util.AsamConstants;
+import mil.nga.giat.asam.util.AsamLog;
+import mil.nga.giat.asam.util.SyncTime;
 
 public class PreferencesActivity extends ActionBarActivity {
 
@@ -132,7 +134,7 @@ public class PreferencesActivity extends ActionBarActivity {
             try {
                 AsamWebService webService = new AsamWebService(context);
                 json = webService.query();
-                if (!AsamUtils.isEmpty(json)) {
+                if (StringUtils.isNotBlank(json)) {
                     AsamJsonParser parser = new AsamJsonParser();
                     List<AsamBean> asams = parser.parseJson(json);
                     if (asams.size() > 0) {

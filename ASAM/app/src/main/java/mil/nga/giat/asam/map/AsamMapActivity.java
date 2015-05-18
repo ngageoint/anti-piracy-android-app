@@ -39,6 +39,8 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.vividsolutions.jts.geom.Geometry;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.lang.ref.WeakReference;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -624,7 +626,7 @@ public class AsamMapActivity extends ActionBarActivity implements OnCameraChange
             }
         } else {
             // Populate the from and to dates for the text query.
-            if (!AsamUtils.isEmpty(textQueryParameters.mDateFrom)) {
+            if (StringUtils.isNotBlank(textQueryParameters.mDateFrom)) {
                 try {
                     mTextQueryDateEarliest = AsamDbHelper.TEXT_QUERY_DATE_FORMAT.parse(textQueryParameters.mDateFrom);
                 } catch (ParseException caught) {
@@ -634,7 +636,7 @@ public class AsamMapActivity extends ActionBarActivity implements OnCameraChange
                 mTextQueryDateEarliest = initAndGetEarliestAsamDate();
             }
 
-            if (!AsamUtils.isEmpty(textQueryParameters.mDateTo)) {
+            if (StringUtils.isNotBlank(textQueryParameters.mDateTo)) {
                 try {
                     mTextQueryDateLatest = AsamDbHelper.TEXT_QUERY_DATE_FORMAT.parse(textQueryParameters.mDateTo);
                 } catch (ParseException caught) {
@@ -881,7 +883,7 @@ public class AsamMapActivity extends ActionBarActivity implements OnCameraChange
                 try {
                     AsamWebService webService = new AsamWebService(context);
                     json = webService.query();
-                    if (!AsamUtils.isEmpty(json)) {
+                    if (StringUtils.isNotBlank(json)) {
                         AsamJsonParser parser = new AsamJsonParser();
                         List<AsamBean> asams = parser.parseJson(json);
                         if (asams.size() > 0) {
