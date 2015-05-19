@@ -39,7 +39,7 @@
                 android:inputType="text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="25dp"/>
+                android:layout_marginBottom="10dp"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -55,7 +55,7 @@
                 android:layout_gravity="center_horizontal"
                 android:entries="@array/filter_interval_labels"
                 android:labelFor="@string/asam_map_label"
-                android:layout_marginBottom="45dp" />
+                android:layout_marginBottom="100dp" />
 
             <Button
                 style="?android:attr/buttonStyleSmall"

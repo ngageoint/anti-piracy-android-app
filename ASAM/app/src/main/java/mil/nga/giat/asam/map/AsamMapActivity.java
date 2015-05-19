@@ -213,7 +213,7 @@ public class AsamMapActivity extends ActionBarActivity implements OnCameraChange
     private ProgressDialog mQueryProgressDialog;
     private QueryHandler mQueryHandler;
     private List<Integer> mSelectedSubregionIds;
-    private FilterParameters mTextQueryParametersBean;
+    private FilterParameters mFilterParameters;
     private Date mTextQueryDateEarliest;
     private Date mTextQueryDateLatest;
     private int mPreviousZoomLevel;
@@ -267,9 +267,9 @@ public class AsamMapActivity extends ActionBarActivity implements OnCameraChange
 
         mQueryHandler = new QueryHandler(this);
 
-        FilterParameters queryParameters = new FilterParameters(FilterParameters.Type.SIMPLE);
-        queryParameters.mTimeInterval = 365;
-        onTextQuery(queryParameters);
+        mFilterParameters = new FilterParameters(FilterParameters.Type.SIMPLE);
+        mFilterParameters.mTimeInterval = 365;
+        onFilter();
     }
 
     @Override
@@ -392,11 +392,11 @@ public class AsamMapActivity extends ActionBarActivity implements OnCameraChange
                 return true;
             }
             case R.id.all_asams_map_menu_search_ui: {
-                Intent intent = lanchAdvancedFilter() ?
+                Intent intent = launchAdvancedFilter() ?
                     new Intent(this, FilterAdvancedActivity.class) :
                     new Intent(this, FilterActivity.class);
 
-                intent.putExtra(SEARCH_PARAMETERS, mTextQueryParametersBean);
+                intent.putExtra(SEARCH_PARAMETERS, mFilterParameters);
                 startActivityForResult(intent, SEARCH_ACTIVITY_REQUEST_CODE);
                 return true;
             }
@@ -526,8 +526,8 @@ public class AsamMapActivity extends ActionBarActivity implements OnCameraChange
         switch (requestCode) {
             case (SEARCH_ACTIVITY_REQUEST_CODE) : {
                 if (resultCode == Activity.RESULT_OK) {
-                    FilterParameters parameters = data.getParcelableExtra(SEARCH_PARAMETERS);
-                    onTextQuery(parameters);
+                    mFilterParameters = data.getParcelableExtra(SEARCH_PARAMETERS);
+                    onFilter();
                 }
                 break;
             }
@@ -569,17 +569,20 @@ public class AsamMapActivity extends ActionBarActivity implements OnCameraChange
         }
     }
 
-    public void onTextQuery(FilterParameters textQueryParameters) {
+    public void onFilter() {
         DialogFragment dialogFragment = (DialogFragment)getSupportFragmentManager().findFragmentByTag(AsamConstants.TEXT_QUERY_DIALOG_TAG);
         if (dialogFragment != null) {
             dialogFragment.dismiss();
         }
-        mTextQueryParametersBean = textQueryParameters;
 
-        if (mTextQueryParametersBean.mType == FilterParameters.Type.SIMPLE) {
-            if (mTextQueryParametersBean.mTimeInterval != null) {
-                mTextQueryDateLatest = null;
-                switch (mTextQueryParametersBean.mTimeInterval) {
+        mTextQueryDateEarliest = initAndGetEarliestAsamDate();
+        mTextQueryDateLatest = new Date();
+
+        if (mFilterParameters.mType == FilterParameters.Type.SIMPLE) {
+            if (mFilterParameters.mTimeInterval != null) {
+                mTextQueryDateEarliest = mFilterParameters.getStartDateFromInterval();
+                mTextQueryDateLatest = new Date();
+                switch (mFilterParameters.mTimeInterval) {
                     case 0: {
                         mTimeSpanTitleText = getString(R.string.query_all_text);
                         mTextQueryDateEarliest = null;
@@ -587,48 +590,31 @@ public class AsamMapActivity extends ActionBarActivity implements OnCameraChange
                     }
                     case 60: {
                         mTimeSpanTitleText = getString(R.string.query_60_days_text);
-                        Calendar calendar = Calendar.getInstance();
-                        calendar.add(Calendar.DAY_OF_MONTH, mTextQueryParametersBean.mTimeInterval * -1);
-                        mTextQueryDateEarliest = calendar.getTime();
                         break;
                     }
                     case 90: {
                         mTimeSpanTitleText = getString(R.string.query_90_days_text);
-                        Calendar calendar = Calendar.getInstance();
-                        calendar.add(Calendar.DAY_OF_MONTH, mTextQueryParametersBean.mTimeInterval * -1);
-                        mTextQueryDateEarliest = calendar.getTime();
                         break;
                     }
                     case 180: {
                         mTimeSpanTitleText = getString(R.string.query_180_days_text);
-                        Calendar calendar = Calendar.getInstance();
-                        calendar.add(Calendar.DAY_OF_MONTH, mTextQueryParametersBean.mTimeInterval * -1);
-                        mTextQueryDateEarliest = calendar.getTime();
                         break;
                     }
                     case 365: {
                         mTimeSpanTitleText = getString(R.string.query_1_year_text);
-                        Calendar calendar = Calendar.getInstance();
-                        calendar.add(Calendar.YEAR, -1);
-                        mTextQueryDateEarliest = calendar.getTime();
                         break;
                     }
                     case 1300: {
                         mTimeSpanTitleText = getString(R.string.query_5_years_text);
-                        Calendar calendar = Calendar.getInstance();
-                        calendar.add(Calendar.YEAR, -5);
-                        mTextQueryDateEarliest = calendar.getTime();
                         break;
                     }
                 }
-
-                mTextQueryDateLatest = new Date();
             }
         } else {
             // Populate the from and to dates for the text query.
-            if (StringUtils.isNotBlank(textQueryParameters.mDateFrom)) {
+            if (StringUtils.isNotBlank(mFilterParameters.mDateFrom)) {
                 try {
-                    mTextQueryDateEarliest = AsamDbHelper.TEXT_QUERY_DATE_FORMAT.parse(textQueryParameters.mDateFrom);
+                    mTextQueryDateEarliest = AsamDbHelper.TEXT_QUERY_DATE_FORMAT.parse(mFilterParameters.mDateFrom);
                 } catch (ParseException caught) {
                     mTextQueryDateEarliest = initAndGetEarliestAsamDate();
                 }
@@ -636,9 +622,9 @@ public class AsamMapActivity extends ActionBarActivity implements OnCameraChange
                 mTextQueryDateEarliest = initAndGetEarliestAsamDate();
             }
 
-            if (StringUtils.isNotBlank(textQueryParameters.mDateTo)) {
+            if (StringUtils.isNotBlank(mFilterParameters.mDateTo)) {
                 try {
-                    mTextQueryDateLatest = AsamDbHelper.TEXT_QUERY_DATE_FORMAT.parse(textQueryParameters.mDateTo);
+                    mTextQueryDateLatest = AsamDbHelper.TEXT_QUERY_DATE_FORMAT.parse(mFilterParameters.mDateTo);
                 } catch (ParseException caught) {
                     mTextQueryDateLatest = new Date();
                 }
@@ -652,7 +638,12 @@ public class AsamMapActivity extends ActionBarActivity implements OnCameraChange
         }
 
         if (mQueryModeMessageContainerUI != null) {
-            mQueryModeMessageTextViewUI.setText(Html.fromHtml(String.format(getResources().getString(R.string.all_asams_map_tablet_text_query_mode_message_text), textQueryParameters.getParametersAsFormattedHtml())));
+            if (mFilterParameters.isEmpty()) {
+                mQueryModeMessageContainerUI.setVisibility(View.INVISIBLE);
+            } else {
+                mQueryModeMessageContainerUI.setVisibility(View.VISIBLE);
+                mQueryModeMessageTextViewUI.setText(Html.fromHtml(String.format(getResources().getString(R.string.all_asams_map_tablet_text_query_mode_message_text), mFilterParameters.getParametersAsFormattedHtml())));
+            }
         }
 
         setTimeSlider(null);
@@ -948,7 +939,7 @@ public class AsamMapActivity extends ActionBarActivity implements OnCameraChange
                     }
 
 
-                    FilterParameters parameters = FilterParameters.newInstance(mTextQueryParametersBean);
+                    FilterParameters parameters = FilterParameters.newInstance(mFilterParameters);
 
                     if (mTextQueryDateLatest != null) {
                         parameters.mDateTo = AsamDbHelper.TEXT_QUERY_DATE_FORMAT.format(mTextQueryDateLatest);
@@ -1065,8 +1056,8 @@ public class AsamMapActivity extends ActionBarActivity implements OnCameraChange
         supportInvalidateOptionsMenu();
     }
 
-    private boolean lanchAdvancedFilter() {
-        return mTextQueryParametersBean != null && mTextQueryParametersBean.mType == FilterParameters.Type.ADVANCED;
+    private boolean launchAdvancedFilter() {
+        return mFilterParameters != null && mFilterParameters.mType == FilterParameters.Type.ADVANCED;
     }
 
     private void setupDateRangeView(View dateRangeView) {
@@ -1080,24 +1071,14 @@ public class AsamMapActivity extends ActionBarActivity implements OnCameraChange
                 Date earliest = mTextQueryDateEarliest != null ? mTextQueryDateEarliest : initAndGetEarliestAsamDate();
                 Date latest = mTextQueryDateLatest != null ? mTextQueryDateLatest : new Date();
 
-//                if (mQueryMode == TEXT_QUERY_MODE) {
-                    if (progress == TOTAL_TIME_SLIDER_TICKS - 1) {
-                        mDateRangeTextViewUI.setText(String.format(DATE_RANGE_PATTERN, DATE_RANGE_FORMAT.format(latest), DATE_RANGE_FORMAT.format(earliest)));
-                    } else if (progress == 0) {
-                        mDateRangeTextViewUI.setText(String.format(DATE_RANGE_PATTERN, DATE_RANGE_FORMAT.format(latest), DATE_RANGE_FORMAT.format(latest)));
-                    } else {
-                        Date dateFromSlider = mTextQueryDateEarliest != null && mTextQueryDateLatest != null ? calculateTextQueryDateFromTimeSlider(progress) : calculateQueryDateFromTimeSlider(progress);
-                        mDateRangeTextViewUI.setText(String.format(DATE_RANGE_PATTERN, DATE_RANGE_FORMAT.format(latest), DATE_RANGE_FORMAT.format(dateFromSlider)));
-                    }
-//                } else {
-//                    if (progress == TOTAL_TIME_SLIDER_TICKS - 1) {
-//                        mDateRangeTextViewUI.setText(String.format(DATE_RANGE_PATTERN, DATE_RANGE_FORMAT.format(new Date()), DATE_RANGE_FORMAT.format(initAndGetEarliestAsamDate())));
-//                    } else if (progress == 0) {
-//                        mDateRangeTextViewUI.setText(String.format(DATE_RANGE_PATTERN, DATE_RANGE_FORMAT.format(new Date()), DATE_RANGE_FORMAT.format(new Date())));
-//                    } else {
-//                        mDateRangeTextViewUI.setText(String.format(DATE_RANGE_PATTERN, DATE_RANGE_FORMAT.format(new Date()), DATE_RANGE_FORMAT.format(calculateQueryDateFromTimeSlider(progress))));
-//                    }
-//                }
+                if (progress == TOTAL_TIME_SLIDER_TICKS - 1) {
+                    mDateRangeTextViewUI.setText(String.format(DATE_RANGE_PATTERN, DATE_RANGE_FORMAT.format(latest), DATE_RANGE_FORMAT.format(earliest)));
+                } else if (progress == 0) {
+                    mDateRangeTextViewUI.setText(String.format(DATE_RANGE_PATTERN, DATE_RANGE_FORMAT.format(latest), DATE_RANGE_FORMAT.format(latest)));
+                } else {
+                    Date dateFromSlider = mTextQueryDateEarliest != null && mTextQueryDateLatest != null ? calculateTextQueryDateFromTimeSlider(progress) : calculateQueryDateFromTimeSlider(progress);
+                    mDateRangeTextViewUI.setText(String.format(DATE_RANGE_PATTERN, DATE_RANGE_FORMAT.format(latest), DATE_RANGE_FORMAT.format(dateFromSlider)));
+                }
             }
 
             @Override

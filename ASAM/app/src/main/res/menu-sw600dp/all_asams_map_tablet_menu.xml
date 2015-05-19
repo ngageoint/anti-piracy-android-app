@@ -44,14 +44,14 @@
 
     <item android:id="@+id/all_asams_map_tablet_menu_settings_ui"
         android:title="@string/all_asams_map_tablet_menu_settings_text"
-        asam:showAsAction="ifRoom"
+        asam:showAsAction="never"
         android:icon="@drawable/ic_action_bar_settings"
         android:menuCategory="system"
         android:orderInCategory="500"/>
 
     <item android:id="@+id/all_asams_map_tablet_menu_info_ui"
         android:title="@string/all_asams_map_tablet_menu_info_text"
-        asam:showAsAction="ifRoom"
+        asam:showAsAction="never"
         android:icon="@drawable/ic_action_bar_info"
         android:menuCategory="system"
         android:orderInCategory="600"/>

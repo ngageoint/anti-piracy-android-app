@@ -263,8 +263,7 @@ public class AsamDbHelper extends SQLiteOpenHelper {
     }
 
     private List<AsamBean> advancedFilter(SQLiteDatabase db, FilterParameters filterParameters) {
-
-        String keywordClause = null;
+        Collection<String> clauses = new ArrayList<String>();
         if (StringUtils.isNotBlank(filterParameters.mKeyword)) {
             List<String> textClauses = new ArrayList<String>();
             textClauses.add("LOWER(" + AsamDbHelper.VICTIM + ") LIKE '%" + filterParameters.mKeyword.toLowerCase(Locale.US) + "%'");
@@ -276,7 +275,7 @@ public class AsamDbHelper extends SQLiteOpenHelper {
             textClauses.add("LOWER(" + AsamDbHelper.DESCRIPTION + ") LIKE '%" + filterParameters.mKeyword.toLowerCase(Locale.US) + "%'");
 
 
-           keywordClause = ("(" + StringUtils.join(textClauses, " OR ") + ")";
+            clauses.add("(" + StringUtils.join(textClauses, " OR ") + ")");
         }
 
         List<String> whereClauses = new ArrayList<String>();
@@ -314,8 +313,13 @@ public class AsamDbHelper extends SQLiteOpenHelper {
 
         String columns = StringUtils.join(new String[] {ID, DATE_OF_OCCURRENCE, REFERENCE_NUMBER, SUBREGION, LATITUDE, LONGITUDE, AGGRESSOR, VICTIM, DESCRIPTION}, ", ");
         StringBuilder sql = new StringBuilder("SELECT ").append(columns).append(" FROM ").append(TABLE_NAME);
+
         if (whereClauses.size() > 0) {
-            sql.append(" WHERE ").append(StringUtils.join(whereClauses, " AND "));
+            clauses.add("(" + StringUtils.join(whereClauses, " AND ") + ")");
+        }
+
+        if (!clauses.isEmpty()) {
+            sql.append(" WHERE ").append(StringUtils.join(clauses, " AND "));
         }
         
         try {

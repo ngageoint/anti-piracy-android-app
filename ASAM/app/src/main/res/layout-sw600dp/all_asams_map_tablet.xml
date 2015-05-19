@@ -37,13 +37,13 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:layout_marginLeft="50dp"
-        android:layout_marginRight="50dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginBottom="30dp"
         android:paddingTop="7dp"
         android:paddingBottom="7dp"
-        android:paddingRight="5dp"
-        android:paddingLeft="5dp"
+        android:paddingRight="15dp"
+        android:paddingLeft="15dp"
         android:background="@drawable/all_asams_map_tablet_timeslider_background">
 
         <TextView android:id="@+id/all_asams_map_tablet_date_range_text_view_ui"
@@ -51,8 +51,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
-            android:text="@string/all_asams_map_tablet_date_range_text"
-            />
+            android:text="@string/all_asams_map_tablet_date_range_text"/>
 
         <SeekBar android:id="@+id/all_asams_map_tablet_time_slider_ui"
             android:layout_width="wrap_content"
@@ -62,16 +61,14 @@
             android:max="999"
             android:progress="100"
             android:paddingLeft="15dp"
-            android:paddingRight="15dp"
-            />
+            android:paddingRight="15dp"/>
 
         <TextView android:id="@+id/all_asams_map_tablet_total_asams_text_view_ui"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:text="@string/all_asams_map_tablet_total_asams_text"
-            />
+            android:text="@string/all_asams_map_tablet_total_asams_text"/>
 
     </RelativeLayout>
 

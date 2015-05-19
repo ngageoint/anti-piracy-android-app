@@ -21,7 +21,6 @@ public class FilterActivity extends AppCompatActivity implements Button.OnClickL
 
     private EditText keyword;
     private Spinner intervalSpinner;
-    private FilterParameters queryParameters;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,8 +40,8 @@ public class FilterActivity extends AppCompatActivity implements Button.OnClickL
         intervalSpinner = (Spinner) findViewById(R.id.interval_spinner);
 
         Intent intent = getIntent();
-        queryParameters = intent.getParcelableExtra(AsamMapActivity.SEARCH_PARAMETERS);
-        populateFields(queryParameters);
+        FilterParameters filterParameters = intent.getParcelableExtra(AsamMapActivity.SEARCH_PARAMETERS);
+        populateFields(filterParameters);
     }
 
     @Override
@@ -75,6 +74,8 @@ public class FilterActivity extends AppCompatActivity implements Button.OnClickL
             case R.id.advanced_filter: {
                 Intent intent = new Intent(this, FilterAdvancedActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT);
+                FilterParameters parameters = parseFields();
+                intent.putExtra(AsamMapActivity.SEARCH_PARAMETERS, parameters);
                 startActivity(intent);
                 finish();
                 break;
@@ -103,12 +104,12 @@ public class FilterActivity extends AppCompatActivity implements Button.OnClickL
         return parameters;
     }
 
-    private void populateFields(FilterParameters queryParameters) {
-        if (queryParameters == null) return;
+    private void populateFields(FilterParameters filterParameters) {
+        if (filterParameters == null) return;
 
-        keyword.setText(queryParameters.mKeyword);
+        keyword.setText(filterParameters.mKeyword);
 
-        Integer timeInterval = queryParameters.mTimeInterval;
+        Integer timeInterval = filterParameters.mTimeInterval;
         if (timeInterval != null) {
             int index = 0;
             int[] intervalValues = getResources().getIntArray(R.array.filter_interval_values);

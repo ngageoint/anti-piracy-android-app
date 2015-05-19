@@ -36,7 +36,7 @@ public class FilterAdvancedActivity extends AppCompatActivity implements OnClick
     private static final int SUBREGION_SPINNER_EMPTY_POSITION = 0;
     private static final int SUBREGION_SPINNER_CURRENT_LOCATION_POSITION = 1;
 
-    private EditText mSearchText;
+    private EditText mKeyword;
     private EditText mDateFromUI;
     private EditText mDateToUI;
     private Spinner mSubregionSpinnerUI;
@@ -56,17 +56,17 @@ public class FilterAdvancedActivity extends AppCompatActivity implements OnClick
                 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.subregions, R.layout.subregion_spinner_item);
         adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
-        mSubregionSpinnerUI = (Spinner)findViewById(R.id.text_query_subregion_spinner_ui);
+        mSubregionSpinnerUI = (Spinner) findViewById(R.id.text_query_subregion_spinner_ui);
         mSubregionSpinnerUI.setAdapter(adapter);
         
-        mReferenceNumberYearUI = (EditText)findViewById(R.id.text_query_reference_number_year_edit_text_ui);
-        mReferenceNumberIdUI = (EditText)findViewById(R.id.text_query_reference_number_id_edit_text_ui);
+        mReferenceNumberYearUI = (EditText) findViewById(R.id.text_query_reference_number_year_edit_text_ui);
+        mReferenceNumberIdUI = (EditText) findViewById(R.id.text_query_reference_number_id_edit_text_ui);
 
-        mSearchText = (EditText) findViewById(R.id.keyword);
-        mDateFromUI = (EditText)findViewById(R.id.text_query_date_from_edit_text_ui);
-        mDateToUI = (EditText)findViewById(R.id.text_query_date_to_edit_text_ui);
-        mVictimUI = (EditText)findViewById(R.id.text_query_victim_edit_text_ui);
-        mAggressorUI = (EditText)findViewById(R.id.text_query_aggressor_edit_text_ui);
+        mKeyword = (EditText) findViewById(R.id.keyword);
+        mDateFromUI = (EditText) findViewById(R.id.text_query_date_from_edit_text_ui);
+        mDateToUI = (EditText) findViewById(R.id.text_query_date_to_edit_text_ui);
+        mVictimUI = (EditText) findViewById(R.id.text_query_victim_edit_text_ui);
+        mAggressorUI = (EditText) findViewById(R.id.text_query_aggressor_edit_text_ui);
 
         mDateFromUI.setOnClickListener(this);
         mDateToUI.setOnClickListener(this);
@@ -75,6 +75,10 @@ public class FilterAdvancedActivity extends AppCompatActivity implements OnClick
         findViewById(R.id.cancel).setOnClickListener(this);
 
         mCurrentSubregionHelper = new CurrentSubregionHelper(this, new SubregionTextParser().parseSubregions(this));
+
+        Intent intent = getIntent();
+        FilterParameters filterParameters = intent.getParcelableExtra(AsamMapActivity.SEARCH_PARAMETERS);
+        populateFields(filterParameters);
     }
 
     @Override
@@ -106,7 +110,7 @@ public class FilterAdvancedActivity extends AppCompatActivity implements OnClick
         switch (v.getId()) {
             case R.id.apply: {
                 Intent intent = new Intent();
-                FilterParameters parameters = parseParameters();
+                FilterParameters parameters = parseFields();
                 intent.putExtra(AsamMapActivity.SEARCH_PARAMETERS, parameters);
                 setResult(Activity.RESULT_OK, intent);
                 finish();
@@ -165,16 +169,65 @@ public class FilterAdvancedActivity extends AppCompatActivity implements OnClick
         }
     }
 
-    private FilterParameters parseParameters() {
-        FilterParameters parameters = new FilterParameters(FilterParameters.Type.ADVANCED);
-        parameters.mKeyword = mSearchText.getText().toString();
+    private void populateFields(FilterParameters filterParameters) {
+        if (filterParameters == null) return;
 
-        parameters.mDateFrom = mDateFromUI.getText().toString();
-        parameters.mDateTo = mDateToUI.getText().toString();
+        mKeyword.setText(filterParameters.mKeyword);
+
+        Date startDate  = filterParameters.getStartDateFromInterval();
+        if (startDate != null) {
+            mDateFromUI.setText(AsamDbHelper.TEXT_QUERY_DATE_FORMAT.format(startDate));
+        }
+
+        if (StringUtils.isNotBlank(filterParameters.mDateFrom)) {
+            mDateFromUI.setText(filterParameters.mDateFrom);
+        }
+
+        if (StringUtils.isNotBlank(filterParameters.mDateTo)) {
+            mDateToUI.setText(filterParameters.mDateTo);
+        }
+
+        //TODO subregion
+
+        mAggressorUI.setText(filterParameters.mAggressor);
+        mVictimUI.setText(filterParameters.mVictim);
+
+        String[] referenceNumber = StringUtils.split(filterParameters.mReferenceNumber, "-");
+        if (referenceNumber != null && referenceNumber.length == 2) {
+            mReferenceNumberYearUI.setText(referenceNumber[0]);
+            mReferenceNumberIdUI.setText(referenceNumber[1]);
+        }
+
+//        Integer timeInterval = queryParameters.mTimeInterval;
+//        if (timeInterval != null) {
+//            int index = 0;
+//            int[] intervalValues = getResources().getIntArray(R.array.filter_interval_values);
+//            for (; index < intervalValues.length; index++) {
+//                if (timeInterval == intervalValues[index]) {
+//                    break;
+//                }
+//            }
+//            intervalSpinner.setSelection(index);
+//        }
+
+
+    }
+
+    private FilterParameters parseFields() {
+        FilterParameters parameters = new FilterParameters(FilterParameters.Type.ADVANCED);
+
+        parameters.mKeyword = mKeyword.getText().toString();
+
+        String dateFrom = mDateFromUI.getText().toString();
+        parameters.mDateFrom = StringUtils.isNotBlank(dateFrom) ? dateFrom : null;
+
+        String dateTo = mDateToUI.getText().toString();
+        parameters.mDateTo = StringUtils.isNotBlank(dateTo) ? dateTo : null;
+
         if (mSubregionSpinnerUI.getSelectedItemPosition() == SUBREGION_SPINNER_CURRENT_LOCATION_POSITION) {
             parameters.mSubregion = mCurrentSubregionHelper.getCurrentSubregion() + "";
         } else if (mSubregionSpinnerUI.getSelectedItemPosition() != SUBREGION_SPINNER_EMPTY_POSITION) {
-            parameters.mSubregion = ((String)mSubregionSpinnerUI.getSelectedItem()).split(" ")[1]; // Looks like "Subregion 32".
+            parameters.mSubregion = ((String) mSubregionSpinnerUI.getSelectedItem()).split(" ")[1]; // Looks like "Subregion 32".
         }
         parameters.mAggressor = mAggressorUI.getText().toString();
         parameters.mVictim = mVictimUI.getText().toString();
@@ -182,12 +235,16 @@ public class FilterAdvancedActivity extends AppCompatActivity implements OnClick
             parameters.mReferenceNumber = mReferenceNumberYearUI.getText().toString() + "-" + mReferenceNumberIdUI.getText().toString();
         }
 
+        if (parameters.isEmpty()) {
+            parameters.mType = FilterParameters.Type.SIMPLE;
+        }
+
         return parameters;
     }
 
     private void clearFields() {
         mSubregionSpinnerUI.setSelection(SUBREGION_SPINNER_EMPTY_POSITION);
-        mSearchText.setText("");
+        mKeyword.setText("");
         mDateFromUI.setText("");
         mDateToUI.setText("");
         mVictimUI.setText("");

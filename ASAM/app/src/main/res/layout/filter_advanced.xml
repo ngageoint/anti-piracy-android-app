@@ -22,7 +22,7 @@
             <TextView android:id="@+id/searchLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Text"
+                android:text="Keyword"
                 android:textSize="18sp"
                 android:textColor="@color/asam_highlight_color"/>
 

@@ -5,7 +5,10 @@ import android.os.Parcelable;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
+import java.util.Date;
 
 public class FilterParameters implements Parcelable {
 
@@ -45,7 +48,7 @@ public class FilterParameters implements Parcelable {
     
     public boolean isEmpty() {
         return StringUtils.isBlank(mKeyword) &&
-               mTimeInterval == null &&
+                (mTimeInterval == null || mTimeInterval == 0) &&
                 StringUtils.isBlank(mDateFrom) &&
                 StringUtils.isBlank(mDateTo) &&
                 StringUtils.isBlank(mSubregion) &&
@@ -53,54 +56,86 @@ public class FilterParameters implements Parcelable {
                 StringUtils.isBlank(mVictim) &&
                 StringUtils.isBlank(mAggressor);
     }
-    
+
+    public Date getStartDateFromInterval() {
+        if (mTimeInterval == null) {
+            return null;
+        }
+
+        Calendar calendar = Calendar.getInstance();
+
+        switch (mTimeInterval) {
+            case 60: {
+                calendar.add(Calendar.DAY_OF_MONTH, mTimeInterval * -1);
+                return calendar.getTime();
+            }
+            case 90: {
+                calendar.add(Calendar.DAY_OF_MONTH, mTimeInterval * -1);
+                return calendar.getTime();
+            }
+            case 180: {
+                calendar.add(Calendar.DAY_OF_MONTH, mTimeInterval * -1);
+                return calendar.getTime();
+            }
+            case 365: {
+                calendar.add(Calendar.YEAR, -1);
+                return calendar.getTime();
+            }
+            case 1300: {
+                calendar.add(Calendar.YEAR, -5);
+                return calendar.getTime();
+            }
+            default:
+                return null;
+        }
+    }
+
     public String getParametersAsFormattedHtml() {
+        Collection<String> partials = new ArrayList<String>();
+
         StringBuilder html = new StringBuilder();
         if (StringUtils.isNotBlank(mKeyword)) {
-            html.append(String.format("<br/>&nbsp;&nbsp;- <b>Keyword:</b> %s", mKeyword));
+            partials.add(String.format("&nbsp;<b>Keyword:</b> %s", mKeyword));
         }
         if (mTimeInterval != null) {
-            Calendar calendar = Calendar.getInstance();
             switch (mTimeInterval) {
                 case 60:
                 case 90:
                 case 180:
-                    html.append(String.format("<br/>&nbsp;&nbsp;- <b>Last:</b> %s days", mTimeInterval));
-                    calendar.add(Calendar.DAY_OF_MONTH, mTimeInterval * -1);
+                    partials.add(String.format("&nbsp;<b>Last:</b> %s days", mTimeInterval));
                     break;
                 case 365:
-                    html.append("<br/>&nbsp;&nbsp;- <b>Date</b>: last year");
-                    calendar.add(Calendar.YEAR, -1);
+                    partials.add("&nbsp;<b>Date</b>: last year");
                     break;
                 case 1300:
-                    html.append("<br/>&nbsp;&nbsp;- <b>Date</b>: last 5 years");
-                    calendar.add(Calendar.YEAR, -5);
+                    partials.add("&nbsp;<b>Date</b>: last 5 years");
                     break;
             }
         }
 
         if (StringUtils.isNotBlank(mDateFrom) && StringUtils.isNotBlank(mDateTo)) {
-            html.append(String.format("<br/>&nbsp;&nbsp;- <b>Date:</b> %s - %s", mDateFrom, mDateTo));
+            partials.add(String.format("&nbsp;<b>Date:</b> %s - %s", mDateFrom, mDateTo));
         } else if (StringUtils.isNotBlank(mDateTo)) {
-            html.append(String.format("<br/>&nbsp;&nbsp;- <b>Date To:</b> %s", mDateTo));
+            partials.add(String.format("&nbsp;<b>Date To:</b> %s", mDateTo));
         } else if (StringUtils.isNotBlank(mDateFrom)){
-            html.append(String.format("<br/>&nbsp;&nbsp;- <b>Date From:</b> %s", mDateFrom));
+            partials.add(String.format("&nbsp;<b>Date From:</b> %s", mDateFrom));
         }
 
         if (StringUtils.isNotBlank(mSubregion)) {
-            html.append(String.format("<br/>&nbsp;&nbsp;- <b>Subregion:</b> %s", mSubregion));
+            partials.add(String.format("&nbsp;<b>Subregion:</b> %s", mSubregion));
         }
 
         if (StringUtils.isNotBlank(mReferenceNumber)) {
-            html.append(String.format("<br/>&nbsp;&nbsp;- <b>Reference Number:</b> %s", mReferenceNumber));
+            partials.add(String.format("&nbsp;<b>Reference Number:</b> %s", mReferenceNumber));
         }
         if (StringUtils.isNotBlank(mVictim)) {
-            html.append(String.format("<br/>&nbsp;&nbsp;- <b>Victim:</b> %s", mVictim));
+            partials.add(String.format("&nbsp;<b>Victim:</b> %s", mVictim));
         }
         if (StringUtils.isNotBlank(mAggressor)) {
-            html.append(String.format("<br/>&nbsp;&nbsp;- <b>Aggressor:</b> %s", mAggressor));
+            partials.add(String.format("&nbsp;<b>Aggressor:</b> %s", mAggressor));
         }
-        return html.toString();
+
+        return "<br>" + StringUtils.join(partials, "<br>");
     }
 
     /**
