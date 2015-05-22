@@ -4,7 +4,8 @@
     android:layout_height="fill_parent"
     android:fillViewport="true"
     android:orientation="vertical"
-    android:windowSoftInputMode="stateVisible" >
+    android:windowSoftInputMode="stateVisible"
+    android:background="@color/md_blue_grey_600">
 
     <ImageView android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -29,9 +30,9 @@
             android:gravity="center"
             android:paddingBottom="10dip"
             android:text="Disclaimer"
-            android:textColor="#EEEEEE"
             android:textSize="22sp"
-            android:textIsSelectable="true" />
+            android:textIsSelectable="true"
+            android:textColor="@android:color/white"/>
 
         <ScrollView
             android:layout_width="match_parent"
@@ -43,9 +44,10 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical|left"
                 android:text="@string/disclaimer_text"
-                android:textColor="#DDDDDD"
                 android:textSize="15sp"
-                android:textIsSelectable="true" />
+                android:textIsSelectable="true"
+                android:textColor="@android:color/white"
+                android:alpha=".7"/>
         </ScrollView>
 
         <LinearLayout

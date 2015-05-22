@@ -1,5 +1,6 @@
 package mil.nga.giat.asam.map;
 
+import android.animation.LayoutTransition;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -13,12 +14,14 @@ import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -62,11 +65,11 @@ import mil.nga.giat.asam.PreferencesActivity;
 import mil.nga.giat.asam.PreferencesDialogFragment;
 import mil.nga.giat.asam.PreferencesDialogFragment.OnPreferencesDialogDismissedListener;
 import mil.nga.giat.asam.R;
+import mil.nga.giat.asam.connectivity.OfflineBannerFragment;
+import mil.nga.giat.asam.db.AsamDbHelper;
 import mil.nga.giat.asam.filter.FilterActivity;
 import mil.nga.giat.asam.filter.FilterAdvancedActivity;
 import mil.nga.giat.asam.filter.FilterParameters;
-import mil.nga.giat.asam.connectivity.OfflineBannerFragment;
-import mil.nga.giat.asam.db.AsamDbHelper;
 import mil.nga.giat.asam.model.AsamBean;
 import mil.nga.giat.asam.model.AsamJsonParser;
 import mil.nga.giat.asam.model.AsamMapClusterBean;
@@ -81,7 +84,7 @@ import mil.nga.giat.poffencluster.PoffenClusterCalculator;
 import mil.nga.giat.poffencluster.PoffenPoint;
 
 
-public class AsamMapActivity extends ActionBarActivity implements OnCameraChangeListener, OnMarkerClickListener, CancelableCallback, OnPreferencesDialogDismissedListener, Asam.OnOfflineFeaturesListener, OfflineBannerFragment.OnOfflineBannerClick {
+public class AsamMapActivity extends AppCompatActivity implements OnCameraChangeListener, OnMarkerClickListener, CancelableCallback, OnPreferencesDialogDismissedListener, Asam.OnOfflineFeaturesListener, OfflineBannerFragment.OnOfflineBannerClick {
 
     private static class QueryHandler extends Handler {
 
@@ -173,11 +176,7 @@ public class AsamMapActivity extends ActionBarActivity implements OnCameraChange
         }
     }
 
-    private static final int ALL_QUERY_MODE = 0;
-    private static final int SUBREGION_QUERY_MODE = 1;
-    private static final int TEXT_QUERY_MODE = 2;
     private static final int SEARCH_ACTIVITY_REQUEST_CODE = 0;
-    private static final int SUBREGION_MAP_TABLET_ACTIVITY_REQUEST_CODE = 1;
     public static final String SEARCH_PARAMETERS = "SEARCH_PARAMETERS";
 
     private static final int TOTAL_TIME_SLIDER_TICKS = 1000;
@@ -204,15 +203,10 @@ public class AsamMapActivity extends ActionBarActivity implements OnCameraChange
     private LinearLayout mQueryModeMessageContainerUI;
     private TextView mFilterStatus;
     private SeekBar mTimeSliderUI;
-    private MenuItem mListViewMenuItemUI;
-    private MenuItem mSubregionsMenuItemUI;
-    private MenuItem mSettingsMenuItemUI;
-    private MenuItem mInfoMenuItemUI;
 
     private Date mEarliestAsamDate;
     private ProgressDialog mQueryProgressDialog;
     private QueryHandler mQueryHandler;
-    private List<Integer> mSelectedSubregionIds;
     private FilterParameters mFilterParameters;
     private Date mTextQueryDateEarliest;
     private Date mTextQueryDateLatest;
@@ -223,14 +217,11 @@ public class AsamMapActivity extends ActionBarActivity implements OnCameraChange
     private MenuItem offlineMap110mMenuItem;
     private OfflineBannerFragment offlineAlertFragment;
 
-    private String mTimeSpanTitleText;
-    private String mSubregionsTitleText;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         AsamLog.i(AsamMapActivity.class.getName() + ":onCreate");
-        setContentView(R.layout.all_asams_map_tablet);
+        setContentView(R.layout.map);
 
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
@@ -253,10 +244,34 @@ public class AsamMapActivity extends ActionBarActivity implements OnCameraChange
 
         mQueryModeMessageTextViewUI = (TextView)findViewById(R.id.all_asams_map_tablet_query_mode_message_text_view_ui);
         mQueryModeMessageContainerUI = (LinearLayout)findViewById(R.id.all_asams_map_tablet_query_mode_message_container_ui);
+        final ImageView filterResultsToggle = (ImageView) findViewById(R.id.filter_results_toggle);
+        mQueryModeMessageContainerUI.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mQueryModeMessageTextViewUI.getVisibility() == View.VISIBLE) {
+                    mQueryModeMessageTextViewUI.setVisibility(View.GONE);
+                } else {
+                    mQueryModeMessageTextViewUI.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+        mQueryModeMessageContainerUI.getLayoutTransition().addTransitionListener(new LayoutTransition.TransitionListener() {
+            @Override
+            public void startTransition(LayoutTransition transition, ViewGroup container, View view, int transitionType) {
+            }
+
+            @Override
+            public void endTransition(LayoutTransition transition, ViewGroup container, View view, int transitionType) {
+                if (transitionType == LayoutTransition.APPEARING) {
+                    filterResultsToggle.setImageResource(R.drawable.ic_keyboard_arrow_up_white);
+                } else if (transitionType == LayoutTransition.CHANGE_DISAPPEARING) {
+                    filterResultsToggle.setImageResource(R.drawable.ic_keyboard_arrow_down_white);
+                }
+            }
+        });
 
         Calendar timePeriod = new GregorianCalendar();
         timePeriod.add(Calendar.YEAR, -1);
-        mTimeSpanTitleText = getString(R.string.query_1_year_text);
         View dateRangeView = findViewById(R.id.all_asams_map_tablet_date_range);
         if (dateRangeView != null) {
             setupDateRangeView(dateRangeView);
@@ -276,10 +291,6 @@ public class AsamMapActivity extends ActionBarActivity implements OnCameraChange
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.all_asams_map_tablet_menu, menu);
-
-        mListViewMenuItemUI = menu.findItem(R.id.all_asams_map_menu_list_view_ui);
-        mSettingsMenuItemUI = menu.findItem(R.id.all_asams_map_tablet_menu_settings_ui);
-        mInfoMenuItemUI = menu.findItem(R.id.all_asams_map_tablet_menu_info_ui);
 
         int mapType = mSharedPreferences.getInt(AsamConstants.MAP_TYPE_KEY, 1);
         switch (mapType) {
@@ -400,15 +411,6 @@ public class AsamMapActivity extends ActionBarActivity implements OnCameraChange
                 startActivityForResult(intent, SEARCH_ACTIVITY_REQUEST_CODE);
                 return true;
             }
-            //TODO reset in filter page
-//            case R.id.all_asams_map_tablet_menu_reset_ui:
-//                mQueryModeMessageContainerUI.setVisibility(View.INVISIBLE);
-//                mQueryMode = ALL_QUERY_MODE;
-//                mTextQueryDateEarliest = null;
-//                mTextQueryDateLatest = null;
-//                mQueryProgressDialog = ProgressDialog.show(this, getString(R.string.all_asams_map_tablet_query_progress_dialog_title_text), getString(R.string.all_asams_map_tablet_query_progress_dialog_content_text), true);
-//                new QueryThread(getInitialTimePeriodQuery()).start();
-//                return true;
             default:
                 return super.onOptionsItemSelected(item);
 
@@ -531,41 +533,6 @@ public class AsamMapActivity extends ActionBarActivity implements OnCameraChange
                 }
                 break;
             }
-//            case SUBREGION_MAP_TABLET_ACTIVITY_REQUEST_CODE:
-//                if (resultCode == Activity.RESULT_OK) {
-//                    mQueryMode = SUBREGION_QUERY_MODE;
-//                    mSelectedSubregionIds = data.getIntegerArrayListExtra(AsamConstants.SUBREGION_QUERY_SUBREGIONS_LIST_KEY);
-//
-//                    // TODO phone only, needs to be in fragment
-//                    if (mSelectedSubregionIds.size() == 1) {
-//                        mSubregionsTitleText = getString(R.string.all_asams_map_1_subregion_text);
-//                    }
-//                    else {
-//                        mSubregionsTitleText = String.format(getString(R.string.all_asams_map_multiple_subregions_text), mSelectedSubregionIds.size());
-//                    }
-//
-//                    // TODO tablet only
-//                    Calendar timePeriod = new GregorianCalendar();
-//                    int timeSpan = data.getIntExtra(AsamConstants.SUBREGION_QUERY_TIME_SPAN_KEY, AsamConstants.TIME_SPAN_60_DAYS);
-//                    if (timeSpan == AsamConstants.TIME_SPAN_1_YEAR) {
-//                        timePeriod.add(Calendar.YEAR, -1);
-//                    }
-//                    else if (timeSpan == AsamConstants.TIME_SPAN_5_YEARS) {
-//                        timePeriod.add(Calendar.YEAR, -5);
-//                    }
-//                    else if (timeSpan == AsamConstants.TIME_SPAN_ALL) {
-//                        timePeriod.setTime(initAndGetEarliestAsamDate());
-//                    }
-//                    else {
-//                        timePeriod.add(Calendar.DAY_OF_YEAR, -timeSpan);
-//                    }
-//                    mQueryModeMessageContainerUI.setVisibility(View.VISIBLE);
-//                    mQueryModeMessageTextViewUI.setText(Html.fromHtml(String.format(getResources().getString(R.string.all_asams_map_tablet_subregions_query_mode_message_text), AsamUtils.getCommaSeparatedStringFromIntegerList(mSelectedSubregionIds))));
-//                    setTimeSlider(timePeriod.getTime());
-//                    mQueryProgressDialog = ProgressDialog.show(this, getString(R.string.all_asams_map_tablet_query_progress_dialog_title_text), getString(R.string.all_asams_map_tablet_query_progress_dialog_content_text), true);
-//                    new QueryThread(timePeriod).start();
-//                }
-//                break;
         }
     }
 
@@ -582,33 +549,6 @@ public class AsamMapActivity extends ActionBarActivity implements OnCameraChange
             if (mFilterParameters.mTimeInterval != null) {
                 mTextQueryDateEarliest = mFilterParameters.getStartDateFromInterval();
                 mTextQueryDateLatest = new Date();
-                switch (mFilterParameters.mTimeInterval) {
-                    case 0: {
-                        mTimeSpanTitleText = getString(R.string.query_all_text);
-                        mTextQueryDateEarliest = null;
-                        break;
-                    }
-                    case 60: {
-                        mTimeSpanTitleText = getString(R.string.query_60_days_text);
-                        break;
-                    }
-                    case 90: {
-                        mTimeSpanTitleText = getString(R.string.query_90_days_text);
-                        break;
-                    }
-                    case 180: {
-                        mTimeSpanTitleText = getString(R.string.query_180_days_text);
-                        break;
-                    }
-                    case 365: {
-                        mTimeSpanTitleText = getString(R.string.query_1_year_text);
-                        break;
-                    }
-                    case 1300: {
-                        mTimeSpanTitleText = getString(R.string.query_5_years_text);
-                        break;
-                    }
-                }
             }
         } else {
             // Populate the from and to dates for the text query.
@@ -724,8 +664,7 @@ public class AsamMapActivity extends ActionBarActivity implements OnCameraChange
                     Marker marker;
                     if (mapCluster.getAsams().size() == 1) {
                         marker = mMapUI.addMarker(new MarkerOptions().position(mapCluster.getClusteredMapPosition()).icon(AsamConstants.PIRATE_MARKER).anchor(0.5f, 0.5f));
-                    }
-                    else {
+                    } else {
                         BitmapDescriptor bitmapDescriptor = BitmapDescriptorFactory.fromBitmap(AsamUtils.drawNumberOnClusterMarker(AsamMapActivity.this, mapCluster.getAsams().size()));
                         marker = mMapUI.addMarker(new MarkerOptions().position(mapCluster.getClusteredMapPosition()).icon(bitmapDescriptor).anchor(0.5f, 0.5f));
                     }
@@ -801,8 +740,7 @@ public class AsamMapActivity extends ActionBarActivity implements OnCameraChange
                     AsamMapClusterBean cluster = new AsamMapClusterBean(asams, new LatLng(asam.getLatitude(), asam.getLongitude()));
                     mMapClusters.add(cluster);
                 }
-            }
-            else {
+            } else {
 
                 // Use the PoffenCluster library to calculate the clusters.
                 int numLatitudeCells = (int)(Math.round(Math.pow(2, zoomLevel[0])));
@@ -924,20 +862,6 @@ public class AsamMapActivity extends ActionBarActivity implements OnCameraChange
                     AsamDbHelper dbHelper = new AsamDbHelper(context);
                     db = dbHelper.getReadableDatabase();
                     long totalNumberOfAsams = dbHelper.getTotalNumberOfAsams(db);
-                    Calendar timePeriod = null;
-                    if (mQueryType == TIME_SLIDER_QUERY) {
-                        timePeriod = new GregorianCalendar();
-                        if (mTimeSliderTick == TOTAL_TIME_SLIDER_TICKS - 1) {
-                            timePeriod.setTime(initAndGetEarliestAsamDate());
-                        }
-                        else {
-                            timePeriod.setTime(calculateQueryDateFromTimeSlider(mTimeSliderTick));
-                        }
-                    }
-                    else if (mQueryType == TIME_PERIOD_QUERY) {
-                        timePeriod = mTimePeriod;
-                    }
-
 
                     FilterParameters parameters = FilterParameters.newInstance(mFilterParameters);
 
@@ -952,11 +876,9 @@ public class AsamMapActivity extends ActionBarActivity implements OnCameraChange
                     } else if (mQueryType == TIME_SLIDER_QUERY) {
                         if (mTimeSliderTick == 0) {
                             parameters.mDateFrom = AsamDbHelper.TEXT_QUERY_DATE_FORMAT.format(mTextQueryDateLatest);
-                        }
-                        else if (mTimeSliderTick == TOTAL_TIME_SLIDER_TICKS - 1) {
+                        } else if (mTimeSliderTick == TOTAL_TIME_SLIDER_TICKS - 1) {
                             parameters.mDateFrom = AsamDbHelper.TEXT_QUERY_DATE_FORMAT.format(mTextQueryDateEarliest);
-                        }
-                        else {
+                        } else {
                             Date dateFromSlider = mTextQueryDateEarliest != null && mTextQueryDateLatest != null ? calculateTextQueryDateFromTimeSlider(mTimeSliderTick) : calculateQueryDateFromTimeSlider(mTimeSliderTick);
                             parameters.mDateFrom = AsamDbHelper.TEXT_QUERY_DATE_FORMAT.format(dateFromSlider);
                         }
@@ -979,9 +901,7 @@ public class AsamMapActivity extends ActionBarActivity implements OnCameraChange
                                 mDateRangeText = String.format(DATE_RANGE_PATTERN, DATE_RANGE_FORMAT.format(latest), DATE_RANGE_FORMAT.format(dateFromSlider));
                             }
                         }
-//                        else { NOT TEXT_QUERY_MODE
-//                            mDateRangeText = String.format(DATE_RANGE_PATTERN, DATE_RANGE_FORMAT.format(new Date()), DATE_RANGE_FORMAT.format(timePeriod.getTime()));
-//                        }
+
                         mTotalAsamsText = String.format(TOTAL_ASAMS_PATTERN, mAsams.size(), totalNumberOfAsams);
                     }
 
@@ -1113,24 +1033,15 @@ public class AsamMapActivity extends ActionBarActivity implements OnCameraChange
             mTotalAsamsTextViewUI.setText(totalAsamsText);
         }
 
-        if (mFilterStatus != null) {
-            // Now set the feedback title.
-            StringBuilder feedbackText = new StringBuilder("");
-//            if (mQueryMode == ALL_QUERY_MODE) {
-                if (mAsams.size() == 1) {
-                    feedbackText.append(String.format(getString(R.string.all_asams_map_1_asam_text_with_timespan), mTimeSpanTitleText));
-                } else {
-                    feedbackText.append(String.format(getString(R.string.all_asams_map_multiple_asams_text_with_timespan), mAsams.size(), mTimeSpanTitleText));
-                }
-//            } else if (mQueryMode == TEXT_QUERY_MODE) {
-//                if (mAsams.size() == 1) {
-//                    feedbackText.append(getString(R.string.all_asams_map_1_asam_text));
-//                } else {
-//                    feedbackText.append(String.format(getString(R.string.all_asams_map_multiple_asams_text), mAsams.size()));
-//                }
-//            }
-            mFilterStatus.setText(feedbackText.toString());
+        // Now set the feedback title.
+        StringBuilder feedbackText = new StringBuilder("");
+        if (mAsams.size() == 1) {
+            feedbackText.append(getString(R.string.all_asams_map_1_asam_text_with_timespan));
+        } else {
+            feedbackText.append(String.format(getString(R.string.all_asams_map_multiple_asams_text_with_timespan), mAsams.size()));
         }
+
+        mFilterStatus.setText(feedbackText.toString());
     }
 
 }

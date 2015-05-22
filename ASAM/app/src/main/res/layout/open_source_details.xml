@@ -20,7 +20,6 @@
           	    android:layout_gravity="start|center_vertical"
           	    android:paddingTop="10dp"
           	    android:text="Jackson"
-          	    android:textColor="@color/asam_nonhighlight_color"
           	    android:textStyle="bold" />
           	
           	<TextView
@@ -38,16 +37,7 @@
           	    android:paddingBottom="20dp"
           	    android:paddingTop="35dp"
           	    android:text="This product includes software licensed under the Apache License version 2.0 http://www.apache.org/licenses/LICENSE-2.0"
-          	    android:textColor="@color/asam_nonhighlight_color"
           	    android:textStyle="bold" />
-        
-        	<TableRow>
-
-            	<View
-            	    style="@style/horizontal_divider"
-            	    android:background="#777" />
-
-        	</TableRow>
         
     	</TableLayout>
     
@@ -61,7 +51,6 @@
           	    android:layout_gravity="start|center_vertical"
           	    android:paddingTop="20dp"
           	    android:text="JTS Topolgy Suite"
-          	    android:textColor="@color/asam_nonhighlight_color"
           	    android:textStyle="bold" />
           	
           	<TextView
@@ -79,16 +68,7 @@
           	    android:paddingBottom="20dp"
           	    android:paddingTop="35dp"
           	    android:text="This product includes software licenesed under the GNU Lesser General Public License v3 https://www.gnu.org/licenses/lgpl.html"
-          	    android:textColor="@color/asam_nonhighlight_color"
           	    android:textStyle="bold" />
-        
-        	<TableRow>
-
-            	<View
-            	    style="@style/horizontal_divider"
-            	    android:background="#777" />
-
-        	</TableRow>
         
     	</TableLayout>
 

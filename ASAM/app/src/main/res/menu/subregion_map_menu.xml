@@ -7,7 +7,7 @@
     <item android:id="@+id/subregion_map_menu_query_ui"
         android:title="@string/subregion_map_menu_query_text"
         asam:showAsAction="always"
-        android:icon="@drawable/ic_action_bar_query"
+        android:icon="@drawable/ic_search_white"
         android:enabled="false"
         android:menuCategory="container"
         android:orderInCategory="100">
@@ -45,7 +45,7 @@
     <item android:id="@+id/all_asams_map_menu_map_type"
      android:title="@string/all_asams_map_menu_map_type_text"
      asam:showAsAction="always"
-     android:icon="@drawable/ic_action_bar_map"
+     android:icon="@drawable/ic_map_white"
      android:menuCategory="system"
      android:orderInCategory="200">
      
@@ -74,8 +74,7 @@
      
     <item android:id="@+id/subregion_map_menu_selected_subregions_ui"
         android:title="@string/subregion_map_menu_selected_subregions_text"
-        asam:showAsAction="ifRoom"
-        android:icon="@drawable/ic_action_bar_selected_subregions"
+        asam:showAsAction="never"
         android:enabled="false"
         android:menuCategory="system"
         android:orderInCategory="300"
@@ -83,8 +82,7 @@
     
     <item android:id="@+id/subregion_map_menu_reset_ui"
         android:title="@string/subregion_map_menu_reset_text"
-        asam:showAsAction="ifRoom"
-        android:icon="@drawable/ic_action_bar_reset"
+        asam:showAsAction="never"
         android:enabled="false"
         android:menuCategory="system"
         android:orderInCategory="400"

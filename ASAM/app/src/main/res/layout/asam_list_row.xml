@@ -1,100 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="?android:attr/listPreferredItemHeight"
-    android:padding="6dp">
-    
-    <RelativeLayout android:layout_width="match_parent" 
-        android:layout_height="wrap_content">
-        
-        <TextView android:id="@+id/asam_list_row_date_label_ui"
-            android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="15dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:textColor="@color/asam_highlight_color"
-            android:text="@string/asam_list_row_date_label_text"
-            android:textStyle="bold"
-            android:textSize="17sp"
-            />
-        
-        <TextView android:id="@+id/asam_list_row_date_ui"
-            android:layout_width="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView android:id="@+id/asam_list_row_date_label_ui"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                style="@style/TextAppearance.AppCompat.Subhead"
+                android:textColor="@android:color/tertiary_text_light"
+                android:text="@string/asam_list_row_date_label_text"
+                />
+
+            <TextView android:id="@+id/asam_list_row_date_ui"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/asam_list_row_date_label_ui"
+                android:layout_alignTop="@+id/asam_list_row_date_label_ui"
+                style="@style/TextAppearance.AppCompat.Subhead"
+                android:textColor="@android:color/primary_text_light"
+                android:paddingLeft="5dp"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/asam_list_row_date_label_ui"
-            android:layout_alignTop="@+id/asam_list_row_date_label_ui"
-            android:textSize="17sp"
-            android:paddingLeft="5dp"
-            android:textColor="@color/asam_nonhighlight_color"
-            />
-        
-        <TextView android:id="@+id/asam_list_row_subregion_label_ui"
-            android:layout_width="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView android:id="@+id/asam_list_row_aggressor_label_ui"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/asam_list_row_subregion_label_ui"
+                android:layout_alignParentLeft="true"
+                style="@style/TextAppearance.AppCompat.Subhead"
+                android:textColor="@android:color/tertiary_text_light"
+                android:text="@string/asam_list_row_aggressor_label_text"
+                />
+
+            <TextView android:id="@+id/asam_list_row_aggressor_ui"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/asam_list_row_aggressor_label_ui"
+                android:layout_alignTop="@+id/asam_list_row_aggressor_label_ui"
+                style="@style/TextAppearance.AppCompat.Subhead"
+                android:textColor="@android:color/primary_text_light"
+                android:ellipsize="marquee"
+                android:paddingLeft="5dp"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/asam_list_row_date_label_ui"
-            android:layout_alignParentLeft="true"
-            android:textColor="@color/asam_highlight_color"
-            android:text="@string/asam_list_row_subregion_label_text"
-            android:textStyle="bold"
-            android:paddingLeft="10dp"
-            android:textSize="17sp"
-            />
-        
-        <TextView android:id="@+id/asam_list_row_subregion_ui"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/asam_list_row_subregion_label_ui"
-            android:layout_alignTop="@+id/asam_list_row_subregion_label_ui"
-            android:textSize="17sp"
-            android:paddingLeft="5dp"
-            android:textColor="@color/asam_nonhighlight_color"
-            />
-        
-        <TextView android:id="@+id/asam_list_row_aggressor_label_ui"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/asam_list_row_subregion_label_ui"
-            android:layout_alignParentLeft="true"
-            android:text="@string/asam_list_row_aggressor_label_text"
-            android:textColor="@color/asam_highlight_color"
-            android:textStyle="bold"
-            android:paddingLeft="10dp"
-            android:textSize="17sp"
-            />
-        
-        <TextView android:id="@+id/asam_list_row_aggressor_ui"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/asam_list_row_aggressor_label_ui"
-            android:layout_alignTop="@+id/asam_list_row_aggressor_label_ui"
-            android:ellipsize="marquee"
-            android:textSize="17sp"
-            android:paddingLeft="5dp"
-            android:textColor="@color/asam_nonhighlight_color"
-            />
-        
-        <TextView android:id="@+id/asam_list_row_victim_label_ui"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/asam_list_row_aggressor_label_ui"
-            android:layout_alignParentLeft="true"
-            android:text="@string/asam_list_row_victim_label_text"
-            android:textColor="@color/asam_highlight_color"
-            android:textStyle="bold"
-            android:paddingLeft="10dp"
-            android:textSize="17sp"
-            />
-        
-        <TextView android:id="@+id/asam_list_row_victim_ui"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/asam_list_row_victim_label_ui"
-            android:layout_alignTop="@+id/asam_list_row_victim_label_ui"
-            android:ellipsize="marquee"
-            android:textSize="17sp"
-            android:paddingLeft="5dp"
-            android:textColor="@color/asam_nonhighlight_color"
-            />
-            
-    </RelativeLayout>
+            android:orientation="horizontal">
+
+            <TextView android:id="@+id/asam_list_row_victim_label_ui"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/asam_list_row_aggressor_label_ui"
+                android:layout_alignParentLeft="true"
+                style="@style/TextAppearance.AppCompat.Subhead"
+                android:textColor="@android:color/tertiary_text_light"
+                android:text="@string/asam_list_row_victim_label_text"
+                />
+
+            <TextView android:id="@+id/asam_list_row_victim_ui"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/asam_list_row_victim_label_ui"
+                android:layout_alignTop="@+id/asam_list_row_victim_label_ui"
+                style="@style/TextAppearance.AppCompat.Subhead"
+                android:textColor="@android:color/primary_text_light"
+                android:ellipsize="marquee"
+                android:paddingLeft="5dp"
+                />
+        </LinearLayout>
+
+    </LinearLayout>
 
 </LinearLayout>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="filter_interval_labels">
-        <item></item>
+        <item>All</item>
         <item>60 days</item>
         <item>90 days</item>
         <item>180 days</item>

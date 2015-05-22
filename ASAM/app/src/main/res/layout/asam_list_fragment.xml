@@ -9,7 +9,6 @@
         android:layout_height="match_parent"
         android:fastScrollEnabled="true"
         android:choiceMode="singleChoice"
-        android:divider="@color/asam_list_fragment_divider_color"
         android:dividerHeight="1dp"
         />
     

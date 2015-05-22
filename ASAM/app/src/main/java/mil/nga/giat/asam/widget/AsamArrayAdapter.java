@@ -1,15 +1,16 @@
 package mil.nga.giat.asam.widget;
 
-import java.util.List;
-
-import mil.nga.giat.asam.R;
-import mil.nga.giat.asam.model.AsamBean;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+
+import java.util.List;
+
+import mil.nga.giat.asam.R;
+import mil.nga.giat.asam.model.AsamBean;
 
 
 public class AsamArrayAdapter extends ArrayAdapter<AsamBean> {
@@ -29,7 +30,6 @@ public class AsamArrayAdapter extends ArrayAdapter<AsamBean> {
             view = layoutInflater.inflate(R.layout.asam_list_row, null);
             ViewHolder viewHolder = new ViewHolder();
             viewHolder.dateUI = (TextView)view.findViewById(R.id.asam_list_row_date_ui);
-            viewHolder.subregionUI = (TextView)view.findViewById(R.id.asam_list_row_subregion_ui);
             viewHolder.aggressorUI = (TextView)view.findViewById(R.id.asam_list_row_aggressor_ui);
             viewHolder.victimUI = (TextView)view.findViewById(R.id.asam_list_row_victim_ui);
             view.setTag(viewHolder);
@@ -38,7 +38,6 @@ public class AsamArrayAdapter extends ArrayAdapter<AsamBean> {
         if (asam != null) {
             ViewHolder viewHolder = (ViewHolder)view.getTag();
             viewHolder.dateUI.setText(AsamBean.OCCURRENCE_DATE_FORMAT.format(asam.getOccurrenceDate()));
-            viewHolder.subregionUI.setText(asam.getGeographicalSubregion());
             viewHolder.aggressorUI.setText(asam.getAggressor());
             viewHolder.victimUI.setText(asam.getVictim());
         }
@@ -47,7 +46,6 @@ public class AsamArrayAdapter extends ArrayAdapter<AsamBean> {
 
     private static class ViewHolder {
         private TextView dateUI;
-        private TextView subregionUI;
         private TextView aggressorUI;
         private TextView victimUI;
     }

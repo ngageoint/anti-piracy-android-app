@@ -11,7 +11,7 @@
     <string name="offline_map_progress_dialog_title_text">Please wait...</string>
     <string name="offline_map_progress_dialog_content_text">Loading offline map data</string>
     <string name="asam_map_label">ASAM</string>
-    <string name="asam_search_label">Filters</string>
+    <string name="filter_label">Filters</string>
     <string name="all_asams_list_title_text">List View</string>
     <string name="all_asams_about_title_text">About</string>
     <string name="all_asams_settings_title_text">Settings</string>
@@ -19,10 +19,10 @@
     <string name="all_asams_map_query_error_text">There was an error retrieving new ASAMs.</string>
     <string name="all_asams_map_no_asams_text">No ASAM activity found</string>
     <string name="all_asams_map_1_asam_text">1 Result</string>
-    <string name="all_asams_map_1_asam_text_with_timespan">1 Result; %s</string>
+    <string name="all_asams_map_1_asam_text_with_timespan">1 Filtered ASAM</string>
     <string name="all_asams_map_1_asam_text_with_timespan_with_subregions">1 Result; %1$s; %2$s</string>
     <string name="all_asams_map_multiple_asams_text">%d Results</string>
-    <string name="all_asams_map_multiple_asams_text_with_timespan">%1$d Results; %2$s</string>
+    <string name="all_asams_map_multiple_asams_text_with_timespan">%1$d Filtered ASAMs</string>
     <string name="all_asams_map_multiple_asams_text_with_timespan_with_subregions">%1$d Results; %2$s; %3$s</string>
     <string name="all_asams_map_1_subregion_text">1 Subregion</string>
     <string name="all_asams_map_multiple_subregions_text">%d Subregions</string>
@@ -45,7 +45,7 @@
     <string name="all_asams_map_tablet_date_range_text">--/--/---- to --/--/----</string>
     <string name="all_asams_map_tablet_total_asams_text">----- of ---- ASAMs</string>
     <string name="all_asams_map_tablet_subregions_query_mode_message_text"><![CDATA[<u><b>Selected Subregion(s)</b></u><p>&nbsp;&nbsp;&nbsp;%s</p>Click <i>Menu->Reset</i> to return to "All ASAMs" mode.]]></string>
-    <string name="all_asams_map_tablet_text_query_mode_message_text"><![CDATA[<u><b>Filters</b></u><br/>%s<br/><br/>]]></string>
+    <string name="all_asams_map_tablet_text_query_mode_message_text"><![CDATA[%s<br/>]]></string>
     <string name="all_asams_map_tablet_menu_list_view_text">List View</string>
     <string name="all_asams_map_tablet_menu_subregions_text">Subregions</string>
     <string name="all_asams_map_tablet_menu_settings_text">Settings</string>
@@ -220,7 +220,6 @@
     <string name="subregion_map_menu_1_year_text">1 year</string>
     <string name="subregion_map_menu_5_years_text">5 years</string>
     <string name="subregion_map_menu_all_text">All</string>
-    <string name="text_query_title_text">ASAM Query</string>
     <string name="text_query_select_subregion_label_text">Subregion</string>
     <string name="text_query_select_subregion_prompt_text">Select A Subregion</string>
     <string name="text_query_reference_number_label_text">Reference Number</string>

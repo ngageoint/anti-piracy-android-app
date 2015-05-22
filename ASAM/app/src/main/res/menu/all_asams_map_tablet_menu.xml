@@ -5,21 +5,21 @@
     <item android:id="@+id/all_asams_map_menu_search_ui"
         android:title="@string/all_asams_map_menu_query_text"
         asam:showAsAction="always"
-        android:icon="@drawable/ic_action_bar_query"
+        android:icon="@drawable/ic_search_white"
         android:menuCategory="system"
         android:orderInCategory="100"/>
 
     <item android:id="@+id/all_asams_map_menu_list_view_ui"
         android:title="@string/all_asams_map_menu_list_view_text"
         asam:showAsAction="always"
-        android:icon="@drawable/ic_action_bar_list_view"
+        android:icon="@drawable/ic_list_white"
         android:menuCategory="system"
         android:orderInCategory="200"/>
 
     <item android:id="@+id/all_asams_map_menu_map_type"
         android:title="@string/all_asams_map_menu_map_type_text"
         asam:showAsAction="always"
-        android:icon="@drawable/ic_action_bar_map"
+        android:icon="@drawable/ic_map_white"
         android:menuCategory="system"
         android:orderInCategory="300">
         <menu android:id="@+id/map_types_menu">
@@ -47,16 +47,13 @@
     <item android:id="@+id/asam_about"
         android:title="@string/all_asams_about_title_text"
         asam:showAsAction="never"
-        android:icon="@drawable/ic_action_bar_info"
         android:menuCategory="system"
         android:orderInCategory="400"/>
 
     <item android:id="@+id/asam_settings"
         android:title="@string/all_asams_settings_title_text"
         asam:showAsAction="never"
-        android:icon="@drawable/ic_action_bar_settings"
         android:menuCategory="system"
         android:orderInCategory="500"/>
-
 
 </menu>

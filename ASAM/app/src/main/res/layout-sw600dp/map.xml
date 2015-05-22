@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <fragment android:id="@+id/all_asams_map_tablet_map_view_ui"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="?android:attr/actionBarSize"
+        class="com.google.android.gms.maps.SupportMapFragment"/>
+
+    <LinearLayout android:id="@+id/all_asams_map_tablet_query_mode_message_container_ui"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:animateLayoutChanges="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:paddingTop="5dp"
+        android:paddingRight="5dp"
+        android:paddingLeft="5dp"
+        android:orientation="vertical"
+        android:background="@color/md_blue_grey_500">
+
+        <TextView android:id="@+id/all_asams_map_query_feedback_text_ui"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textColor="@android:color/white"/>
+
+        <TextView android:id="@+id/all_asams_map_tablet_query_mode_message_text_view_ui"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:textColor="@android:color/white"
+            android:visibility="gone"/>
+
+        <ImageView android:id="@+id/filter_results_toggle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="-5dp"
+            android:layout_marginBottom="-5dp"
+            android:adjustViewBounds="true"
+            android:tint="@color/md_teal_A700"
+            android:src="@drawable/ic_keyboard_arrow_down_white"/>
+
+    </LinearLayout>
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:padding="0dp"
+        android:layout_alignParentBottom="true"
+        app:contentInsetLeft="0dp"
+        app:contentInsetStart="0dp"
+        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+        <LinearLayout
+            android:id="@+id/all_asams_map_tablet_date_range"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/all_asams_map_tablet_date_range_text_view_ui"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:text="@string/all_asams_map_tablet_date_range_text"/>
+
+            <SeekBar
+                android:id="@+id/all_asams_map_tablet_time_slider_ui"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:max="999"
+                android:progress="100"/>
+
+            <TextView
+                android:id="@+id/all_asams_map_tablet_total_asams_text_view_ui"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="15dp"
+                android:text="@string/all_asams_map_tablet_total_asams_text"/>
+
+        </LinearLayout>
+
+    </android.support.v7.widget.Toolbar>
+
+</RelativeLayout>

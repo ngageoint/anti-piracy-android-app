@@ -1,12 +1,5 @@
 package mil.nga.giat.asam;
 
-import java.util.List;
-
-import mil.nga.giat.asam.model.AsamBean;
-import mil.nga.giat.asam.util.AsamConstants;
-import mil.nga.giat.asam.util.AsamListContainer;
-import mil.nga.giat.asam.util.AsamLog;
-import mil.nga.giat.asam.widget.AsamArrayAdapter;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -21,6 +14,14 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import java.util.List;
+
+import mil.nga.giat.asam.model.AsamBean;
+import mil.nga.giat.asam.util.AsamConstants;
+import mil.nga.giat.asam.util.AsamListContainer;
+import mil.nga.giat.asam.util.AsamLog;
+import mil.nga.giat.asam.widget.AsamArrayAdapter;
 
 
 public class AsamListFragment extends Fragment implements AdapterView.OnItemClickListener {
@@ -116,7 +117,7 @@ public class AsamListFragment extends Fragment implements AdapterView.OnItemClic
                     mAsamArrayAdapter.sort(new AsamBean.DescendingAggressorComparator());
                 }
                 break;
-                
+
             case AsamConstants.OCURRENCE_DATE_SORT:
                 if (mSortDirection == AsamConstants.SORT_ASCENDING) {
                     mAsamArrayAdapter.sort(new AsamBean.AscendingOccurrenceDateComparator());
@@ -125,7 +126,7 @@ public class AsamListFragment extends Fragment implements AdapterView.OnItemClic
                     mAsamArrayAdapter.sort(new AsamBean.DescendingOccurrenceDateComparator());
                 }
                 break;
-                
+
             case AsamConstants.REFERENCE_NUMBER_SORT:
                 if (mSortDirection == AsamConstants.SORT_ASCENDING) {
                     mAsamArrayAdapter.sort(new AsamBean.AscendingReferenceNumberComparator());
@@ -134,7 +135,7 @@ public class AsamListFragment extends Fragment implements AdapterView.OnItemClic
                     mAsamArrayAdapter.sort(new AsamBean.DescendingReferenceNumberComparator());
                 }
                 break;
-                
+
             case AsamConstants.SUBREGION_SORT:
                 if (mSortDirection == AsamConstants.SORT_ASCENDING) {
                     mAsamArrayAdapter.sort(new AsamBean.AscendingSubregionComparator());
@@ -143,7 +144,7 @@ public class AsamListFragment extends Fragment implements AdapterView.OnItemClic
                     mAsamArrayAdapter.sort(new AsamBean.DescendingSubregionComparator());
                 }
                 break;
-                
+
             case AsamConstants.VICTIM_SORT:
                 if (mSortDirection == AsamConstants.SORT_ASCENDING) {
                     mAsamArrayAdapter.sort(new AsamBean.AscendingVictimComparator());

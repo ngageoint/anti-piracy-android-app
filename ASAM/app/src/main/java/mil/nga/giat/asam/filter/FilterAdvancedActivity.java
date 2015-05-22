@@ -100,7 +100,7 @@ public class FilterAdvancedActivity extends AppCompatActivity implements OnClick
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu items for use in the action bar
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.filter_menu, menu);
+        inflater.inflate(R.menu.filter_advanced, menu);
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -197,20 +197,6 @@ public class FilterAdvancedActivity extends AppCompatActivity implements OnClick
             mReferenceNumberYearUI.setText(referenceNumber[0]);
             mReferenceNumberIdUI.setText(referenceNumber[1]);
         }
-
-//        Integer timeInterval = queryParameters.mTimeInterval;
-//        if (timeInterval != null) {
-//            int index = 0;
-//            int[] intervalValues = getResources().getIntArray(R.array.filter_interval_values);
-//            for (; index < intervalValues.length; index++) {
-//                if (timeInterval == intervalValues[index]) {
-//                    break;
-//                }
-//            }
-//            intervalSpinner.setSelection(index);
-//        }
-
-
     }
 
     private FilterParameters parseFields() {

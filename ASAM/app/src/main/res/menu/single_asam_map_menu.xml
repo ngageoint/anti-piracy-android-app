@@ -6,7 +6,7 @@
     <item android:id="@+id/all_asams_map_menu_map_type"
      android:title="@string/all_asams_map_menu_map_type_text"
      asam:showAsAction="always"
-     android:icon="@drawable/ic_action_bar_map"
+     android:icon="@drawable/ic_map_white"
      android:menuCategory="system"
      android:orderInCategory="100">
      

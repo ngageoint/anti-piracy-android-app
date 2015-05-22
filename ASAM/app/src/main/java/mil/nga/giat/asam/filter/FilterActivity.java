@@ -9,7 +9,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -24,7 +23,7 @@ public class FilterActivity extends AppCompatActivity implements Button.OnClickL
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
+//        requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.filter);
@@ -32,7 +31,6 @@ public class FilterActivity extends AppCompatActivity implements Button.OnClickL
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        findViewById(R.id.advanced_filter).setOnClickListener(this);
         findViewById(R.id.apply).setOnClickListener(this);
         findViewById(R.id.cancel).setOnClickListener(this);
 
@@ -53,6 +51,15 @@ public class FilterActivity extends AppCompatActivity implements Button.OnClickL
             case R.id.reset:
                 clearFields();
                 return true;
+            case R.id.advanced: {
+                Intent intent = new Intent(this, FilterAdvancedActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT);
+                FilterParameters parameters = parseFields();
+                intent.putExtra(AsamMapActivity.SEARCH_PARAMETERS, parameters);
+                startActivity(intent);
+                finish();
+                return true;
+            }
             default: {
                 return super.onOptionsItemSelected(item);
             }
@@ -63,7 +70,7 @@ public class FilterActivity extends AppCompatActivity implements Button.OnClickL
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu items for use in the action bar
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.filter_menu, menu);
+        inflater.inflate(R.menu.filter, menu);
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -71,15 +78,6 @@ public class FilterActivity extends AppCompatActivity implements Button.OnClickL
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.advanced_filter: {
-                Intent intent = new Intent(this, FilterAdvancedActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT);
-                FilterParameters parameters = parseFields();
-                intent.putExtra(AsamMapActivity.SEARCH_PARAMETERS, parameters);
-                startActivity(intent);
-                finish();
-                break;
-            }
             case R.id.apply: {
                 Intent intent = new Intent();
                 FilterParameters parameters = parseFields();

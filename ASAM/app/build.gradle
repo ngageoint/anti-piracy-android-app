@@ -6,10 +6,14 @@ android {
     compileSdkVersion 21
     buildToolsVersion "21.1.2"
 
+    dexOptions {
+        javaMaxHeapSize "4g"
+    }
+
     defaultConfig {
         applicationId "mil.nga.giat.asam"
-        minSdkVersion 10
-        targetSdkVersion 19
+        minSdkVersion 16
+        targetSdkVersion 22
         multiDexEnabled true
     }
 
@@ -45,6 +49,8 @@ android {
 
 dependencies {
     compile 'com.android.support:appcompat-v7:22.1.1'
+    compile 'com.android.support:cardview-v7:22.1.1'
+    compile 'com.android.support:recyclerview-v7:22.1.1'
     compile 'com.google.android.gms:play-services:7.3.0'
     compile 'com.fasterxml.jackson.core:jackson-databind:2.4.2'
     compile 'com.vividsolutions:jts:1.8'

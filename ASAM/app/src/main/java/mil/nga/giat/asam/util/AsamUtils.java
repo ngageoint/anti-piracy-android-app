@@ -32,7 +32,18 @@ public class AsamUtils {
     public static Bitmap drawNumberOnClusterMarker(Context context, int number) {
         String numberOfPoints = "" + number;
         float scale = context.getResources().getDisplayMetrics().density;
-        Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_cluster);
+        Bitmap bitmap = null;
+
+        if (number > 1000)  {
+            bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_cluster_xlarge);
+        } else if (number > 100) {
+            bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_cluster_large);
+        } else if (number > 10) {
+            bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_cluster_medium);
+        } else {
+            bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_cluster_small);
+        }
+
         Bitmap.Config bitmapConfig = bitmap.getConfig();
         if (bitmapConfig == null) {
             bitmapConfig = android.graphics.Bitmap.Config.ARGB_8888;

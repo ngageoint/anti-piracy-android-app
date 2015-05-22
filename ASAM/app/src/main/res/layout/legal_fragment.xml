@@ -17,25 +17,15 @@
         	    android:layout_height="wrap_content"
         	    android:padding="10dp"
         		android:clickable="true"
-        		android:onClick="ngaDisclaimerRowClicked"
-        		style="@style/SelectableTableRow">
+        		android:onClick="ngaDisclaimerRowClicked">
             
             	<TextView
             	    android:layout_width="wrap_content"
             	    android:layout_height="wrap_content"
             	    android:layout_gravity="left|center_vertical"
             	    android:padding="10dp"
-            	    android:text="@string/legal_fragment_nga_disclaimer_label_text"
-            	    android:textColor="@color/asam_nonhighlight_color" />
+            	    android:text="@string/legal_fragment_nga_disclaimer_label_text" />
             	
-        	</TableRow>
-        
-        	<TableRow>
-
-            	<View
-            	    style="@style/horizontal_divider"
-            	    android:background="#777" />
-
         	</TableRow>
         
     	</TableLayout>
@@ -49,25 +39,15 @@
         	    android:layout_height="wrap_content"
         	    android:padding="10dp"
         		android:clickable="true"
-        		android:onClick="ngaPrivacyPolicyRowClicked"
-        		style="@style/SelectableTableRow">
+        		android:onClick="ngaPrivacyPolicyRowClicked">
             
             	<TextView
             	    android:layout_width="wrap_content"
             	    android:layout_height="wrap_content"
             	    android:layout_gravity="left|center_vertical"
             	    android:padding="10dp"
-            	    android:text="@string/legal_fragment_nga_privacy_policy_label_text"
-            	    android:textColor="@color/asam_nonhighlight_color" />
+            	    android:text="@string/legal_fragment_nga_privacy_policy_label_text" />
             
-        	</TableRow>
-        
-        	<TableRow>
-
-            	<View
-            	    style="@style/horizontal_divider"
-            	    android:background="#777" />
-
         	</TableRow>
         
     	</TableLayout>
@@ -81,25 +61,15 @@
         	    android:layout_height="wrap_content"
         	    android:padding="10dp"
         		android:clickable="true"
-        		android:onClick="openSourceAttributionRowClicked"
-        		style="@style/SelectableTableRow">
+        		android:onClick="openSourceAttributionRowClicked">
             
             	<TextView
             	    android:layout_width="wrap_content"
             	    android:layout_height="wrap_content"
             	    android:layout_gravity="left|center_vertical"
             	    android:padding="10dp"
-            	    android:text="@string/legal_fragment_nga_open_source_licenses_label_text"
-            	    android:textColor="@color/asam_nonhighlight_color" />
+            	    android:text="@string/legal_fragment_nga_open_source_licenses_label_text" />
             
-        	</TableRow>
-        
-        	<TableRow>
-
-            	<View
-            	    style="@style/horizontal_divider"
-            	    android:background="#777" />
-
         	</TableRow>
         
     	</TableLayout>

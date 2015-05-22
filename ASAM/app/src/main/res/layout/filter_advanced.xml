@@ -23,8 +23,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Keyword"
-                android:textSize="18sp"
-                android:textColor="@color/asam_highlight_color"/>
+                android:textSize="18sp"/>
 
             <EditText android:id="@+id/keyword"
                 android:inputType="text"
@@ -42,7 +41,6 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="left"
-                    android:textColor="@color/asam_highlight_color"
                     android:textSize="18sp"/>
 
                 <TextView android:text="@string/text_query_date_to_text"
@@ -50,7 +48,6 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="left"
-                    android:textColor="@color/asam_highlight_color"
                     android:textSize="18sp"/>
 
             </LinearLayout>
@@ -86,7 +83,6 @@
                 android:layout_height="wrap_content"
                 android:text="@string/text_query_select_subregion_label_text"
                 android:layout_marginTop="10dp"
-                android:textColor="@color/asam_highlight_color"
                 android:textSize="18sp"/>
 
             <Spinner android:id="@+id/text_query_subregion_spinner_ui"
@@ -98,7 +94,6 @@
                 android:layout_height="wrap_content"
                 android:text="@string/text_query_reference_number_label_text"
                 android:layout_marginTop="10dp"
-                android:textColor="@color/asam_highlight_color"
                 android:textSize="18sp"/>
 
             <LinearLayout android:layout_width="match_parent"
@@ -130,7 +125,6 @@
                 android:layout_height="wrap_content"
                 android:text="@string/text_query_victim_label_text"
                 android:layout_marginTop="10dp"
-                android:textColor="@color/asam_highlight_color"
                 android:textSize="18sp"/>
 
             <EditText android:id="@+id/text_query_victim_edit_text_ui"
@@ -143,7 +137,6 @@
                 android:layout_height="wrap_content"
                 android:text="@string/text_query_aggressor_label_text"
                 android:layout_marginTop="10dp"
-                android:textColor="@color/asam_highlight_color"
                 android:textSize="18sp"/>
 
             <EditText android:id="@+id/text_query_aggressor_edit_text_ui"

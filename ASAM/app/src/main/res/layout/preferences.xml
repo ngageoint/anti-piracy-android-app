@@ -9,7 +9,6 @@
     <TextView android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/preferences_hide_disclaimer_label_text"
-        android:textColor="@color/asam_highlight_color"
         android:textStyle="bold"
         android:paddingTop="10dp"
         />
@@ -38,7 +37,6 @@
         android:layout_height="wrap_content"
         android:text="@string/preferences_last_sync_time_label_text"
         android:textStyle="bold"
-        android:textColor="@color/asam_highlight_color"
         android:paddingTop="10dp"
         />
             
