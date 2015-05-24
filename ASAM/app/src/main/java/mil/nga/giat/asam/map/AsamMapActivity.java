@@ -177,7 +177,9 @@ public class AsamMapActivity extends AppCompatActivity implements OnCameraChange
     }
 
     private static final int SEARCH_ACTIVITY_REQUEST_CODE = 0;
+    private static final int LIST_ACTIVITY_REQUEST_CODE = 1;
     public static final String SEARCH_PARAMETERS = "SEARCH_PARAMETERS";
+    public static final String MAP_LOCATION = "MAP_LOCATION";
 
     private static final int TOTAL_TIME_SLIDER_TICKS = 1000;
     private static final SimpleDateFormat DATE_RANGE_FORMAT = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
@@ -377,7 +379,7 @@ public class AsamMapActivity extends AppCompatActivity implements OnCameraChange
                 AsamListContainer.mAsams = mAsams;
                 Intent intent = new Intent(this, AsamListActivity.class);
                 intent.putExtra(AsamListActivity.ALWAYS_SHOW_LIST_KEY, true);
-                startActivity(intent);
+                startActivityForResult(intent, LIST_ACTIVITY_REQUEST_CODE);
                 return true;
             }
             case R.id.all_asams_map_tablet_menu_settings_ui: {
@@ -526,10 +528,17 @@ public class AsamMapActivity extends AppCompatActivity implements OnCameraChange
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
-            case (SEARCH_ACTIVITY_REQUEST_CODE) : {
+            case (SEARCH_ACTIVITY_REQUEST_CODE): {
                 if (resultCode == Activity.RESULT_OK) {
                     mFilterParameters = data.getParcelableExtra(SEARCH_PARAMETERS);
                     onFilter();
+                }
+                break;
+            }
+            case (LIST_ACTIVITY_REQUEST_CODE): {
+                if (resultCode == Activity.RESULT_OK) {
+                    LatLng latLng = data.getParcelableExtra(MAP_LOCATION);
+                    mMapUI.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14));
                 }
                 break;
             }

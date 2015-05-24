@@ -1,15 +1,20 @@
 package mil.nga.giat.asam;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
+
+import com.google.android.gms.maps.model.LatLng;
 
 import org.apache.commons.lang3.StringUtils;
 
+import mil.nga.giat.asam.map.AsamMapActivity;
 import mil.nga.giat.asam.map.SingleAsamMapActivity;
 import mil.nga.giat.asam.model.AsamBean;
 import mil.nga.giat.asam.util.AsamConstants;
@@ -37,6 +42,16 @@ public class AsamReportFragment extends Fragment {
         mReferenceNumberUI = (TextView) view.findViewById(R.id.asam_report_fragment_reference_number_ui);
         mLocationUI = (TextView) view.findViewById(R.id.asam_report_fragment_location_ui);
         mDescriptionUI = (TextView) view.findViewById(R.id.asam_report_fragment_description_ui);
+
+        view.findViewById(R.id.asam_report_fragment_map_it_button_icon_ui).setOnClickListener(new Button.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            Intent intent = new Intent(v.getContext(), AsamMapActivity.class);
+            intent.putExtra(AsamMapActivity.MAP_LOCATION, new LatLng(mAsam.getLatitude(), mAsam.getLongitude()));
+                getActivity().setResult(Activity.RESULT_OK, intent);
+                getActivity().finish();
+            }
+        });
 
         return view;
     }

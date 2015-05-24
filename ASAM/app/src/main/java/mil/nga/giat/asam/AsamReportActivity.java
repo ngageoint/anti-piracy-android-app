@@ -1,15 +1,14 @@
 package mil.nga.giat.asam;
 
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 
 import mil.nga.giat.asam.model.AsamBean;
 import mil.nga.giat.asam.util.AsamConstants;
 
-
-public class AsamReportActivity extends ActionBarActivity {
+public class AsamReportActivity extends AppCompatActivity {
 
     private AsamReportFragment mAsamReportFragment;
     

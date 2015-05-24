@@ -3,18 +3,16 @@ package mil.nga.giat.asam;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
-import android.view.View;
 
 import java.util.Collections;
 
 import mil.nga.giat.asam.model.AsamBean;
 import mil.nga.giat.asam.util.AsamConstants;
 import mil.nga.giat.asam.util.AsamListContainer;
-import mil.nga.giat.asam.util.AsamLog;
 
-public class AsamListActivity extends ActionBarActivity implements AsamListFragment.OnAsamSelectedListener, SortAsamListDialogFragment.OnSortAsamListListener {
+public class AsamListActivity extends AppCompatActivity implements AsamListFragment.OnAsamSelectedListener, SortAsamListDialogFragment.OnSortAsamListListener {
 
     public static final String ALWAYS_SHOW_LIST_KEY = "ALWAYS_SHOW_LIST";
 
@@ -63,11 +61,12 @@ public class AsamListActivity extends ActionBarActivity implements AsamListFragm
 
     @Override
     public void onAsamSelected(AsamBean asam) {
-        AsamLog.i(AsamListActivity.class.getName() + ":onAsamSelected");
         if (reportFragment == null) {
             Intent intent = new Intent(this, AsamReportActivity.class);
             intent.putExtra(AsamConstants.ASAM_KEY, asam);
+            intent.setFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT);
             startActivity(intent);
+            finish();
         } else {
             reportFragment.updateContent(asam);
         }
@@ -75,11 +74,6 @@ public class AsamListActivity extends ActionBarActivity implements AsamListFragm
     
     @Override
     public void onSortAsamList(int sortDirection, int sortPopupSpinnerSelection) {
-        AsamLog.i(AsamListActivity.class.getName() + ":onSortAsamList");
         listFragment.onSortAsamList(sortDirection, sortPopupSpinnerSelection);
-    }
-    
-    public void mapAsamLocation(View view) {
-        reportFragment.mapAsamLocation(view);
     }
 }
