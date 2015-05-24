@@ -10,6 +10,7 @@
         android:fastScrollEnabled="true"
         android:choiceMode="singleChoice"
         android:dividerHeight="1dp"
+        android:divider="#1f000000"
         />
     
 </LinearLayout>

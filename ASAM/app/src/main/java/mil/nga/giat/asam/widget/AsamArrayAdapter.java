@@ -29,9 +29,10 @@ public class AsamArrayAdapter extends ArrayAdapter<AsamBean> {
             LayoutInflater layoutInflater = (LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = layoutInflater.inflate(R.layout.asam_list_row, null);
             ViewHolder viewHolder = new ViewHolder();
-            viewHolder.dateUI = (TextView)view.findViewById(R.id.asam_list_row_date_ui);
-            viewHolder.aggressorUI = (TextView)view.findViewById(R.id.asam_list_row_aggressor_ui);
-            viewHolder.victimUI = (TextView)view.findViewById(R.id.asam_list_row_victim_ui);
+            viewHolder.dateUI = (TextView) view.findViewById(R.id.asam_list_row_date_ui);
+            viewHolder.aggressorUI = (TextView) view.findViewById(R.id.asam_list_row_aggressor_ui);
+            viewHolder.victimUI = (TextView) view.findViewById(R.id.asam_list_row_victim_ui);
+            viewHolder.descriptionUI = (TextView) view.findViewById(R.id.asam_list_row_description_ui);
             view.setTag(viewHolder);
         }
         AsamBean asam = mAsams.get(position);
@@ -40,6 +41,7 @@ public class AsamArrayAdapter extends ArrayAdapter<AsamBean> {
             viewHolder.dateUI.setText(AsamBean.OCCURRENCE_DATE_FORMAT.format(asam.getOccurrenceDate()));
             viewHolder.aggressorUI.setText(asam.getAggressor());
             viewHolder.victimUI.setText(asam.getVictim());
+            viewHolder.descriptionUI.setText(asam.getDescription());
         }
         return view;
     }
@@ -48,5 +50,6 @@ public class AsamArrayAdapter extends ArrayAdapter<AsamBean> {
         private TextView dateUI;
         private TextView aggressorUI;
         private TextView victimUI;
+        private TextView descriptionUI;
     }
 }

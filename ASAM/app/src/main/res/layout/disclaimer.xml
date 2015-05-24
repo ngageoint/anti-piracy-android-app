@@ -57,22 +57,26 @@
             style="?android:attr/buttonBarStyle">
 
             <Button android:id="@+id/disclaimer_exit_button_ui"
+                style="?android:attr/borderlessButtonStyle"
                 android:text="@string/disclaimer_exit_button_text"
+                android:textColor="@color/md_teal_A700"
                 android:contentDescription="@string/disclaimer_exit_button_text"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:onClick="disclaimerExitButtonClicked"
-                style="?android:attr/buttonBarButtonStyle"/>
+                android:background="?android:attr/selectableItemBackgroundBorderless"/>
 
             <Button android:id="@+id/disclaimer_agree_button_ui"
+                style="?android:attr/borderlessButtonStyle"
                 android:text="@string/disclaimer_agree_button_text"
+                android:textColor="@color/md_teal_A700"
                 android:contentDescription="@string/disclaimer_agree_button_text"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:onClick="disclaimerAgreeButtonClicked"
-                style="?android:attr/buttonBarButtonStyle"/>
+                android:background="?android:attr/selectableItemBackgroundBorderless"/>
 
         </LinearLayout>
     </LinearLayout>

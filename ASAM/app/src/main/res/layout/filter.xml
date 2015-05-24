@@ -70,8 +70,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <android.support.v7.widget.AppCompatButton
-            android:id="@+id/apply"
+        <Button android:id="@+id/apply"
             style="?android:attr/borderlessButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -81,8 +80,7 @@
             android:text="Apply"
             android:background="?android:attr/selectableItemBackgroundBorderless"/>
 
-        <Button
-            android:id="@+id/cancel"
+        <Button android:id="@+id/cancel"
             style="?android:attr/borderlessButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

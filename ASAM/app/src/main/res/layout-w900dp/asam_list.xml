@@ -7,10 +7,7 @@
     <fragment android:id="@+id/asam_list_report_tablet_asam_list_fragment"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="3"
-        android:layout_marginTop="10dp"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
+        android:layout_weight="4"
         class="mil.nga.giat.asam.AsamListFragment"/>
 
     <fragment android:id="@+id/asam_list_report_tablet_asam_report_fragment"

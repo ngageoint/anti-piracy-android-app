@@ -94,8 +94,7 @@ public class AsamListFragment extends Fragment implements AdapterView.OnItemClic
         AsamLog.i(AsamListFragment.class.getName() + ":onAttach");
         try {
             mOnAsamSelectedListener = (OnAsamSelectedListener)activity;
-        }
-        catch (ClassCastException caught) {
+        } catch (ClassCastException caught) {
             throw new ClassCastException(activity.toString() + " must implement OnAsamSelectedListener");
         }
     }
@@ -112,8 +111,7 @@ public class AsamListFragment extends Fragment implements AdapterView.OnItemClic
             case AsamConstants.AGGRESSOR_SORT:
                 if (mSortDirection == AsamConstants.SORT_ASCENDING) {
                     mAsamArrayAdapter.sort(new AsamBean.AscendingAggressorComparator());
-                }
-                else {
+                } else {
                     mAsamArrayAdapter.sort(new AsamBean.DescendingAggressorComparator());
                 }
                 break;
@@ -121,8 +119,7 @@ public class AsamListFragment extends Fragment implements AdapterView.OnItemClic
             case AsamConstants.OCURRENCE_DATE_SORT:
                 if (mSortDirection == AsamConstants.SORT_ASCENDING) {
                     mAsamArrayAdapter.sort(new AsamBean.AscendingOccurrenceDateComparator());
-                }
-                else {
+                } else {
                     mAsamArrayAdapter.sort(new AsamBean.DescendingOccurrenceDateComparator());
                 }
                 break;
@@ -130,8 +127,7 @@ public class AsamListFragment extends Fragment implements AdapterView.OnItemClic
             case AsamConstants.REFERENCE_NUMBER_SORT:
                 if (mSortDirection == AsamConstants.SORT_ASCENDING) {
                     mAsamArrayAdapter.sort(new AsamBean.AscendingReferenceNumberComparator());
-                }
-                else {
+                } else {
                     mAsamArrayAdapter.sort(new AsamBean.DescendingReferenceNumberComparator());
                 }
                 break;
@@ -139,8 +135,7 @@ public class AsamListFragment extends Fragment implements AdapterView.OnItemClic
             case AsamConstants.SUBREGION_SORT:
                 if (mSortDirection == AsamConstants.SORT_ASCENDING) {
                     mAsamArrayAdapter.sort(new AsamBean.AscendingSubregionComparator());
-                }
-                else {
+                } else {
                     mAsamArrayAdapter.sort(new AsamBean.DescendingSubregionComparator());
                 }
                 break;
@@ -148,8 +143,7 @@ public class AsamListFragment extends Fragment implements AdapterView.OnItemClic
             case AsamConstants.VICTIM_SORT:
                 if (mSortDirection == AsamConstants.SORT_ASCENDING) {
                     mAsamArrayAdapter.sort(new AsamBean.AscendingVictimComparator());
-                }
-                else {
+                } else {
                     mAsamArrayAdapter.sort(new AsamBean.DescendingVictimComparator());
                 }
                 break;
