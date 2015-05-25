@@ -20,7 +20,7 @@
         android:paddingRight="5dp"
         android:paddingLeft="5dp"
         android:orientation="vertical"
-        android:background="@color/md_blue_grey_500">
+        android:background="@drawable/filter_ripple">
 
         <TextView android:id="@+id/all_asams_map_query_feedback_text_ui"
             android:layout_width="wrap_content"

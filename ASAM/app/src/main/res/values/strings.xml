@@ -204,7 +204,7 @@
     <string name="selected_subregions_popup_cancel_text">Close</string>
     <string name="single_asam_map_snippet_text">ASAM Report - %1$s</string>
     <string name="sort_asam_list_dialog_fragment_prompt_text">Sort By</string>
-    <string name="sort_asam_list_dialog_fragment_title_text">Asam List Sort</string>
+    <string name="sort_asam_list_dialog_fragment_title_text">Sort</string>
     <string name="sort_asam_list_dialog_fragment_sort_button_text">Sort</string>
     <string name="sort_asam_list_dialog_fragment_cancel_button_text">Cancel</string>
     <string name="sort_asam_list_dialog_fragment_spinner_prompt_text">Sort By</string>

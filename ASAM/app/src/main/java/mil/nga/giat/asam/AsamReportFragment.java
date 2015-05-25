@@ -21,7 +21,7 @@ import mil.nga.giat.asam.util.AsamConstants;
 
 
 public class AsamReportFragment extends Fragment {
-    
+
     private AsamBean mAsam;
     private TextView mOccurrenceDateUI;
     private TextView mAggressorUI;
@@ -30,7 +30,7 @@ public class AsamReportFragment extends Fragment {
     private TextView mReferenceNumberUI;
     private TextView mLocationUI;
     private TextView mDescriptionUI;
-    
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.asam_report_fragment, container, false);

@@ -8,7 +8,6 @@
         asam:showAsAction="always"
         android:icon="@drawable/ic_sort_white"
         android:menuCategory="system"
-        android:orderInCategory="100"
-        />
+        android:orderInCategory="100"/>
 
 </menu>

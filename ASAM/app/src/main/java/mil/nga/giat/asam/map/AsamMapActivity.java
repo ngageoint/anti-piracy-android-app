@@ -426,7 +426,7 @@ public class AsamMapActivity extends AppCompatActivity implements OnCameraChange
                 if (marker.equals(mapCluster.getMapMarker())) {
                     AsamListContainer.mAsams = mapCluster.getAsams();
                     Intent intent = new Intent(this, AsamListActivity.class);
-                    startActivity(intent);
+                    startActivityForResult(intent, LIST_ACTIVITY_REQUEST_CODE);
                     break;
                 }
             }
