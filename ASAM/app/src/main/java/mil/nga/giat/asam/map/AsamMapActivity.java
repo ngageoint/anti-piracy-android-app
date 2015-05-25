@@ -596,7 +596,12 @@ public class AsamMapActivity extends AppCompatActivity implements OnCameraChange
         }
 
         setTimeSlider(null);
-        mQueryProgressDialog = ProgressDialog.show(this, getString(R.string.all_asams_map_tablet_query_progress_dialog_title_text), getString(R.string.all_asams_map_tablet_query_progress_dialog_content_text), true);
+
+        mQueryProgressDialog = new ProgressDialog(this, R.style.AppCompatAlertDialogStyle);
+        mQueryProgressDialog.setTitle(getString(R.string.all_asams_map_tablet_query_progress_dialog_title_text));
+        mQueryProgressDialog.setMessage(getString(R.string.all_asams_map_tablet_query_progress_dialog_content_text));
+        mQueryProgressDialog.setIndeterminate(true);
+        mQueryProgressDialog.show();
         new QueryThread().start();
     }
 
