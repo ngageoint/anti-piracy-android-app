@@ -11,6 +11,7 @@
         android:choiceMode="singleChoice"
         android:dividerHeight="1dp"
         android:divider="#1f000000"
-        />
+        android:background="@android:color/background_light"
+        android:drawSelectorOnTop="true"/>
     
 </LinearLayout>
