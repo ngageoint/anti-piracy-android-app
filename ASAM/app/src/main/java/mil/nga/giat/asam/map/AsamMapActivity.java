@@ -1021,7 +1021,11 @@ public class AsamMapActivity extends AppCompatActivity implements OnCameraChange
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                mQueryProgressDialog = ProgressDialog.show(AsamMapActivity.this, getString(R.string.all_asams_map_tablet_query_progress_dialog_title_text), getString(R.string.all_asams_map_tablet_query_progress_dialog_content_text), true);
+                mQueryProgressDialog = new ProgressDialog(AsamMapActivity.this, R.style.AppCompatAlertDialogStyle);
+                mQueryProgressDialog.setTitle(getString(R.string.all_asams_map_tablet_query_progress_dialog_title_text));
+                mQueryProgressDialog.setMessage(getString(R.string.all_asams_map_tablet_query_progress_dialog_content_text));
+                mQueryProgressDialog.setIndeterminate(true);
+                mQueryProgressDialog.show();
                 new QueryThread(seekBar.getProgress()).start();
             }
 
