@@ -42,16 +42,10 @@
         </menu>
     </item>
 
-    <item android:id="@+id/all_asams_map_tablet_menu_settings_ui"
-        android:title="@string/all_asams_map_tablet_menu_settings_text"
+    <item android:id="@+id/about"
+        android:title="@string/all_asams_about_title_text"
         asam:showAsAction="never"
         android:menuCategory="system"
-        android:orderInCategory="500"/>
-
-    <item android:id="@+id/all_asams_map_tablet_menu_info_ui"
-        android:title="@string/all_asams_map_tablet_menu_info_text"
-        asam:showAsAction="never"
-        android:menuCategory="system"
-        android:orderInCategory="600"/>
+        android:orderInCategory="400"/>
 
 </menu>

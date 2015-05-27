@@ -44,16 +44,10 @@
         </menu>
     </item>
 
-    <item android:id="@+id/asam_about"
+    <item android:id="@+id/about"
         android:title="@string/all_asams_about_title_text"
         asam:showAsAction="never"
         android:menuCategory="system"
         android:orderInCategory="400"/>
-
-    <item android:id="@+id/asam_settings"
-        android:title="@string/all_asams_settings_title_text"
-        asam:showAsAction="never"
-        android:menuCategory="system"
-        android:orderInCategory="500"/>
 
 </menu>

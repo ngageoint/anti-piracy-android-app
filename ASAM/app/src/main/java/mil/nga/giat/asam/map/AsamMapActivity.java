@@ -58,12 +58,7 @@ import java.util.Locale;
 
 import mil.nga.giat.asam.Asam;
 import mil.nga.giat.asam.AsamListActivity;
-import mil.nga.giat.asam.InfoActivity;
-import mil.nga.giat.asam.InfoDialogFragment;
-import mil.nga.giat.asam.LegalTabletActivity;
-import mil.nga.giat.asam.PreferencesActivity;
-import mil.nga.giat.asam.PreferencesDialogFragment;
-import mil.nga.giat.asam.PreferencesDialogFragment.OnPreferencesDialogDismissedListener;
+import mil.nga.giat.asam.settings.SettingsActivity;
 import mil.nga.giat.asam.R;
 import mil.nga.giat.asam.connectivity.OfflineBannerFragment;
 import mil.nga.giat.asam.db.AsamDbHelper;
@@ -84,7 +79,7 @@ import mil.nga.giat.poffencluster.PoffenClusterCalculator;
 import mil.nga.giat.poffencluster.PoffenPoint;
 
 
-public class AsamMapActivity extends AppCompatActivity implements OnCameraChangeListener, OnMarkerClickListener, CancelableCallback, OnPreferencesDialogDismissedListener, Asam.OnOfflineFeaturesListener, OfflineBannerFragment.OnOfflineBannerClick {
+public class AsamMapActivity extends AppCompatActivity implements OnCameraChangeListener, OnMarkerClickListener, CancelableCallback, Asam.OnOfflineFeaturesListener, OfflineBannerFragment.OnOfflineBannerClick {
 
     private static class QueryHandler extends Handler {
 
@@ -382,29 +377,13 @@ public class AsamMapActivity extends AppCompatActivity implements OnCameraChange
                 startActivityForResult(intent, LIST_ACTIVITY_REQUEST_CODE);
                 return true;
             }
-            case R.id.all_asams_map_tablet_menu_settings_ui: {
-                DialogFragment dialogFragment = PreferencesDialogFragment.newInstance();
-                dialogFragment.show(getSupportFragmentManager(), AsamConstants.PREFERENCES_DIALOG_TAG);
-                return true;
-            }
-            case R.id.all_asams_map_tablet_menu_info_ui: {
-                DialogFragment dialogFragment = InfoDialogFragment.newInstance();
-                dialogFragment.show(getSupportFragmentManager(), AsamConstants.INFO_DIALOG_TAG);
-                return true;
-            }
-            case R.id.asam_about: {
-                //TODO should launch same info thing as tablet, use different layout
-                Intent intent = new Intent(this, InfoActivity.class);
-                startActivity(intent);
-                return true;
-            }
-            case R.id.asam_settings: {
-                //TODO should launch same preference as tablet, use different layout
-                Intent intent = new Intent(this, PreferencesActivity.class);
+            case R.id.about: {
+                Intent intent = new Intent(this, SettingsActivity.class);
                 startActivity(intent);
                 return true;
             }
             case R.id.all_asams_map_menu_search_ui: {
+
                 Intent intent = launchAdvancedFilter() ?
                     new Intent(this, FilterAdvancedActivity.class) :
                     new Intent(this, FilterActivity.class);
@@ -605,52 +584,6 @@ public class AsamMapActivity extends AppCompatActivity implements OnCameraChange
         new QueryThread().start();
     }
 
-    public void onPreferencesDialogDismissed(boolean hideDisclaimer) {
-        DialogFragment dialogFragment = (DialogFragment)getSupportFragmentManager().findFragmentByTag(AsamConstants.PREFERENCES_DIALOG_TAG);
-        if (dialogFragment != null) {
-            dialogFragment.dismiss();
-        }
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putBoolean(AsamConstants.HIDE_DISCLAIMER_KEY, hideDisclaimer);
-        editor.commit();
-    }
-
-    public void syncButtonClicked(View view) {
-        PreferencesDialogFragment dialogFragment = (PreferencesDialogFragment)getSupportFragmentManager().findFragmentByTag(AsamConstants.PREFERENCES_DIALOG_TAG);
-        if (dialogFragment != null) {
-            if (SyncTime.isSynched(this)) {
-                Toast.makeText(this, getString(R.string.preferences_no_sync_description_text), Toast.LENGTH_LONG).show();
-            }
-            else {
-                mQueryProgressDialog = ProgressDialog.show(this, getString(R.string.all_asams_map_tablet_query_progress_dialog_title_text), getString(R.string.all_asams_map_tablet_query_progress_dialog_content_text), true);
-                new QueryThread(true).start();
-            }
-        }
-    }
-
-    public void legalRowClicked(View view) {
-        DialogFragment dialogFragment = (DialogFragment)getSupportFragmentManager().findFragmentByTag(AsamConstants.INFO_DIALOG_TAG);
-        if (dialogFragment != null) {
-            dialogFragment.dismiss();
-        }
-        Intent intent = new Intent(this, LegalTabletActivity.class);
-        startActivity(intent);
-    }
-
-    public void emailLinkClicked(View view) {
-        DialogFragment dialogFragment = (DialogFragment)getSupportFragmentManager().findFragmentByTag(AsamConstants.INFO_DIALOG_TAG);
-        if (dialogFragment != null) {
-            dialogFragment.dismiss();
-        }
-        Intent intent = new Intent(android.content.Intent.ACTION_SEND);
-        String[] recipients = { getString(R.string.info_fragment_email_address) };
-        intent.putExtra(android.content.Intent.EXTRA_EMAIL, recipients);
-        intent.putExtra(android.content.Intent.EXTRA_SUBJECT, getString(R.string.info_fragment_email_subject_text));
-        intent.setType("plain/text");
-        startActivity(intent);
-    }
-
     private void redrawMarkersOnMapBasedOnVisibleRegion() {
         LatLngBounds bounds = mMapUI.getProjection().getVisibleRegion().latLngBounds;
         int zoomLevel = Math.round(mMapUI.getCameraPosition().zoom);
@@ -791,30 +724,22 @@ public class AsamMapActivity extends AppCompatActivity implements OnCameraChange
         private int mQueryType;
         private int mTimeSliderTick;
         private Calendar mTimePeriod;
-        private boolean mSynchronizationQuery;
 
         QueryThread() {
             mQueryType = STANDARD_QUERY;
             mPerformBoundsAdjustmentWithQuery = true;
-            mSynchronizationQuery = false;
-        }
-
-        QueryThread(boolean synchronizationQuery) {
-            mSynchronizationQuery = synchronizationQuery;
         }
 
         QueryThread(int timeSliderTick) {
             mQueryType = TIME_SLIDER_QUERY;
             mTimeSliderTick = timeSliderTick;
             mPerformBoundsAdjustmentWithQuery = false;
-            mSynchronizationQuery = false;
         }
 
         QueryThread(Calendar timePeriod) {
             mQueryType = TIME_PERIOD_QUERY;
             mTimePeriod = timePeriod;
             mPerformBoundsAdjustmentWithQuery = true;
-            mSynchronizationQuery = false;
         }
 
         @Override
@@ -839,34 +764,15 @@ public class AsamMapActivity extends AppCompatActivity implements OnCameraChange
                         }
                     }
                     SyncTime.finishedSync(context);
-                }
-                catch (Exception caught) {
+                } catch (Exception caught) {
                     AsamLog.e(AsamMapActivity.class.getName() + ":There was an error parsing ASAM feed", caught);
                     mQueryError = true;
-                }
-                finally {
+                } finally {
                     if (db != null) {
                         db.close();
                         db = null;
                     }
                 }
-            }
-
-            if (mSynchronizationQuery) {
-                runOnUiThread(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        mQueryProgressDialog.dismiss();
-                        if (!mQueryError) {
-                            Toast.makeText(AsamMapActivity.this, getString(R.string.preferences_sync_complete_description_text), Toast.LENGTH_LONG).show();
-                        }
-                        else {
-                            Toast.makeText(AsamMapActivity.this, getString(R.string.preferences_error_sync_description_text), Toast.LENGTH_LONG).show();
-                        }
-                    }
-                });
-                return;
             }
 
             try {

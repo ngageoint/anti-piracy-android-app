@@ -37,14 +37,32 @@
 
         <activity android:name=".DisclaimerActivity"
             android:label="@string/disclaimer_title_text"
-            android:theme="@style/asam_theme"
-            android:configChanges="orientation|keyboardHidden|screenSize">
+            android:theme="@style/asam_theme">
+        </activity>
+
+        <activity android:name=".settings.disclaimer.DisclaimerActivity"
+            android:label="@string/disclaimer_title_text"
+            android:theme="@style/asam_theme">
+        </activity>
+
+        <activity android:name=".settings.privacy.PrivacyActivity"
+            android:label="@string/legal_fragment_nga_privacy_policy_label_text"
+            android:theme="@style/asam_theme">
+        </activity>
+
+        <activity android:name=".settings.opensource.OpenSourceActivity"
+            android:label="@string/legal_fragment_nga_open_source_licenses_label_text"
+            android:theme="@style/asam_theme">
         </activity>
         
-        <activity android:name=".InfoActivity"
+        <activity android:name=".settings.SettingsActivity"
             android:label="@string/info_title_text"
-            android:theme="@style/asam_theme"
-            android:configChanges="orientation|keyboardHidden|screenSize">
+            android:theme="@style/asam_theme">
+        </activity>
+
+        <activity android:name=".settings.about.AboutActivity"
+            android:label="@string/all_asams_about_title_text"
+            android:theme="@style/asam_theme">
         </activity>
 
         <activity android:name=".map.AsamMapActivity"
@@ -75,13 +93,7 @@
             android:theme="@style/asam_theme"
             android:configChanges="orientation|keyboardHidden|screenSize">
         </activity>
-        
-        <activity android:name=".PreferencesActivity"
-            android:label="@string/preferences_title_text"
-            android:theme="@style/asam_theme"
-            android:configChanges="orientation|keyboardHidden|screenSize">
-        </activity>
-        
+
         <activity android:name=".AsamReportActivity"
             android:label="@string/asam_report_title_text"
             android:theme="@style/asam_theme"
@@ -93,31 +105,7 @@
             android:theme="@style/asam_theme"
             android:configChanges="orientation|keyboardHidden|screenSize">
         </activity>
-        
-        <activity android:name=".LegalActivity"
-            android:label="@string/legal_title_text"
-            android:theme="@style/asam_theme"
-            android:configChanges="orientation|keyboardHidden|screenSize">
-        </activity>
-        
-        <activity android:name=".LegalTabletActivity"
-            android:label="@string/legal_title_text"
-            android:theme="@style/asam_theme"
-            android:configChanges="orientation|keyboardHidden|screenSize">
-        </activity>
-        
-        <activity android:name=".LegalDetailsActivity"
-            android:label="@string/legal_details_title_text"
-            android:theme="@style/asam_theme"
-            android:configChanges="orientation|keyboardHidden|screenSize">
-        </activity>
-        
-        <activity android:name=".OpenSourceDetailsActivity"
-            android:label="@string/legal_fragment_nga_open_source_licenses_label_text"
-            android:theme="@style/asam_theme"
-            android:configChanges="orientation|keyboardHidden|screenSize">
-        </activity>
-        
+
         <receiver android:name="mil.nga.giat.asam.connectivity.NetworkChangeReceiver" >
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />

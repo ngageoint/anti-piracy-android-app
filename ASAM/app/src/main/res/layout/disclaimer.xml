@@ -5,7 +5,7 @@
     android:fillViewport="true"
     android:orientation="vertical"
     android:windowSoftInputMode="stateVisible"
-    android:background="@color/md_blue_grey_600">
+    android:background="@color/md_blue_grey_500">
 
     <ImageView android:layout_width="wrap_content"
         android:layout_height="wrap_content"

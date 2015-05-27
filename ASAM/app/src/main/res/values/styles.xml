@@ -27,6 +27,13 @@
         <item name="colorAccent">@color/md_teal_A700</item>
     </style>
 
+    <style name="ListSubHeader">
+        <item name="android:textStyle">normal</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">#8A000000</item>
+    </style>
+
     <style name="ListTextPrimary">
         <item name="android:textStyle">normal</item>
         <item name="android:fontFamily">sans-serif</item>
@@ -45,6 +52,12 @@
         <item name="android:fontFamily">sans-serif</item>
         <item name="android:textSize">14sp</item>
         <item name="android:alpha">.7</item>
+    </style>
+
+    <style name="Divider">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:background">#1f000000</item>
     </style>
 
 </resources>

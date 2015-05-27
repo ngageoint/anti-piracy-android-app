@@ -14,7 +14,6 @@
     <string name="filter_label">Filters</string>
     <string name="all_asams_list_title_text">List View</string>
     <string name="all_asams_about_title_text">About</string>
-    <string name="all_asams_settings_title_text">Settings</string>
     <string name="all_asams_map_title_text">ASAM</string>
     <string name="all_asams_map_query_error_text">There was an error retrieving new ASAMs.</string>
     <string name="all_asams_map_no_asams_text">No ASAM activity found</string>
@@ -96,10 +95,10 @@
     <string name="info_fragment_image_content_description_text">NGA Logo</string>
     <string name="info_fragment_version_text">ASAM v1.0.0</string>
     <string name="info_fragment_info_text">Anti-Shipping Activity Messages (ASAM) include the locations and descriptive accounts of specific hostile acts against ships and mariners. The reports may be useful for recognition, prevention and avoidance of potential hostile activity.</string>
-    <string name="info_fragment_contact_text"><u>Contact Us</u></string>
-    <string name="info_fragment_phone_number_text">Phone: 1-800-362-6289</string>
+    <string name="info_fragment_contact_text">Contact Us</string>
+    <string name="info_fragment_phone_number_text">1-800-362-6289</string>
     <string name="info_fragment_email_subject_text">ASAM app feedback</string>
-    <string name="info_fragment_email_text">Email: <a href="mailto:MCDASAM@nga.mil">MCDASAM@nga.mil</a></string>
+    <string name="info_fragment_email_text"><a href="mailto:MCDASAM@nga.mil">MCDASAM@nga.mil</a></string>
     <string name="info_fragment_email_address">MCDASAM@nga.mil</string>
     <string name="info_fragment_menu_info_text">About</string>
     <string name="info_fragment_legal_row_text">Legal Information</string>
@@ -115,70 +114,56 @@
     <string name="legal_details_title_text">License</string>
     <string name="legal_details_nga_disclaimer_title_text">NGA Disclaimer</string>
     <string name="legal_details_fragment_nga_disclaimer_license_text">
-        <![CDATA[
-                 <p>
-                     As a condition of downloading, accessing, or using the products, you agree to the terms of the NGA Disclaimer.
-                 </p>
-                 <p>
-                     DISCLAIMER OF WARRANTIES AND LIMITATIONS ON LIABILITY.
-                 </p>
-                 <p>
-                     NGA MAKES NO REPRESENTATIONS OR WARRANTIES REGARDING THE ACCURACY OR COMPLETENESS OF ANY CONTENT OF THE PRODUCTS.
-                 </p>
-                 <p>
-                     USER AGREES, THROUGH USE OF THE PRODUCT, TO ASSUME ANY AND ALL LIABILITY FOR ANY DAMAGE OR LOSS RESULTING FROM
-                     YOUR USE OF THE CONTENT OR THE PRODUCTS AND HOLDS NGA HARMLESS FROM LIABILITY.
-                 <p>
-        ]]>
+        As a condition of downloading, accessing, or using the products, you agree to the terms of the NGA Disclaimer.
+        \n\n
+        DISCLAIMER OF WARRANTIES AND LIMITATIONS ON LIABILITY.
+        \n\n
+        NGA MAKES NO REPRESENTATIONS OR WARRANTIES REGARDING THE ACCURACY OR COMPLETENESS OF ANY CONTENT OF THE PRODUCTS.
+        \n\n
+        USER AGREES, THROUGH USE OF THE PRODUCT, TO ASSUME ANY AND ALL LIABILITY FOR ANY DAMAGE OR LOSS RESULTING FROM YOUR USE OF THE CONTENT OR THE PRODUCTS AND HOLDS NGA HARMLESS FROM LIABILITY.
     </string>
     <string name="legal_details_nga_privacy_policy_title_text">ASAM App</string>
     <string name="legal_details_fragment_nga_privacy_policy_license_text">
-        <![CDATA[
-                 <p>
                      NGA Mobile Application Privacy Policy for ASAM Mobile
-                 </p>
-                 <p>
+                     \n\n
                      This App is exclusively licensed to and operated by the National Geospatial-Intelligence Agency (NGA).
                      Our Privacy Policy informs you, the user, what personally identifiable information (PII) we collect
                      when you use this App, how we use and share the PII we collect, and how we protect your privacy.
                      Further information on NGA\'s privacy practices can be found at http://www.nga.mil, at the "Privacy and Security" tab.
-                 </p>
-                 <p>
+                     \n\n
                      If you have any questions about this Policy or our privacy practices, please contact us using the following
                      information: publicaffairs@nga.mil. Effective Date: 20 August 2012
-                 </p>
-                 <p>
+                     \n\n
                      Your Consent: Please review NGA\'s Privacy Policy before using this App. By using this App you are consenting
                      to the collection, use, and disclosure of your PII as set forth in this Policy. If you do not agree to be
                      bound by this Policy, you may not access or use this App.
-                 </p>
-                 <p>
+                     \n\n
+
                      Privacy Notices
-                 </p>
-                 <p>
+                     \n\n
+
                      This Policy may be supplemented or amended from time to time and NGA will notify you by issuing “privacy notices.”
                      These Privacy Notices will provide a level of detail describing the changes in our policy and how they may affect you.
                      For example, this App may issue Privacy Notices providing details about changes in the function and use of the PII
                      we collect, and why we need that information.
-                 </p>
-                 <p>
+                     \n\n
+
                      Types of Information We Collect
-                 </p>
-                 <p>
+                     \n\n
+
                      NGA will collect NO PII or information from your mobile device. NGA neither collects nor acquires any user names, passwords or other login information or personal information from Google.
-                 </p>
-                 <p>
+                     \n\n
+
                      Links to Third-Party Websites
-                 </p>
-                 <p>
+                     \n\n
+
                      This App may contain links to websites operated by other organizations. This Policy does not apply to PII collected
                      on any of these third-party websites. When you access third-party websites through a link on this App, please take
                      a few minutes to review the privacy policy posted on that site. This App uses the Google Maps/Google Earth API.
                      It incorporates by reference the Google Privacy Policy, which can be viewed at http://www.google.com/privacy.html,
                      as amended by Google from time to time.
-                 </p>
-        ]]>
     </string>
+    <string name="preferences_last_sync_title_text">Last Sync Date</string>
     <string name="preferences_no_sync_title_text">Sync\'d</string>
     <string name="preferences_no_sync_description_text">The ASAM application is already sync\'d.</string>
     <string name="preferences_error_sync_description_text">There was an error retrieving new ASAMs.</string>

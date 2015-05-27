@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="horizontal"
-    android:baselineAligned="false">
-    
-    <fragment android:id="@+id/info_info_fragment"
+    android:layout_height="match_parent">
+
+    <fragment android:id="@+id/disclaimer_fragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        class="mil.nga.giat.asam.InfoFragment"
-        />
-    
+        class="mil.nga.giat.asam.settings.privacy.PrivacyFragment"/>
+
 </LinearLayout>

@@ -5,10 +5,9 @@
     android:orientation="horizontal"
     android:baselineAligned="false">
     
-    <fragment android:id="@+id/legal_details_legal_details_fragment"
+    <fragment android:id="@+id/info_info_fragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        class="mil.nga.giat.asam.LegalDetailsFragment"
-        />
+        class="mil.nga.giat.asam.settings.SettingsFragment"/>
     
 </LinearLayout>

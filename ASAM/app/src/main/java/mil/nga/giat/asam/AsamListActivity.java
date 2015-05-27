@@ -34,7 +34,7 @@ public class AsamListActivity extends AppCompatActivity implements AsamListFragm
         // Pick the first item in the list.
         if (reportFragment != null && AsamListContainer.mAsams.size() > 0) {
             Collections.sort(AsamListContainer.mAsams, new AsamBean.DescendingOccurrenceDateComparator());
-            reportFragment.updateContent(AsamListContainer.mAsams.get(0));
+            listFragment.selectAsam(0);
         }
 
         Boolean alwaysShowList = getIntent().getBooleanExtra(ALWAYS_SHOW_LIST_KEY, false);

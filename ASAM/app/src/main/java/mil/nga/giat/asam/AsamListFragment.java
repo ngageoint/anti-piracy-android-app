@@ -10,7 +10,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -47,6 +46,23 @@ public class AsamListFragment extends Fragment implements AdapterView.OnItemClic
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.asam_list_fragment, container, false);
+
+        mAsamListViewUI = (ListView) view.findViewById(R.id.asam_list_tablet_list_view_ui);
+
+        TextView emptyListViewUI = new TextView(view.getContext());
+        emptyListViewUI.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        emptyListViewUI.setText(getResources().getString(R.string.asam_list_empty_list_text));
+        emptyListViewUI.setVisibility(View.GONE);
+        mAsamListViewUI.setEmptyView(emptyListViewUI);
+
+        mAsams = AsamListContainer.mAsams;
+        mAsamArrayAdapter = new AsamArrayAdapter(view.getContext(), R.layout.asam_list_row, mAsams);
+        mSortDirection = AsamConstants.SORT_DESCENDING;
+        mSortPopupSpinnerSelection = AsamConstants.OCURRENCE_DATE_SORT;
+        mAsamArrayAdapter.sort(new AsamBean.DescendingOccurrenceDateComparator());
+        mAsamListViewUI.setAdapter(mAsamArrayAdapter);
+        mAsamListViewUI.setOnItemClickListener(this);
+
         return view;
     }
     
@@ -65,27 +81,6 @@ public class AsamListFragment extends Fragment implements AdapterView.OnItemClic
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        AsamLog.i(AsamListFragment.class.getName() + ":onActivityCreated");
-        mAsamListViewUI = (ListView)getActivity().findViewById(R.id.asam_list_tablet_list_view_ui);
-        
-        TextView emptyListViewUI = new TextView(getActivity());
-        emptyListViewUI.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-        emptyListViewUI.setText(getResources().getString(R.string.asam_list_empty_list_text));
-        emptyListViewUI.setVisibility(View.GONE);
-        mAsamListViewUI.setEmptyView(emptyListViewUI);
-        
-        mAsams = AsamListContainer.mAsams;
-        mAsamArrayAdapter = new AsamArrayAdapter(getActivity(), R.layout.asam_list_row, mAsams);
-        mSortDirection = AsamConstants.SORT_DESCENDING;
-        mSortPopupSpinnerSelection = AsamConstants.OCURRENCE_DATE_SORT;
-        mAsamArrayAdapter.sort(new AsamBean.DescendingOccurrenceDateComparator());
-        mAsamListViewUI.setAdapter(mAsamArrayAdapter);
-        mAsamListViewUI.setOnItemClickListener(this);
     }
     
     @Override
@@ -148,5 +143,9 @@ public class AsamListFragment extends Fragment implements AdapterView.OnItemClic
                 }
                 break;
         }
+    }
+
+    public void selectAsam(int position) {
+        mAsamListViewUI.performItemClick(mAsamListViewUI, position, mAsamListViewUI.getItemIdAtPosition(position));
     }
 }
