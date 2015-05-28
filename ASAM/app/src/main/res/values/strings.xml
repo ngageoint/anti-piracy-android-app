@@ -162,6 +162,7 @@
                      It incorporates by reference the Google Privacy Policy, which can be viewed at http://www.google.com/privacy.html,
                      as amended by Google from time to time.
     </string>
+    <string name="preferences_date_title_text">Data</string>
     <string name="preferences_last_sync_title_text">Last Sync Date</string>
     <string name="preferences_no_sync_title_text">Sync\'d</string>
     <string name="preferences_no_sync_description_text">The ASAM application is already sync\'d.</string>

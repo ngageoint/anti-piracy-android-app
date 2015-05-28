@@ -75,7 +75,7 @@ public class SettingsFragment extends Fragment implements AdapterView.OnItemClic
             case 3:
                 settingClickListener.onOpenSourceClick();
                 break;
-            case 4:
+            case 6:
                 onSyncClick();
                 break;
         }
