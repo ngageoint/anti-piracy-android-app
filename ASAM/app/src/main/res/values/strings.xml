@@ -106,7 +106,6 @@
     <string name="launch_screen_subregions_label_text">Subregions</string>
     <string name="launch_screen_text_query_label_text">ASAM Query</string>
     <string name="launch_screen_settings_label_text">Settings</string>
-    <string name="launch_screen_sync_text">* Go to Settings and select \"Sync Now\" to view the most recent reports.</string>
     <string name="legal_title_text">Legal</string>
     <string name="legal_fragment_nga_disclaimer_label_text">NGA Disclaimer</string>
     <string name="legal_fragment_nga_privacy_policy_label_text">NGA Privacy Policy</string>
@@ -170,7 +169,8 @@
     <string name="preferences_sync_complete_title_text">Sync\'d</string>
     <string name="preferences_sync_complete_description_text">The ASAM application sync is now complete.</string>
     <string name="preferences_title_text">Settings</string>
-    <string name="preferences_last_sync_time_label_text">Last Sync Time</string>
+    <string name="preferences_last_sync_time_label_text">Last Sync Time %1$s</string>
+    <string name="preferences_click_to_sync_label_text">Click to sync</string>
     <string name="preferences_sync_now_button_text">Sync Now</string>
     <string name="preferences_hide_disclaimer_label_text">Disclaimer</string>
     <string name="preferences_hide_disclaimer_checkbox_text">Hide Disclaimer</string>

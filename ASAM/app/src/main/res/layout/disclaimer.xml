@@ -65,7 +65,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:onClick="disclaimerExitButtonClicked"
-                android:background="?android:attr/selectableItemBackgroundBorderless"/>
+                android:background="?attr/selectableItemBackgroundBorderless"/>
 
             <Button android:id="@+id/disclaimer_agree_button_ui"
                 style="?android:attr/borderlessButtonStyle"
@@ -76,7 +76,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:onClick="disclaimerAgreeButtonClicked"
-                android:background="?android:attr/selectableItemBackgroundBorderless"/>
+                android:background="?attr/selectableItemBackgroundBorderless"/>
 
         </LinearLayout>
     </LinearLayout>

@@ -1,175 +1,196 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@android:color/background_light">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <LinearLayout android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:scrollbars="vertical">
+    <ListView android:id="@+id/list_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fastScrollEnabled="true"
+        android:choiceMode="singleChoice"
+        android:dividerHeight="1dp"
+        android:divider="#1f000000"
+        android:background="@android:color/background_light"
+        android:drawSelectorOnTop="true"/>
 
-        <TableLayout android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+</LinearLayout>
 
-            <TableRow android:id="@+id/about_row"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingTop="16dp"
-                android:paddingLeft="16dp"
-                android:paddingBottom="20dp">
+<!--<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:background="@android:color/background_light">-->
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    style="@style/ListTextPrimary"
-                    android:layout_gravity="left|center_vertical"
-                    android:text="@string/all_asams_about_title_text" />
+    <!--<LinearLayout android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:orientation="vertical"-->
+        <!--android:scrollbars="vertical">-->
 
-            </TableRow>
+        <!--<TableLayout android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content">-->
 
-            <View style="@style/Divider"/>
+            <!--<LinearLayout android:id="@+id/about_row"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:paddingTop="16dp"-->
+                <!--android:paddingLeft="16dp"-->
+                <!--android:paddingBottom="20dp"-->
+                <!--android:background="@android:color/background_light">-->
+                <!--<TextView-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--style="@style/ListTextPrimary"-->
+                    <!--android:layout_gravity="left|center_vertical"-->
+                    <!--android:text="@string/all_asams_about_title_text" />-->
 
-        </TableLayout>
+            <!--</LinearLayout>-->
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:paddingTop="16dp">
+            <!--<View style="@style/Divider"/>-->
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingLeft="16dp"
-                android:layout_gravity="center_vertical"
-                style="@style/ListSubHeader"
-                android:text="Legal Information"/>
+        <!--</TableLayout>-->
 
-        </LinearLayout>
+        <!--<LinearLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="48dp"-->
+            <!--android:layout_marginTop="16dp"-->
+            <!--android:paddingTop="16dp">-->
 
-        <TableLayout android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            <!--<TextView-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:paddingLeft="16dp"-->
+                <!--android:layout_gravity="center_vertical"-->
+                <!--style="@style/ListSubHeader"-->
+                <!--android:text="Legal Information"/>-->
 
-            <View style="@style/Divider"/>
+        <!--</LinearLayout>-->
 
-            <TableRow android:id="@+id/disclaimer_row"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingTop="16dp"
-                android:paddingLeft="16dp"
-                android:paddingBottom="20dp"
-                android:clickable="true">
+        <!--<TableLayout android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content">-->
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    style="@style/ListTextPrimary"
-                    android:layout_gravity="left|center_vertical"
-                    android:text="@string/legal_fragment_nga_disclaimer_label_text" />
+            <!--<View style="@style/Divider"/>-->
 
-            </TableRow>
+            <!--<LinearLayout android:id="@+id/disclaimer_row"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:paddingTop="16dp"-->
+                <!--android:paddingLeft="16dp"-->
+                <!--android:paddingBottom="20dp"-->
+                <!--android:clickable="true"-->
+                <!--android:background="?attr/selectableItemBackground">-->
 
-            <View style="@style/Divider"/>
+                <!--<TextView-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--style="@style/ListTextPrimary"-->
+                    <!--android:layout_gravity="left|center_vertical"-->
+                    <!--android:text="@string/legal_fragment_nga_disclaimer_label_text" />-->
 
-            <TableRow android:id="@+id/privacy_policy_row"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingTop="16dp"
-                android:paddingLeft="16dp"
-                android:paddingBottom="20dp"
-                android:clickable="true">
+            <!--</LinearLayout>-->
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    style="@style/ListTextPrimary"
-                    android:layout_gravity="left|center_vertical"
-                    android:text="@string/legal_fragment_nga_privacy_policy_label_text" />
+            <!--<View style="@style/Divider"/>-->
 
-            </TableRow>
+            <!--<LinearLayout android:id="@+id/privacy_policy_row"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:paddingTop="16dp"-->
+                <!--android:paddingLeft="16dp"-->
+                <!--android:paddingBottom="20dp"-->
+                <!--android:clickable="true"-->
+                <!--android:background="?attr/selectableItemBackground">>-->
 
-            <View style="@style/Divider"/>
+                <!--<TextView-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--style="@style/ListTextPrimary"-->
+                    <!--android:layout_gravity="left|center_vertical"-->
+                    <!--android:text="@string/legal_fragment_nga_privacy_policy_label_text" />-->
 
-            <TableRow android:id="@+id/open_source_row"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingTop="16dp"
-                android:paddingLeft="16dp"
-                android:paddingBottom="20dp"
-                android:clickable="true">
+            <!--</LinearLayout>-->
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    style="@style/ListTextPrimary"
-                    android:layout_gravity="left|center_vertical"
-                    android:text="@string/legal_fragment_nga_open_source_licenses_label_text" />
+            <!--<View style="@style/Divider"/>-->
 
-            </TableRow>
+            <!--<TableRow android:id="@+id/open_source_row"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:paddingTop="16dp"-->
+                <!--android:paddingLeft="16dp"-->
+                <!--android:paddingBottom="20dp"-->
+                <!--android:clickable="true">-->
 
-            <View style="@style/Divider"/>
+                <!--<TextView-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--style="@style/ListTextPrimary"-->
+                    <!--android:layout_gravity="left|center_vertical"-->
+                    <!--android:text="@string/legal_fragment_nga_open_source_licenses_label_text" />-->
 
-        </TableLayout>
+            <!--</TableRow>-->
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:paddingTop="16dp">
+            <!--<View style="@style/Divider"/>-->
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingLeft="16dp"
-                android:layout_gravity="center_vertical"
-                style="@style/ListSubHeader"
-                android:text="Sync"/>
+        <!--</TableLayout>-->
 
-        </LinearLayout>
+        <!--<LinearLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="48dp"-->
+            <!--android:layout_marginTop="16dp"-->
+            <!--android:paddingTop="16dp">-->
 
-        <View style="@style/Divider"/>
+            <!--<TextView-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:paddingLeft="16dp"-->
+                <!--android:layout_gravity="center_vertical"-->
+                <!--style="@style/ListSubHeader"-->
+                <!--android:text="Sync"/>-->
 
-        <TableRow android:id="@+id/sync_row"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="16dp"
-            android:paddingLeft="16dp"
-            android:paddingBottom="20dp">
+        <!--</LinearLayout>-->
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+        <!--<View style="@style/Divider"/>-->
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        style="@style/ListTextPrimary"
-                        android:text="@string/preferences_last_sync_title_text" />
+        <!--<TableRow android:id="@+id/sync_row"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:paddingTop="16dp"-->
+            <!--android:paddingLeft="16dp"-->
+            <!--android:paddingBottom="20dp">-->
 
-                    <TextView android:id="@+id/sync_date"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:paddingLeft="5dp"
-                        style="@style/ListTextPrimary"
-                        android:text="01-01-2015" />
-                </LinearLayout>
+            <!--<LinearLayout-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:orientation="vertical">-->
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    style="@style/ListTextSecondary"
-                    android:layout_gravity="left|center_vertical"
-                    android:text="Click to sync" />
-            </LinearLayout>
+                <!--<LinearLayout-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:orientation="horizontal">-->
+                    <!--<TextView-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--style="@style/ListTextPrimary"-->
+                        <!--android:text="@string/preferences_last_sync_title_text" />-->
 
-        </TableRow>
+                    <!--<TextView android:id="@+id/sync_date"-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:paddingLeft="5dp"-->
+                        <!--style="@style/ListTextPrimary"-->
+                        <!--android:text="01-01-2015" />-->
+                <!--</LinearLayout>-->
 
-        <View style="@style/Divider"/>
+                <!--<TextView-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--style="@style/ListTextSecondary"-->
+                    <!--android:layout_gravity="left|center_vertical"-->
+                    <!--android:text="Click to sync" />-->
+            <!--</LinearLayout>-->
 
-    </LinearLayout>
+        <!--</TableRow>-->
 
-</ScrollView>
+        <!--<View style="@style/Divider"/>-->
+
+    <!--</LinearLayout>-->
+
+<!--</ScrollView>-->
