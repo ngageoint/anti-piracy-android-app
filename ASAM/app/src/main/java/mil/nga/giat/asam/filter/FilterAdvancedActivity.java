@@ -14,11 +14,11 @@ import android.view.WindowManager.LayoutParams;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.Spinner;
 
 import org.apache.commons.lang3.StringUtils;
 
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -26,26 +26,27 @@ import java.util.GregorianCalendar;
 import mil.nga.giat.asam.R;
 import mil.nga.giat.asam.db.AsamDbHelper;
 import mil.nga.giat.asam.map.AsamMapActivity;
-import mil.nga.giat.asam.model.SubregionTextParser;
+import mil.nga.giat.asam.map.SubregionMapActivity;
 import mil.nga.giat.asam.util.AsamLog;
-import mil.nga.giat.asam.util.CurrentSubregionHelper;
 
 
 public class FilterAdvancedActivity extends AppCompatActivity implements OnClickListener {
 
-    private static final int SUBREGION_SPINNER_EMPTY_POSITION = 0;
-    private static final int SUBREGION_SPINNER_CURRENT_LOCATION_POSITION = 1;
+    public static final String SUBREGIONS_EXTRA = "SUBREGIONS_EXTRA";
+
+    private static final int PICK_SUBREGIONS_REQUEST = 1;
+
+    private ArrayList<Integer> mSubregionIds = new ArrayList<Integer>();
 
     private EditText mKeyword;
     private EditText mDateFromUI;
     private EditText mDateToUI;
-    private Spinner mSubregionSpinnerUI;
+    private EditText mSubregionsText;
     private EditText mReferenceNumberYearUI;
     private EditText mReferenceNumberIdUI;
     private EditText mVictimUI;
     private EditText mAggressorUI;
-    private CurrentSubregionHelper mCurrentSubregionHelper;
-    
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,15 +57,14 @@ public class FilterAdvancedActivity extends AppCompatActivity implements OnClick
                 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.subregions, R.layout.subregion_spinner_item);
         adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
-        mSubregionSpinnerUI = (Spinner) findViewById(R.id.text_query_subregion_spinner_ui);
-        mSubregionSpinnerUI.setAdapter(adapter);
-        
+
         mReferenceNumberYearUI = (EditText) findViewById(R.id.text_query_reference_number_year_edit_text_ui);
         mReferenceNumberIdUI = (EditText) findViewById(R.id.text_query_reference_number_id_edit_text_ui);
 
         mKeyword = (EditText) findViewById(R.id.keyword);
         mDateFromUI = (EditText) findViewById(R.id.text_query_date_from_edit_text_ui);
         mDateToUI = (EditText) findViewById(R.id.text_query_date_to_edit_text_ui);
+        mSubregionsText = (EditText) findViewById(R.id.subregions);
         mVictimUI = (EditText) findViewById(R.id.text_query_victim_edit_text_ui);
         mAggressorUI = (EditText) findViewById(R.id.text_query_aggressor_edit_text_ui);
 
@@ -73,8 +73,7 @@ public class FilterAdvancedActivity extends AppCompatActivity implements OnClick
 
         findViewById(R.id.apply).setOnClickListener(this);
         findViewById(R.id.cancel).setOnClickListener(this);
-
-        mCurrentSubregionHelper = new CurrentSubregionHelper(this, new SubregionTextParser().parseSubregions(this));
+        findViewById(R.id.subregion_button).setOnClickListener(this);
 
         Intent intent = getIntent();
         FilterParameters filterParameters = intent.getParcelableExtra(AsamMapActivity.SEARCH_PARAMETERS);
@@ -106,6 +105,15 @@ public class FilterAdvancedActivity extends AppCompatActivity implements OnClick
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == PICK_SUBREGIONS_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                populateSubregions(data.getIntegerArrayListExtra(SUBREGIONS_EXTRA));
+            }
+        }
+    }
+
+    @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.apply: {
@@ -118,6 +126,12 @@ public class FilterAdvancedActivity extends AppCompatActivity implements OnClick
             }
             case R.id.cancel: {
                 finish();
+                break;
+            }
+            case R.id.subregion_button: {
+                Intent intent = new Intent(this, SubregionMapActivity.class);
+                intent.putIntegerArrayListExtra(SUBREGIONS_EXTRA, mSubregionIds);
+                startActivityForResult(intent, PICK_SUBREGIONS_REQUEST);
                 break;
             }
             case R.id.text_query_date_from_edit_text_ui: {
@@ -169,6 +183,11 @@ public class FilterAdvancedActivity extends AppCompatActivity implements OnClick
         }
     }
 
+    private void populateSubregions(ArrayList<Integer> subregionIds) {
+        mSubregionIds = subregionIds;
+        mSubregionsText.setText(StringUtils.join(subregionIds, ","));
+    }
+
     private void populateFields(FilterParameters filterParameters) {
         if (filterParameters == null) return;
 
@@ -187,7 +206,7 @@ public class FilterAdvancedActivity extends AppCompatActivity implements OnClick
             mDateToUI.setText(filterParameters.mDateTo);
         }
 
-        //TODO subregion
+        populateSubregions(filterParameters.mSubregionIds);
 
         mAggressorUI.setText(filterParameters.mAggressor);
         mVictimUI.setText(filterParameters.mVictim);
@@ -210,11 +229,8 @@ public class FilterAdvancedActivity extends AppCompatActivity implements OnClick
         String dateTo = mDateToUI.getText().toString();
         parameters.mDateTo = StringUtils.isNotBlank(dateTo) ? dateTo : null;
 
-        if (mSubregionSpinnerUI.getSelectedItemPosition() == SUBREGION_SPINNER_CURRENT_LOCATION_POSITION) {
-            parameters.mSubregion = mCurrentSubregionHelper.getCurrentSubregion() + "";
-        } else if (mSubregionSpinnerUI.getSelectedItemPosition() != SUBREGION_SPINNER_EMPTY_POSITION) {
-            parameters.mSubregion = ((String) mSubregionSpinnerUI.getSelectedItem()).split(" ")[1]; // Looks like "Subregion 32".
-        }
+        parameters.mSubregionIds = mSubregionIds;
+
         parameters.mAggressor = mAggressorUI.getText().toString();
         parameters.mVictim = mVictimUI.getText().toString();
         if (StringUtils.isNotBlank(mReferenceNumberYearUI.getText().toString()) && StringUtils.isNotBlank(mReferenceNumberIdUI.getText().toString())) {
@@ -229,7 +245,8 @@ public class FilterAdvancedActivity extends AppCompatActivity implements OnClick
     }
 
     private void clearFields() {
-        mSubregionSpinnerUI.setSelection(SUBREGION_SPINNER_EMPTY_POSITION);
+        mSubregionIds.clear();
+        mSubregionsText.setText("");
         mKeyword.setText("");
         mDateFromUI.setText("");
         mDateToUI.setText("");

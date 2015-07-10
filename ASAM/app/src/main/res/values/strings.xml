@@ -46,6 +46,7 @@
     <string name="all_asams_map_tablet_subregions_query_mode_message_text"><![CDATA[<u><b>Selected Subregion(s)</b></u><p>&nbsp;&nbsp;&nbsp;%s</p>Click <i>Menu->Reset</i> to return to "All ASAMs" mode.]]></string>
     <string name="all_asams_map_tablet_text_query_mode_message_text"><![CDATA[%s<br/>]]></string>
     <string name="all_asams_map_tablet_menu_list_view_text">List View</string>
+    <string name="all_asams_map_tablet_change_subregions_text">Change</string>
     <string name="all_asams_map_tablet_menu_subregions_text">Subregions</string>
     <string name="all_asams_map_tablet_menu_settings_text">Settings</string>
     <string name="all_asams_map_tablet_menu_text_filter_text">Filters</string>
@@ -199,14 +200,14 @@
     <string name="subregion_map_title_text">Subregions</string>
     <string name="subregion_map_menu_selected_subregions_text">Selected Subregions</string>
     <string name="subregion_map_menu_query_text">Query</string>
-    <string name="subregion_map_menu_reset_text">Reset</string>
+    <string name="subregion_map_menu_clear_text">Clear</string>
     <string name="subregion_map_menu_60_days_text">60 days</string>
     <string name="subregion_map_menu_90_days_text">90 days</string>
     <string name="subregion_map_menu_180_days_text">180 days</string>
     <string name="subregion_map_menu_1_year_text">1 year</string>
     <string name="subregion_map_menu_5_years_text">5 years</string>
     <string name="subregion_map_menu_all_text">All</string>
-    <string name="text_query_select_subregion_label_text">Subregion</string>
+    <string name="text_query_select_subregion_label_text">Subregions</string>
     <string name="text_query_select_subregion_prompt_text">Select A Subregion</string>
     <string name="text_query_reference_number_label_text">Reference Number</string>
     <string name="text_query_victim_label_text">Victim</string>

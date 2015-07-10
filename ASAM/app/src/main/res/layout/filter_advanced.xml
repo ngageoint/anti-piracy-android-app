@@ -85,10 +85,34 @@
                 android:layout_marginTop="10dp"
                 android:textSize="18sp"/>
 
-            <Spinner android:id="@+id/text_query_subregion_spinner_ui"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:prompt="@string/text_query_select_subregion_prompt_text"/>
+                android:orientation="horizontal">
+
+                <EditText android:id="@+id/subregions"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:inputType="text"
+                    android:ellipsize="end"
+                    android:scrollHorizontally="true"
+                    android:editable="false"
+                    android:focusable="false"
+                    android:textIsSelectable="false"
+                    android:focusableInTouchMode="false"
+                    android:clickable="false"
+                    android:singleLine="true" />
+
+                <Button android:id="@+id/subregion_button"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/all_asams_map_tablet_change_subregions_text"
+                    android:textColor="@color/md_teal_A700"
+                    android:background="?attr/selectableItemBackgroundBorderless"/>
+
+            </LinearLayout>
 
             <TextView android:layout_width="match_parent"
                 android:layout_height="wrap_content"

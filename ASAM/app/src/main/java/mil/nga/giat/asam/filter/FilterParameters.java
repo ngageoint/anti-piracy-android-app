@@ -24,7 +24,7 @@ public class FilterParameters implements Parcelable {
 
     public String mDateFrom;
     public String mDateTo;
-    public String mSubregion;
+    public ArrayList<Integer> mSubregionIds = new ArrayList<Integer>();
     public String mReferenceNumber;
     public String mVictim;
     public String mAggressor;
@@ -35,7 +35,7 @@ public class FilterParameters implements Parcelable {
         copy.mTimeInterval = parameters.mTimeInterval;
         copy.mDateFrom = parameters.mDateFrom;
         copy.mDateTo = parameters.mDateTo;
-        copy.mSubregion = parameters.mSubregion;
+        copy.mSubregionIds = parameters.mSubregionIds;
         copy.mReferenceNumber = parameters.mReferenceNumber;
         copy.mVictim = parameters.mVictim;
         copy.mAggressor = parameters.mAggressor;
@@ -51,7 +51,7 @@ public class FilterParameters implements Parcelable {
                 (mTimeInterval == null || mTimeInterval == 0) &&
                 StringUtils.isBlank(mDateFrom) &&
                 StringUtils.isBlank(mDateTo) &&
-                StringUtils.isBlank(mSubregion) &&
+                mSubregionIds.isEmpty() &&
                 StringUtils.isBlank(mReferenceNumber) &&
                 StringUtils.isBlank(mVictim) &&
                 StringUtils.isBlank(mAggressor);
@@ -121,8 +121,8 @@ public class FilterParameters implements Parcelable {
             partials.add(String.format("&nbsp;<b>Date From:</b> %s", mDateFrom));
         }
 
-        if (StringUtils.isNotBlank(mSubregion)) {
-            partials.add(String.format("&nbsp;<b>Subregion:</b> %s", mSubregion));
+        if (!mSubregionIds.isEmpty()) {
+            partials.add(String.format("&nbsp;<b>Subregion:</b> %s", StringUtils.join(mSubregionIds, ", ")));
         }
 
         if (StringUtils.isNotBlank(mReferenceNumber)) {
@@ -167,7 +167,7 @@ public class FilterParameters implements Parcelable {
         dest.writeString(mKeyword);
         dest.writeString(mDateFrom);
         dest.writeString(mDateTo);
-        dest.writeString(mSubregion);
+        dest.writeSerializable(mSubregionIds);
         dest.writeString(mReferenceNumber);
         dest.writeString(mVictim);
         dest.writeString(mAggressor);
@@ -179,7 +179,7 @@ public class FilterParameters implements Parcelable {
         mKeyword = in.readString();
         mDateFrom = in.readString();
         mDateTo = in.readString();
-        mSubregion = in.readString();
+        mSubregionIds = (ArrayList<Integer>) in.readSerializable();
         mReferenceNumber = in.readString();
         mVictim = in.readString();
         mAggressor = in.readString();
