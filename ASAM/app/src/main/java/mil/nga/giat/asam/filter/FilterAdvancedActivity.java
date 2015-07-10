@@ -52,7 +52,6 @@ public class FilterAdvancedActivity extends AppCompatActivity implements OnClick
         super.onCreate(savedInstanceState);
         AsamLog.i(FilterAdvancedActivity.class.getName() + ":onCreate");
         setContentView(R.layout.filter_advanced);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getWindow().setSoftInputMode(LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
                 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.subregions, R.layout.subregion_spinner_item);
@@ -83,9 +82,6 @@ public class FilterAdvancedActivity extends AppCompatActivity implements OnClick
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                return true;
             case R.id.reset:
                 clearFields();
                 return true;

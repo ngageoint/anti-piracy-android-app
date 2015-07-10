@@ -174,48 +174,31 @@
     </ScrollView>
 
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center_vertical">
+        android:orientation="horizontal">
 
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="1dip"
-            android:background="?android:attr/dividerHorizontal" />
-
-        <LinearLayout
-            style="?android:attr/buttonBarStyle"
-            android:layout_width="fill_parent"
+        <Button android:id="@+id/apply"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingTop="0dip"
-            android:paddingLeft="2dip"
-            android:paddingRight="2dip"
-            android:measureWithLargestChild="true">
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="16dp"
+            android:textColor="@color/md_teal_A700"
+            android:text="Apply"
+            android:background="?android:attr/selectableItemBackgroundBorderless"/>
 
-            <Button
-                android:id="@+id/cancel"
-                style="?android:attr/buttonBarButtonStyle"
-                android:layout_width="0dip"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@android:string/cancel"/>
+        <Button android:id="@+id/cancel"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@id/apply"
+            android:layout_marginRight="8dp"
+            android:textColor="@color/md_teal_A700"
+            android:text="@android:string/cancel"
+            android:background="?android:attr/selectableItemBackgroundBorderless"/>
 
-            <View android:layout_height="fill_parent"
-                android:layout_width="1dip"
-                android:background="?android:attr/dividerHorizontal"/>
-
-            <Button
-                android:id="@+id/apply"
-                style="?android:attr/buttonBarButtonStyle"
-                android:layout_width="0dip"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Apply"/>
-        </LinearLayout>
-
-    </LinearLayout>
+    </RelativeLayout>
 
 </LinearLayout>

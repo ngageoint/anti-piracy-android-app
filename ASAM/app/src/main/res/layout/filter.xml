@@ -49,17 +49,22 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="Time Interval"
-                android:id="@+id/timeLabel" />
+                android:layout_marginBottom="10dp"
+                android:text="@string/filter_interval_label" />
 
             <Spinner
                 android:id="@+id/interval_spinner"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="10dp"
                 android:entries="@array/filter_interval_labels"
-                android:labelFor="@string/asam_map_label"
-                android:layout_marginBottom="100dp" />
+                android:labelFor="@string/asam_map_label" />
+
+            <CheckBox android:id="@+id/current_subregion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/filter_current_subregion_label" />
 
         </LinearLayout>
 

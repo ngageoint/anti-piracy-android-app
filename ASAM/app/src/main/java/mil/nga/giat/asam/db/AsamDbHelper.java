@@ -205,6 +205,19 @@ public class AsamDbHelper extends SQLiteOpenHelper {
             clauses.add("(" + StringUtils.join(dateClauses, " AND ") + ")");
         }
 
+        Collection<String> subregionPlaceholders = new ArrayList<String>(filterParameters.mSubregionIds.size());
+        Collection<String> subregionParameters = new ArrayList<String>(filterParameters.mSubregionIds.size());
+        for (Integer subregionId : filterParameters.mSubregionIds) {
+            subregionPlaceholders.add("?");
+            subregionParameters.add(subregionId.toString());
+        }
+
+        if (!subregionParameters.isEmpty()) {
+            StringBuilder subregionQuery = new StringBuilder();
+            subregionQuery.append(SUBREGION).append(" IN ( ").append(StringUtils.join(subregionPlaceholders, ",")).append(" )");
+            clauses.add(subregionQuery.toString());
+        }
+
         String columns = StringUtils.join(new String[] {ID, DATE_OF_OCCURRENCE, REFERENCE_NUMBER, SUBREGION, LATITUDE, LONGITUDE, AGGRESSOR, VICTIM, DESCRIPTION}, ", ");
         StringBuilder sql = new StringBuilder("SELECT ").append(columns).append(" FROM ").append(TABLE_NAME);
         if (!clauses.isEmpty()) {

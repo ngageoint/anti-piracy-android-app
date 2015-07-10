@@ -10,21 +10,26 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
 
 import mil.nga.giat.asam.R;
 import mil.nga.giat.asam.map.AsamMapActivity;
+import mil.nga.giat.asam.model.SubregionTextParser;
+import mil.nga.giat.asam.util.CurrentSubregionHelper;
 
 public class FilterActivity extends AppCompatActivity implements Button.OnClickListener {
 
     private EditText keyword;
     private Spinner intervalSpinner;
+    private CheckBox currentSubregion;
+
+    private CurrentSubregionHelper currentSubregionHelper;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-//        requestWindowFeature(Window.FEATURE_NO_TITLE);
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.filter);
 
@@ -36,6 +41,10 @@ public class FilterActivity extends AppCompatActivity implements Button.OnClickL
 
         keyword = (EditText) findViewById(R.id.keyword);
         intervalSpinner = (Spinner) findViewById(R.id.interval_spinner);
+        currentSubregion = (CheckBox) findViewById(R.id.current_subregion);
+
+        currentSubregionHelper = new CurrentSubregionHelper(this, new SubregionTextParser().parseSubregions(this));
+
 
         Intent intent = getIntent();
         FilterParameters filterParameters = intent.getParcelableExtra(AsamMapActivity.SEARCH_PARAMETERS);
@@ -97,7 +106,11 @@ public class FilterActivity extends AppCompatActivity implements Button.OnClickL
         FilterParameters parameters = new FilterParameters(FilterParameters.Type.SIMPLE);
 
         parameters.mKeyword = keyword.getText().toString();
-        parameters.mTimeInterval = getResources().getIntArray(R.array.filter_interval_values)[intervalSpinner.getSelectedItemPosition()];;
+        parameters.mTimeInterval = getResources().getIntArray(R.array.filter_interval_values)[intervalSpinner.getSelectedItemPosition()];
+
+        if (currentSubregion.isChecked()) {
+            parameters.mSubregionIds.add(currentSubregionHelper.getCurrentSubregion());
+        }
 
         return parameters;
     }
@@ -118,10 +131,16 @@ public class FilterActivity extends AppCompatActivity implements Button.OnClickL
             }
             intervalSpinner.setSelection(index);
         }
+
+        int currentSubregionId = currentSubregionHelper.getCurrentSubregion();
+        if (filterParameters.mSubregionIds.size() == 1 && filterParameters.mSubregionIds.get(0) == currentSubregionId) {
+            currentSubregion.setChecked(true);
+        }
     }
 
     private void clearFields() {
         intervalSpinner.setSelection(0);
         keyword.setText("");
+        currentSubregion.setChecked(false);
     }
 }
