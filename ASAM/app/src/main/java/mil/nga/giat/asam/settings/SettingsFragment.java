@@ -66,13 +66,13 @@ public class SettingsFragment extends Fragment implements AdapterView.OnItemClic
             case 0:
                 settingClickListener.onAboutClick();
                 break;
-            case 1:
+            case 2:
                 settingClickListener.onDisclaimerClick();
                 break;
-            case 2:
+            case 3:
                 settingClickListener.onPrivacyPolicyClick();
                 break;
-            case 3:
+            case 4:
                 settingClickListener.onOpenSourceClick();
                 break;
             case 6:

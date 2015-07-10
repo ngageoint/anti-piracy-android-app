@@ -2,7 +2,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:fillViewport="true"
     android:orientation="vertical"
     android:windowSoftInputMode="stateVisible"
     android:background="@color/md_blue_grey_500">
@@ -20,7 +19,6 @@
         android:layout_height="fill_parent"
         android:gravity="center_vertical"
         android:orientation="vertical"
-        android:paddingBottom="24dip"
         android:paddingLeft="24dip"
         android:paddingRight="24dip">
 
@@ -39,21 +37,40 @@
             android:layout_height="0dip"
             android:layout_weight="1" >
 
-            <TextView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical|left"
-                android:text="@string/disclaimer_text"
-                android:textSize="15sp"
-                android:textIsSelectable="true"
-                android:textColor="@android:color/white"
-                android:alpha=".7"/>
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical|left"
+                    android:layout_marginBottom="25dp"
+                    android:text="@string/disclaimer_text"
+                    android:textSize="15sp"
+                    android:textIsSelectable="true"
+                    android:textColor="@android:color/white"
+                    android:alpha=".7"/>
+
+                <CheckBox android:id="@+id/show_disclaimer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="15dp"
+                    android:textColor="@android:color/white"
+                    android:alpha=".7"
+                    android:buttonTint="#AFFFFFFF"
+                    android:text="@string/disclaimer_show_text" />
+
+            </LinearLayout>
+
         </ScrollView>
 
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:layout_alignParentBottom="true"
             style="?android:attr/buttonBarStyle">
 
             <Button android:id="@+id/disclaimer_exit_button_ui"
@@ -79,6 +96,7 @@
                 android:background="?attr/selectableItemBackgroundBorderless"/>
 
         </LinearLayout>
+
     </LinearLayout>
 
 </LinearLayout>
