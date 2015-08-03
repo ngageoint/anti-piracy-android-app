@@ -29,6 +29,36 @@
         <item name="colorAccent">@color/md_teal_A700</item>
     </style>
 
+    <style name="MapText">
+        <item name="android:textStyle">normal</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">#777777</item>
+        <item name="android:shadowColor">#FFFFFF</item>
+        <item name="android:shadowDx">0</item>
+        <item name="android:shadowDy">0</item>
+        <item name="android:shadowRadius">2.0</item>
+    </style>
+
+    <style name="AsamReportHeader">
+        <item name="android:textStyle">normal</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="AsamReportSubHeader">
+        <item name="android:textStyle">normal</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="AsamReportContent">
+        <item name="android:textStyle">normal</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:alpha">.7</item>
+    </style>
+
     <style name="ListSubHeader">
         <item name="android:textStyle">normal</item>
         <item name="android:fontFamily">sans-serif-medium</item>

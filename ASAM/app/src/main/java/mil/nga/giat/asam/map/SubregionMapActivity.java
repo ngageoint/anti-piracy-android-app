@@ -158,6 +158,8 @@ public class SubregionMapActivity extends AppCompatActivity implements OnMapClic
                 subregion.setSelected(!subregion.isSelected());
                 if (subregion.isSelected()) {
                     subregion.getMapPolygon().setFillColor(SELECTED_FILL_COLOR);
+                } else {
+                    subregion.getMapPolygon().setFillColor(Color.TRANSPARENT);
                 }
 
                 int tappedSubregionId = subregion.getSubregionId();
@@ -170,6 +172,8 @@ public class SubregionMapActivity extends AppCompatActivity implements OnMapClic
                             multiSubregion.setSelected(selectedStatus);
                             if (multiSubregion.isSelected()) {
                                 multiSubregion.getMapPolygon().setFillColor(SELECTED_FILL_COLOR);
+                            } else {
+                                subregion.getMapPolygon().setFillColor(Color.TRANSPARENT);
                             }
                         }
                     }
