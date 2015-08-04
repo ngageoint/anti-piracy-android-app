@@ -187,7 +187,7 @@
             android:layout_marginRight="16dp"
             android:textColor="@color/md_teal_A700"
             android:text="Apply"
-            android:background="?android:attr/selectableItemBackgroundBorderless"/>
+            android:background="?attr/selectableItemBackgroundBorderless"/>
 
         <Button android:id="@+id/cancel"
             style="?android:attr/borderlessButtonStyle"
@@ -197,7 +197,7 @@
             android:layout_marginRight="8dp"
             android:textColor="@color/md_teal_A700"
             android:text="@android:string/cancel"
-            android:background="?android:attr/selectableItemBackgroundBorderless"/>
+            android:background="?attr/selectableItemBackgroundBorderless"/>
 
     </RelativeLayout>
 
