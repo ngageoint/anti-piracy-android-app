@@ -283,5 +283,6 @@ public class FilterActivity extends AppCompatActivity implements OnClickListener
         mAggressorUI.setText("");
         mReferenceNumberYearUI.setText("");
         mReferenceNumberIdUI.setText("");
+        intervalSpinner.setSelection(0);
     }
 }
