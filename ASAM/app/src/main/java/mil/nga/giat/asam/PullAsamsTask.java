@@ -13,6 +13,7 @@ import java.util.List;
 
 import mil.nga.giat.asam.db.AsamDbHelper;
 import mil.nga.giat.asam.model.AsamBean;
+import mil.nga.giat.asam.model.AsamInputAdapter;
 import mil.nga.giat.asam.model.AsamJsonParser;
 import mil.nga.giat.asam.net.AsamWebService;
 import mil.nga.giat.asam.util.AsamLog;
@@ -31,10 +32,13 @@ public class PullAsamsTask extends AsyncTask<Void, Void, Void> {
     private ProgressDialog progressDialog;
     private boolean error = false;
     private OnSyncCompletedListener onSyncCompletedListener;
+    private AsamInputAdapter asamIA;
+
 
     public PullAsamsTask(Context context, OnSyncCompletedListener onSyncCompletedListener) {
         this.context = context;
         this.onSyncCompletedListener = onSyncCompletedListener;
+        this.asamIA = new AsamInputAdapter(this.context);
     }
 
     @Override
@@ -48,34 +52,7 @@ public class PullAsamsTask extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... params) {
-        String json = null;
-        SQLiteDatabase db = null;
-        try {
-            AsamWebService webService = new AsamWebService(context);
-            json = webService.query();
-            if (StringUtils.isNotBlank(json)) {
-                AsamJsonParser parser = new AsamJsonParser();
-                List<AsamBean> asams = parser.parseJson(json);
-                if (asams.size() > 0) {
-
-                    // Do a diff of what the web service returned and what's currently in the db.
-                    AsamDbHelper dbHelper = new AsamDbHelper(context);
-                    db = dbHelper.getWritableDatabase();
-                    asams = dbHelper.removeDuplicates(db, asams);
-                    dbHelper.insertAsams(db, asams);
-                }
-            }
-            SyncTime.finishedSync(context);
-        } catch (Exception caught) {
-            AsamLog.e("There was an error parsing ASAM feed", caught);
-            error = true;
-        } finally {
-            if (db != null) {
-                db.close();
-                db = null;
-            }
-        }
-
+        asamIA.run();
         return null;
     }
 

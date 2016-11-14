@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:modu="http://schemas.android.com/apk/res-auto">
+
+    <group android:checkableBehavior="single">
+    <item android:id="@+id/map_type_normal"
+        android:title="@string/map_type_normal_text"/>
+
+    <item android:id="@+id/map_type_satellite"
+        android:title="@string/map_type_satellite_text"/>
+
+    <item android:id="@+id/map_type_hybrid"
+        android:title="@string/map_type_hybrid_text"/>
+
+    <item android:id="@+id/map_type_offline"
+        android:title="@string/map_type_offline_text"/>
+    </group>
+</menu>

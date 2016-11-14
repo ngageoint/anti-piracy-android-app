@@ -7,6 +7,7 @@
         <item>180 days</item>
         <item>1 year</item>
         <item>5 years</item>
+        <item>Custom</item>
     </string-array>
     <integer-array name="filter_interval_values">
         <item>0</item>
@@ -15,5 +16,6 @@
         <item>180</item>
         <item>365</item>
         <item>1300</item>
+        <item>-1</item>
     </integer-array>
 </resources>

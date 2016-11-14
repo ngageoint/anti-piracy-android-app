@@ -31,6 +31,18 @@
             android:text="@string/info_fragment_info_text"
         />
 
+        <TextView android:id="@+id/asam_url_link"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="?attr/colorAccent"
+            android:text="@string/info_fragment_about_link_text"
+            android:paddingTop="10dp"
+            android:textIsSelectable="false"
+            android:clickable="true"
+            android:onClick="asamLinkClicked"
+            />
+
         <TextView android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/info_fragment_contact_text"

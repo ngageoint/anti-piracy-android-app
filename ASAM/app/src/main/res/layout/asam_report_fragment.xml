@@ -155,24 +155,6 @@
 
         </LinearLayout>
 
-        <!--<LinearLayout-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:orientation="horizontal">-->
-
-            <!--&lt;!&ndash; Location &ndash;&gt;-->
-            <!--<TextView-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--style="@style/ListTextPrimary"-->
-                <!--android:text="@string/asam_report_location_label_text" />-->
-
-
-
-        <!--</LinearLayout>-->
-
-
-
     </LinearLayout>
 
 </ScrollView>

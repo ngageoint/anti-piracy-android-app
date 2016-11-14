@@ -1,14 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-      xmlns:asam="http://schemas.android.com/apk/res-auto">
-    
-    <item android:id="@+id/subregion_map_menu_reset_ui"
-        android:title="@string/subregion_map_menu_clear_text"
-        asam:showAsAction="always|withText"
+    xmlns:asam="http://schemas.android.com/apk/res-auto"
+    >
+
+    <item android:id="@+id/subregion_map_menu_query_ui"
+        android:title="Query"
+        android:icon="@drawable/ic_search_white"
+        asam:showAsAction="always"
+        asam:actionViewClass="android.widget.SearchView"
+        android:queryAfterZeroResults="true"
+        android:searchMode="queryRewriteFromText"
+        android:inputType="number"
+        android:enabled="true"
+        android:menuCategory="container"
+        android:orderInCategory="100"/>
+
+    <item android:id="@+id/subregion_map_menu_selected_subregions_ui"
+        android:title="@string/subregion_map_menu_selected_subregions_text"
+        asam:showAsAction="never"
         android:enabled="false"
         android:menuCategory="system"
-        android:orderInCategory="400" />
-    
+        android:orderInCategory="200"
+        />
 
-        
+    <item android:id="@+id/subregion_map_menu_reset_ui"
+        android:title="@string/subregion_map_menu_reset_text"
+        asam:showAsAction="never"
+        android:enabled="false"
+        android:menuCategory="system"
+        android:orderInCategory="300"
+        />
+
+    <item android:id="@+id/subregion_map_menu_clear_ui"
+        android:title="@string/subregion_map_menu_clear_text"
+        asam:showAsAction="never"
+        android:enabled="false"
+        android:menuCategory="system"
+        android:orderInCategory="400"
+        />
+
+
 </menu>

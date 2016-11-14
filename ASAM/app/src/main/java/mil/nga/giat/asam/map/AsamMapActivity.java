@@ -1,28 +1,23 @@
 package mil.nga.giat.asam.map;
 
-import android.animation.LayoutTransition;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Html;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.ImageButton;
+import android.widget.PopupMenu;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,17 +25,11 @@ import android.widget.Toast;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.CancelableCallback;
-import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
-import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.vividsolutions.jts.geom.Geometry;
+import com.google.maps.android.clustering.Cluster;
+import com.google.maps.android.clustering.ClusterManager;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -48,52 +37,46 @@ import java.lang.ref.WeakReference;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 
-import mil.nga.giat.asam.Asam;
 import mil.nga.giat.asam.AsamListActivity;
+import mil.nga.giat.asam.model.AsamBeanClusterRenderer;
+import mil.nga.giat.asam.model.AsamInputAdapter;
 import mil.nga.giat.asam.settings.SettingsActivity;
 import mil.nga.giat.asam.R;
+import mil.nga.giat.asam.connectivity.NetworkChangeReceiver;
 import mil.nga.giat.asam.connectivity.OfflineBannerFragment;
 import mil.nga.giat.asam.db.AsamDbHelper;
 import mil.nga.giat.asam.filter.FilterActivity;
-import mil.nga.giat.asam.filter.FilterAdvancedActivity;
 import mil.nga.giat.asam.filter.FilterParameters;
 import mil.nga.giat.asam.model.AsamBean;
-import mil.nga.giat.asam.model.AsamJsonParser;
-import mil.nga.giat.asam.model.AsamMapClusterBean;
-import mil.nga.giat.asam.net.AsamWebService;
 import mil.nga.giat.asam.util.AsamConstants;
 import mil.nga.giat.asam.util.AsamListContainer;
 import mil.nga.giat.asam.util.AsamLog;
-import mil.nga.giat.asam.util.AsamUtils;
 import mil.nga.giat.asam.util.SyncTime;
-import mil.nga.giat.poffencluster.PoffenCluster;
-import mil.nga.giat.poffencluster.PoffenClusterCalculator;
-import mil.nga.giat.poffencluster.PoffenPoint;
 
 
-public class AsamMapActivity extends AppCompatActivity implements OnCameraChangeListener, OnMarkerClickListener, CancelableCallback, Asam.OnOfflineFeaturesListener, OfflineBannerFragment.OnOfflineBannerClick {
+public class AsamMapActivity extends AppCompatActivity implements CancelableCallback, OfflineBannerFragment.OnOfflineBannerClick, ClusterManager.OnClusterClickListener<AsamBean>, ClusterManager.OnClusterItemClickListener<AsamBean>, GoogleMap.OnCameraChangeListener {
+
 
     private static class QueryHandler extends Handler {
 
-        WeakReference<AsamMapActivity> mAllAsamsMapTabletActivity;
+        WeakReference<AsamMapActivity> mAllModusMapTabletActivity;
 
-        QueryHandler(AsamMapActivity asamMapActivity) {
-            mAllAsamsMapTabletActivity = new WeakReference<AsamMapActivity>(asamMapActivity);
+        QueryHandler(AsamMapActivity moduMapActivity) {
+            mAllModusMapTabletActivity = new WeakReference<AsamMapActivity>(moduMapActivity);
         }
 
         @Override
         public void handleMessage(Message message) {
-            AsamMapActivity asamMapActivity = mAllAsamsMapTabletActivity.get();
+            AsamMapActivity asamMapActivity = mAllModusMapTabletActivity.get();
 
-            asamMapActivity.setFilterStatus(asamMapActivity.mDateRangeText, asamMapActivity.mTotalAsamsText);
+            asamMapActivity.setFilterStatus(asamMapActivity.mDateStart, asamMapActivity.mDateSelected);
 
             asamMapActivity.mQueryProgressDialog.dismiss();
             if (asamMapActivity.mQueryError) {
@@ -101,73 +84,10 @@ public class AsamMapActivity extends AppCompatActivity implements OnCameraChange
                 Toast.makeText(asamMapActivity, asamMapActivity.getString(R.string.all_asams_map_tablet_query_error_text), Toast.LENGTH_LONG).show();
             }
 
-            asamMapActivity.clearAsamMarkers();
-            if (asamMapActivity.mAsams.size() == 1) {
-
-                // Camera position changing so redraw will be triggered in onCameraChange.
-                if (asamMapActivity.mPerformBoundsAdjustmentWithQuery) {
-                    asamMapActivity.mPerformMapClustering = true;
-                    AsamBean asam = asamMapActivity.mAsams.get(0);
-                    asamMapActivity.mMapUI.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder().target(new LatLng(asam.getLatitude(), asam.getLongitude())).zoom(AsamConstants.SINGLE_ASAM_ZOOM_LEVEL).build()));
-                }
-            }
-            else if (asamMapActivity.mAsams.size() > 1) {
-
-                // Camera position changing so redraw will be triggered in onCameraChange.
-                if (asamMapActivity.mPerformBoundsAdjustmentWithQuery) {
-                    asamMapActivity.mPerformMapClustering = true;
-                    LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
-                    for (AsamBean asam : asamMapActivity.mAsams) {
-                        boundsBuilder = boundsBuilder.include(new LatLng(asam.getLatitude(), asam.getLongitude()));
-                    }
-                    asamMapActivity.mMapUI.animateCamera(CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), 0), asamMapActivity);
-                }
-            }
-            else {
-                Toast.makeText(asamMapActivity, asamMapActivity.getString(R.string.all_asams_map_no_asams_text), Toast.LENGTH_LONG).show();
-            }
-
-            // Camera position not changing so redraw won't be triggered in onCameraChange.
-            if (!asamMapActivity.mPerformBoundsAdjustmentWithQuery && asamMapActivity.mAsams.size() > 0) {
-
-                // Use the PoffenCluster library to calculate the clusters.
-                int zoomLevel = Math.round(asamMapActivity.mMapUI.getCameraPosition().zoom);
-                LatLngBounds bounds = asamMapActivity.mMapUI.getProjection().getVisibleRegion().latLngBounds;
-                int numLatitudeCells = (int)(Math.round(Math.pow(2, zoomLevel)));
-                int numLongitudeCells = (int)(Math.round(Math.pow(2, zoomLevel)));
-                PoffenClusterCalculator<AsamBean> calculator = new PoffenClusterCalculator.Builder<AsamBean>(numLatitudeCells, numLongitudeCells).mergeLargeClusters(false).build();
-                for (AsamBean asam : asamMapActivity.mAsams) {
-                    calculator.add(asam, new PoffenPoint(asam.getLatitude(), asam.getLongitude()));
-                }
-
-                asamMapActivity.mMapClusters = Collections.synchronizedList(new ArrayList<AsamMapClusterBean>());
-                synchronized (asamMapActivity.Mutex) {
-                    asamMapActivity.mVisibleClusters = new ArrayList<AsamMapClusterBean>();
-                }
-                List<PoffenCluster<AsamBean>> poffenClusters = calculator.getPoffenClusters();
-                synchronized (asamMapActivity.Mutex) {
-                    for (PoffenCluster<AsamBean> poffenCluster : poffenClusters) {
-                        PoffenPoint poffenPoint = poffenCluster.getClusterCoordinateClosestToMean();
-                        AsamMapClusterBean cluster = new AsamMapClusterBean(poffenCluster.getClusterItems(), new LatLng(poffenPoint.getLatitude(), poffenPoint.getLongitude()));
-                        asamMapActivity.mMapClusters.add(cluster);
-
-                        if (bounds.contains(cluster.getClusteredMapPosition()) || zoomLevel <= AsamConstants.ZOOM_LEVEL_TO_DRAW_ALL_CLUSTERS) {
-                            asamMapActivity.mVisibleClusters.add(cluster);
-
-                            // Now draw it on the map.
-                            Marker marker;
-                            if (poffenCluster.getClusterItems().size() == 1) {
-                                marker = asamMapActivity.mMapUI.addMarker(new MarkerOptions().position(cluster.getClusteredMapPosition()).icon(AsamConstants.PIRATE_MARKER).anchor(0.5f, 0.5f));
-                            }
-                            else {
-                                BitmapDescriptor bitmapDescriptor = BitmapDescriptorFactory.fromBitmap(AsamUtils.drawNumberOnClusterMarker(asamMapActivity, poffenCluster.getClusterItems().size()));
-                                marker = asamMapActivity.mMapUI.addMarker(new MarkerOptions().position(cluster.getClusteredMapPosition()).icon(bitmapDescriptor).anchor(0.5f, 0.5f));
-                            }
-                            cluster.setMapMarker(marker);
-                        }
-                    }
-                }
-            }
+            // clear items
+            asamMapActivity.getmClusterManager().clearItems();
+            asamMapActivity.getmClusterManager().addItems(asamMapActivity.mAsams);
+            asamMapActivity.getmClusterManager().cluster();
         }
     }
 
@@ -178,27 +98,20 @@ public class AsamMapActivity extends AppCompatActivity implements OnCameraChange
 
     private static final int TOTAL_TIME_SLIDER_TICKS = 1000;
     private static final SimpleDateFormat DATE_RANGE_FORMAT = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
-    private static final String DATE_RANGE_PATTERN = "%s to %s";
-    private static final String TOTAL_ASAMS_PATTERN = "%5d of %d ASAMs";
 
+    private TextView mFilterStatus;
 
-    private String mDateRangeText;
-    private String mTotalAsamsText;
+    private String mDateStart;
+    private String mDateSelected;
     private final Object Mutex = new Object();
     private volatile boolean mQueryError;
-    private volatile boolean mPerformMapClustering;
-    private volatile boolean mPerformBoundsAdjustmentWithQuery;
     private List<AsamBean> mAsams;
-    private List<AsamMapClusterBean> mMapClusters;
     private GoogleMap mMapUI;
     private int mMapType;
-    private Collection<Geometry> offlineGeometries = null;
 
-    private TextView mDateRangeTextViewUI;
-    private TextView mTotalAsamsTextViewUI;
-    private TextView mQueryModeMessageTextViewUI;
-    private LinearLayout mQueryModeMessageContainerUI;
-    private TextView mFilterStatus;
+
+    private TextView mDateStartTextViewUI;
+    private TextView mDateSelectedTextViewUI;
     private SeekBar mTimeSliderUI;
 
     private Date mEarliestAsamDate;
@@ -207,12 +120,17 @@ public class AsamMapActivity extends AppCompatActivity implements OnCameraChange
     private FilterParameters mFilterParameters;
     private Date mTextQueryDateEarliest;
     private Date mTextQueryDateLatest;
-    private int mPreviousZoomLevel;
-    private List<AsamMapClusterBean> mVisibleClusters;
     private SharedPreferences mSharedPreferences;
     private OfflineMap offlineMap;
-    private MenuItem offlineMap110mMenuItem;
     private OfflineBannerFragment offlineAlertFragment;
+    private int selectedGraticuleMenuItem = R.id.grat_none;
+    public ClusterManager<AsamBean> getmClusterManager() {
+        return mClusterManager;
+    }
+    private ClusterManager<AsamBean> mClusterManager;
+    private AsamInputAdapter asamIA;
+    private GraticulesManager gratManager;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -220,114 +138,123 @@ public class AsamMapActivity extends AppCompatActivity implements OnCameraChange
         AsamLog.i(AsamMapActivity.class.getName() + ":onCreate");
         setContentView(R.layout.map);
 
+        asamIA = new AsamInputAdapter(getApplicationContext());
+
+
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         mQueryError = false;
-        mPerformMapClustering = false;
-        mAsams = new ArrayList<AsamBean>();
-        mMapClusters = Collections.synchronizedList(new ArrayList<AsamMapClusterBean>());
-        mVisibleClusters = new ArrayList<AsamMapClusterBean>();
+        mAsams = new ArrayList();
 
-        mMapUI = ((SupportMapFragment)getSupportFragmentManager().findFragmentById(R.id.all_asams_map_tablet_map_view_ui)).getMap();
+        mMapUI = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.all_asams_map_tablet_map_view_ui)).getMap();
+
+        gratManager = new GraticulesManager(getApplicationContext(), mMapUI);
+
+        mFilterStatus = (TextView) findViewById(R.id.all_asams_map_query_feedback_text_ui);
+
+        ImageButton btn = (ImageButton) findViewById(R.id.map_overlay_menu);
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showMapTypeMenu(v);
+            }
+        });
+
+        ImageButton gratButton = (ImageButton) findViewById(R.id.graticules_overlay_menu);
+        gratButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showGraticulesMenu(v);
+            }
+        });
+
+        // initialize the cluster manager
+        mClusterManager = new ClusterManager(this, mMapUI);
+        mClusterManager.setRenderer(new AsamBeanClusterRenderer(this, mMapUI, mClusterManager));
         mMapUI.setOnCameraChangeListener(this);
-        mMapUI.setOnMarkerClickListener(this);
+        mMapUI.setOnMarkerClickListener(mClusterManager);
+        mClusterManager.setOnClusterClickListener(this);
+        mClusterManager.setOnClusterItemClickListener(this);
 
         offlineAlertFragment = new OfflineBannerFragment();
         getSupportFragmentManager().beginTransaction()
-            .add(android.R.id.content, offlineAlertFragment)
-            .commit();
-
-        mPreviousZoomLevel = -1;
-
-        mQueryModeMessageTextViewUI = (TextView)findViewById(R.id.all_asams_map_tablet_query_mode_message_text_view_ui);
-        mQueryModeMessageContainerUI = (LinearLayout)findViewById(R.id.all_asams_map_tablet_query_mode_message_container_ui);
-        final ImageView filterResultsToggle = (ImageView) findViewById(R.id.filter_results_toggle);
-        mQueryModeMessageContainerUI.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mQueryModeMessageTextViewUI.getVisibility() == View.VISIBLE) {
-                    mQueryModeMessageTextViewUI.setVisibility(View.GONE);
-                } else {
-                    mQueryModeMessageTextViewUI.setVisibility(View.VISIBLE);
-                }
-            }
-        });
-        mQueryModeMessageContainerUI.getLayoutTransition().addTransitionListener(new LayoutTransition.TransitionListener() {
-            @Override
-            public void startTransition(LayoutTransition transition, ViewGroup container, View view, int transitionType) {
-            }
-
-            @Override
-            public void endTransition(LayoutTransition transition, ViewGroup container, View view, int transitionType) {
-                if (transitionType == LayoutTransition.APPEARING) {
-                    filterResultsToggle.setImageResource(R.drawable.ic_keyboard_arrow_up_white);
-                } else if (transitionType == LayoutTransition.CHANGE_DISAPPEARING) {
-                    filterResultsToggle.setImageResource(R.drawable.ic_keyboard_arrow_down_white);
-                }
-            }
-        });
+                .add(R.id.connectivity_fragment_container, offlineAlertFragment)
+                .commit();
 
         Calendar timePeriod = new GregorianCalendar();
         timePeriod.add(Calendar.YEAR, -1);
-        View dateRangeView = findViewById(R.id.all_asams_map_tablet_date_range);
+        View dateRangeView = findViewById(R.id.all_modus_map_tablet_date_range);
         if (dateRangeView != null) {
             setupDateRangeView(dateRangeView);
             mTimeSliderUI.setProgress(calculateTimeSliderTicksFromDate(timePeriod.getTime()));
         }
 
-        mFilterStatus = (TextView)findViewById(R.id.all_asams_map_query_feedback_text_ui);
-
         mQueryHandler = new QueryHandler(this);
 
-        mFilterParameters = new FilterParameters(FilterParameters.Type.SIMPLE);
+        mFilterParameters = new FilterParameters();
         mFilterParameters.mTimeInterval = 365;
         onFilter();
     }
+
+    public void showGraticulesMenu(View v) {
+        PopupMenu popup = new PopupMenu(this, v);
+
+        // This activity implements OnMenuItemClickListener
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                return onOptionsItemSelected(item);
+            }
+        });
+        popup.inflate(R.menu.graticule_overlay_menu);
+
+        popup.getMenu().findItem(selectedGraticuleMenuItem).setChecked(true);
+
+        popup.show();
+    }
+
+    public void showMapTypeMenu(View v) {
+        PopupMenu popup = new PopupMenu(this, v);
+
+        // This activity implements OnMenuItemClickListener
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                return onOptionsItemSelected(item);
+            }
+        });
+        popup.inflate(R.menu.map_overlay_menu);
+
+        int mapType = mSharedPreferences.getInt(AsamConstants.MAP_TYPE_KEY, 1);
+        switch (mapType) {
+            case GoogleMap.MAP_TYPE_SATELLITE:
+                popup.getMenu().findItem(R.id.map_type_satellite).setChecked(true);
+                break;
+            case GoogleMap.MAP_TYPE_HYBRID:
+                popup.getMenu().findItem(R.id.map_type_hybrid).setChecked(true);
+                break;
+            case AsamConstants.MAP_TYPE_OFFLINE:
+                popup.getMenu().findItem(R.id.map_type_offline).setChecked(true);
+                break;
+            default:
+                popup.getMenu().findItem(R.id.map_type_normal).setChecked(true);
+
+        }
+
+        popup.show();
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.all_asams_map_tablet_menu, menu);
 
-        int mapType = mSharedPreferences.getInt(AsamConstants.MAP_TYPE_KEY, 1);
-        switch (mapType) {
-            case GoogleMap.MAP_TYPE_SATELLITE:
-                menu.findItem(R.id.map_type_satellite).setChecked(true);
-                break;
-            case GoogleMap.MAP_TYPE_HYBRID:
-                menu.findItem(R.id.map_type_hybrid).setChecked(true);
-                break;
-            case AsamConstants.MAP_TYPE_OFFLINE_110M:
-                menu.findItem(R.id.map_type_offline_110m).setChecked(true);
-                break;
-            default:
-                menu.findItem(R.id.map_type_normal).setChecked(true);
-
-        }
-
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        int mapType = mSharedPreferences.getInt(AsamConstants.MAP_TYPE_KEY, 1);
-        switch (mapType) {
-            case GoogleMap.MAP_TYPE_SATELLITE:
-                menu.findItem(R.id.map_type_satellite).setChecked(true);
-                break;
-            case GoogleMap.MAP_TYPE_HYBRID:
-                menu.findItem(R.id.map_type_hybrid).setChecked(true);
-                break;
-            case AsamConstants.MAP_TYPE_OFFLINE_110M:
-                menu.findItem(R.id.map_type_offline_110m).setChecked(true);
-                break;
-            default:
-                menu.findItem(R.id.map_type_normal).setChecked(true);
-        }
-
-        offlineMap110mMenuItem = menu.findItem(R.id.map_type_offline_110m);
-
-        if (offlineGeometries != null) offlineMap110mMenuItem.setVisible(true);
 
         return super.onPrepareOptionsMenu(menu);
     }
@@ -337,7 +264,6 @@ public class AsamMapActivity extends AppCompatActivity implements OnCameraChange
     public void onResume() {
         super.onResume();
 
-        ((Asam) getApplication()).registerOfflineMapListener(this);
         supportInvalidateOptionsMenu();
 
         int mapType = mSharedPreferences.getInt(AsamConstants.MAP_TYPE_KEY, GoogleMap.MAP_TYPE_NORMAL);
@@ -347,8 +273,6 @@ public class AsamMapActivity extends AppCompatActivity implements OnCameraChange
     @Override
     public void onPause() {
         super.onPause();
-
-        ((Asam) getApplication()).unregisterOfflineMapListener(this);
     }
 
     @Override
@@ -366,9 +290,9 @@ public class AsamMapActivity extends AppCompatActivity implements OnCameraChange
                 item.setChecked(!item.isChecked());
                 onMapTypeChanged(GoogleMap.MAP_TYPE_HYBRID);
                 return true;
-            case R.id.map_type_offline_110m:
+            case R.id.map_type_offline:
                 item.setChecked(!item.isChecked());
-                onMapTypeChanged(AsamConstants.MAP_TYPE_OFFLINE_110M);
+                onMapTypeChanged(AsamConstants.MAP_TYPE_OFFLINE);
                 return true;
             case R.id.all_asams_map_menu_list_view_ui: {
                 AsamListContainer.mAsams = mAsams;
@@ -384,115 +308,40 @@ public class AsamMapActivity extends AppCompatActivity implements OnCameraChange
             }
             case R.id.all_asams_map_menu_search_ui: {
 
-                Intent intent = launchAdvancedFilter() ?
-                    new Intent(this, FilterAdvancedActivity.class) :
-                    new Intent(this, FilterActivity.class);
-
+                Intent intent = new Intent(this, FilterActivity.class);
                 intent.putExtra(SEARCH_PARAMETERS, mFilterParameters);
                 startActivityForResult(intent, SEARCH_ACTIVITY_REQUEST_CODE);
                 return true;
             }
+            case R.id.grat_none:
+                selectedGraticuleMenuItem = item.getItemId();
+                gratManager.removeGraticulesFromMap();
+                item.setChecked(!item.isChecked());
+                return true;
+            case R.id.grat_degree_10:
+                selectedGraticuleMenuItem = item.getItemId();
+                gratManager.addGraticulesToMap(getApplicationContext().getString(R.string.grat_10_geopackage));
+                item.setChecked(!item.isChecked());
+                return true;
+            case R.id.grat_degree_15:
+                selectedGraticuleMenuItem = item.getItemId();
+                gratManager.addGraticulesToMap(getApplicationContext().getString(R.string.grat_15_geopackage));
+                item.setChecked(!item.isChecked());
+                return true;
+            case R.id.grat_degree_20:
+                selectedGraticuleMenuItem = item.getItemId();
+                gratManager.addGraticulesToMap(getApplicationContext().getString(R.string.grat_20_geopackage));
+                item.setChecked(!item.isChecked());
+                return true;
+            case R.id.grat_degree_30:
+                selectedGraticuleMenuItem = item.getItemId();
+                gratManager.addGraticulesToMap(getApplicationContext().getString(R.string.grat_30_geopackage));
+                item.setChecked(!item.isChecked());
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
 
         }
-    }
-
-    @Override
-    public boolean onMarkerClick(Marker marker) {
-        synchronized (Mutex) {
-            for (AsamMapClusterBean mapCluster : mVisibleClusters) {
-                if (marker.equals(mapCluster.getMapMarker())) {
-                    AsamListContainer.mAsams = mapCluster.getAsams();
-                    Intent intent = new Intent(this, AsamListActivity.class);
-                    startActivityForResult(intent, LIST_ACTIVITY_REQUEST_CODE);
-                    break;
-                }
-            }
-        }
-        return true;
-    }
-
-    @Override
-    public void onCameraChange(CameraPosition position) {
-        AsamLog.i(AsamMapActivity.class.getName() + ":onCameraChange");
-
-        if (mPerformMapClustering) {
-            mPerformMapClustering = false;
-            mPreviousZoomLevel = Math.round(mMapUI.getCameraPosition().zoom);
-
-            // Use the PoffenCluster library to calculate the clusters.
-            int zoomLevel = mPreviousZoomLevel;
-            int numLatitudeCells = (int)(Math.round(Math.pow(2, zoomLevel)));
-            int numLongitudeCells = (int)(Math.round(Math.pow(2, zoomLevel)));
-            LatLngBounds bounds = mMapUI.getProjection().getVisibleRegion().latLngBounds;
-            PoffenClusterCalculator<AsamBean> calculator = new PoffenClusterCalculator.Builder<AsamBean>(numLatitudeCells, numLongitudeCells).mergeLargeClusters(false).build();
-            for (AsamBean asam : mAsams) {
-                calculator.add(asam, new PoffenPoint(asam.getLatitude(), asam.getLongitude()));
-            }
-
-            mMapClusters = Collections.synchronizedList(new ArrayList<AsamMapClusterBean>());
-            synchronized (Mutex) {
-                mVisibleClusters = new ArrayList<AsamMapClusterBean>();
-            }
-            List<PoffenCluster<AsamBean>> poffenClusters = calculator.getPoffenClusters();
-            synchronized (Mutex) {
-                for (PoffenCluster<AsamBean> poffenCluster : poffenClusters) {
-                    PoffenPoint poffenPoint = poffenCluster.getClusterCoordinateClosestToMean();
-                    AsamMapClusterBean cluster = new AsamMapClusterBean(poffenCluster.getClusterItems(), new LatLng(poffenPoint.getLatitude(), poffenPoint.getLongitude()));
-                    mMapClusters.add(cluster);
-                    if (bounds.contains(cluster.getClusteredMapPosition()) || zoomLevel <= AsamConstants.ZOOM_LEVEL_TO_DRAW_ALL_CLUSTERS) {
-                        mVisibleClusters.add(cluster);
-
-                        // Now draw it on the map.
-                        Marker marker;
-                        if (poffenCluster.getClusterItems().size() == 1) {
-                            marker = mMapUI.addMarker(new MarkerOptions().position(cluster.getClusteredMapPosition()).icon(AsamConstants.PIRATE_MARKER).anchor(0.5f, 0.5f));
-                        }
-                        else {
-                            BitmapDescriptor bitmapDescriptor = BitmapDescriptorFactory.fromBitmap(AsamUtils.drawNumberOnClusterMarker(this, poffenCluster.getClusterItems().size()));
-                            marker = mMapUI.addMarker(new MarkerOptions().position(cluster.getClusteredMapPosition()).icon(bitmapDescriptor).anchor(0.5f, 0.5f));
-                        }
-                        cluster.setMapMarker(marker);
-                    }
-                }
-            }
-        }
-        else {
-            if (mPreviousZoomLevel == -1) {
-                mPreviousZoomLevel = Math.round(position.zoom);
-            }
-            else if (mPreviousZoomLevel != Math.round(position.zoom)) {
-                mPreviousZoomLevel = Math.round(position.zoom);
-                new RecalculateAndRedrawClustersBasedOnZoomLevelAsyncTask().execute(Math.round(mMapUI.getCameraPosition().zoom));
-            }
-            else {
-                redrawMarkersOnMapBasedOnVisibleRegion();
-            }
-        }
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration config) {
-        super.onConfigurationChanged(config);
-        Thread redrawThread = new Thread() {
-
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(250);
-                }
-                catch (Exception ignore) {}
-                runOnUiThread(new Thread() {
-
-                    @Override
-                    public void run() {
-                        redrawMarkersOnMapBasedOnVisibleRegion();
-                    }
-                });
-            }
-        };
-        redrawThread.start();
     }
 
     @Override
@@ -525,7 +374,8 @@ public class AsamMapActivity extends AppCompatActivity implements OnCameraChange
     }
 
     public void onFilter() {
-        DialogFragment dialogFragment = (DialogFragment)getSupportFragmentManager().findFragmentByTag(AsamConstants.TEXT_QUERY_DIALOG_TAG);
+        AsamLog.i(AsamMapActivity.class.getName() + ":onFilter");
+        DialogFragment dialogFragment = (DialogFragment) getSupportFragmentManager().findFragmentByTag(AsamConstants.TEXT_QUERY_DIALOG_TAG);
         if (dialogFragment != null) {
             dialogFragment.dismiss();
         }
@@ -533,13 +383,10 @@ public class AsamMapActivity extends AppCompatActivity implements OnCameraChange
         mTextQueryDateEarliest = initAndGetEarliestAsamDate();
         mTextQueryDateLatest = new Date();
 
-        if (mFilterParameters.mType == FilterParameters.Type.SIMPLE) {
-            if (mFilterParameters.mTimeInterval != null) {
-                mTextQueryDateEarliest = mFilterParameters.getStartDateFromInterval();
-                mTextQueryDateLatest = new Date();
-            }
+        // Populate the from and to dates for the text query.
+        if (mFilterParameters.getStartDateFromInterval() != null) {
+            mTextQueryDateEarliest = mFilterParameters.getStartDateFromInterval();
         } else {
-            // Populate the from and to dates for the text query.
             if (StringUtils.isNotBlank(mFilterParameters.mDateFrom)) {
                 try {
                     mTextQueryDateEarliest = AsamDbHelper.TEXT_QUERY_DATE_FORMAT.parse(mFilterParameters.mDateFrom);
@@ -549,29 +396,16 @@ public class AsamMapActivity extends AppCompatActivity implements OnCameraChange
             } else {
                 mTextQueryDateEarliest = initAndGetEarliestAsamDate();
             }
+        }
 
-            if (StringUtils.isNotBlank(mFilterParameters.mDateTo)) {
-                try {
-                    mTextQueryDateLatest = AsamDbHelper.TEXT_QUERY_DATE_FORMAT.parse(mFilterParameters.mDateTo);
-                } catch (ParseException caught) {
-                    mTextQueryDateLatest = new Date();
-                }
-            } else {
+        if (StringUtils.isNotBlank(mFilterParameters.mDateTo)) {
+            try {
+                mTextQueryDateLatest = AsamDbHelper.TEXT_QUERY_DATE_FORMAT.parse(mFilterParameters.mDateTo);
+            } catch (ParseException caught) {
                 mTextQueryDateLatest = new Date();
             }
-        }
-
-        if (mQueryModeMessageContainerUI != null) {
-            mQueryModeMessageContainerUI.setVisibility(View.VISIBLE);
-        }
-
-        if (mQueryModeMessageContainerUI != null) {
-            if (mFilterParameters.isEmpty()) {
-                mQueryModeMessageContainerUI.setVisibility(View.INVISIBLE);
-            } else {
-                mQueryModeMessageContainerUI.setVisibility(View.VISIBLE);
-                mQueryModeMessageTextViewUI.setText(Html.fromHtml(String.format(getResources().getString(R.string.all_asams_map_tablet_text_query_mode_message_text), mFilterParameters.getParametersAsFormattedHtml())));
-            }
+        } else {
+            mTextQueryDateLatest = new Date();
         }
 
         setTimeSlider(null);
@@ -582,44 +416,6 @@ public class AsamMapActivity extends AppCompatActivity implements OnCameraChange
         mQueryProgressDialog.setIndeterminate(true);
         mQueryProgressDialog.show();
         new QueryThread().start();
-    }
-
-    private void redrawMarkersOnMapBasedOnVisibleRegion() {
-        LatLngBounds bounds = mMapUI.getProjection().getVisibleRegion().latLngBounds;
-        int zoomLevel = Math.round(mMapUI.getCameraPosition().zoom);
-        final List<AsamMapClusterBean> clustersToAddToMap = new ArrayList<AsamMapClusterBean>();
-        final List<AsamMapClusterBean> clustersToRemoveFromMap = new ArrayList<AsamMapClusterBean>();
-        for (AsamMapClusterBean mapCluster : mMapClusters) {
-            if (bounds.contains(mapCluster.getClusteredMapPosition()) || zoomLevel <= AsamConstants.ZOOM_LEVEL_TO_DRAW_ALL_CLUSTERS) {
-                clustersToAddToMap.add(mapCluster);
-            }
-        }
-        synchronized (Mutex) {
-            for (AsamMapClusterBean mapCluster : mVisibleClusters) {
-                if (!bounds.contains(mapCluster.getClusteredMapPosition()) && zoomLevel > AsamConstants.ZOOM_LEVEL_TO_DRAW_ALL_CLUSTERS) {
-                    clustersToRemoveFromMap.add(mapCluster);
-                }
-            }
-            for (AsamMapClusterBean mapCluster : clustersToRemoveFromMap) {
-                mapCluster.getMapMarker().remove(); // Remove from map.
-                mVisibleClusters.remove(mapCluster); // Remove from visible marker list.
-            }
-            for (AsamMapClusterBean mapCluster : clustersToAddToMap) {
-
-                // Only add it if not already visible.
-                if (!mVisibleClusters.contains(mapCluster)) {
-                    Marker marker;
-                    if (mapCluster.getAsams().size() == 1) {
-                        marker = mMapUI.addMarker(new MarkerOptions().position(mapCluster.getClusteredMapPosition()).icon(AsamConstants.PIRATE_MARKER).anchor(0.5f, 0.5f));
-                    } else {
-                        BitmapDescriptor bitmapDescriptor = BitmapDescriptorFactory.fromBitmap(AsamUtils.drawNumberOnClusterMarker(AsamMapActivity.this, mapCluster.getAsams().size()));
-                        marker = mMapUI.addMarker(new MarkerOptions().position(mapCluster.getClusteredMapPosition()).icon(bitmapDescriptor).anchor(0.5f, 0.5f));
-                    }
-                    mapCluster.setMapMarker(marker);
-                    mVisibleClusters.add(mapCluster);
-                }
-            }
-        }
     }
 
     private Date initAndGetEarliestAsamDate() {
@@ -639,8 +435,7 @@ public class AsamMapActivity extends AppCompatActivity implements OnCameraChange
                 if (mEarliestAsamDate.before(earliestDate)) {
                     mEarliestAsamDate = earliestDate;
                 }
-            }
-            finally {
+            } finally {
                 if (db != null) {
                     db.close();
                 }
@@ -652,68 +447,21 @@ public class AsamMapActivity extends AppCompatActivity implements OnCameraChange
     private Date calculateQueryDateFromTimeSlider(int timeSliderTick) {
         Date currentDate = new Date();
         long totalDateRangeInMilliseconds = currentDate.getTime() - initAndGetEarliestAsamDate().getTime();
-        long millisecondsFromLatestAsamDate = Math.round(((double)totalDateRangeInMilliseconds / TOTAL_TIME_SLIDER_TICKS) * timeSliderTick);
+        long millisecondsFromLatestAsamDate = Math.round(((double) totalDateRangeInMilliseconds / TOTAL_TIME_SLIDER_TICKS) * timeSliderTick);
         return new Date(currentDate.getTime() - millisecondsFromLatestAsamDate);
     }
 
     private Date calculateTextQueryDateFromTimeSlider(int timeSliderTick) {
         long totalDateRangeInMilliseconds = mTextQueryDateLatest.getTime() - mTextQueryDateEarliest.getTime();
-        long millisecondsFromTextQueryDateFrom = Math.round(((double)totalDateRangeInMilliseconds / TOTAL_TIME_SLIDER_TICKS) * timeSliderTick);
+        long millisecondsFromTextQueryDateFrom = Math.round(((double) totalDateRangeInMilliseconds / TOTAL_TIME_SLIDER_TICKS) * timeSliderTick);
         return new Date(mTextQueryDateLatest.getTime() - millisecondsFromTextQueryDateFrom);
     }
 
     private int calculateTimeSliderTicksFromDate(Date date) {
         Date currentDate = new Date();
         long totalDateRangeInMilliseconds = currentDate.getTime() - initAndGetEarliestAsamDate().getTime();
-        double percentage = (currentDate.getTime() - date.getTime()) / (double)totalDateRangeInMilliseconds;
-        return (int)Math.round(TOTAL_TIME_SLIDER_TICKS * percentage);
-    }
-
-    private class RecalculateAndRedrawClustersBasedOnZoomLevelAsyncTask extends AsyncTask<Integer, Void, Void> {
-        @Override
-        protected void onPreExecute() {
-            clearAsamMarkers();
-        }
-
-        @Override
-        protected Void doInBackground(Integer... zoomLevel) {
-            mMapClusters.clear();
-            if (mAsams.size() < AsamConstants.MAX_NUM_ASAMS_FOR_NO_CLUSTERING_WITH_ZOOM_LEVEL && zoomLevel[0] > AsamConstants.MAX_ZOOM_LEVEL_FOR_CLUSTERING) {
-
-                // Turn off clustering. Zoomed in enough.
-                for (AsamBean asam : mAsams) {
-                    List<AsamBean> asams = new ArrayList<AsamBean>();
-                    asams.add(asam);
-                    AsamMapClusterBean cluster = new AsamMapClusterBean(asams, new LatLng(asam.getLatitude(), asam.getLongitude()));
-                    mMapClusters.add(cluster);
-                }
-            } else {
-
-                // Use the PoffenCluster library to calculate the clusters.
-                int numLatitudeCells = (int)(Math.round(Math.pow(2, zoomLevel[0])));
-                int numLongitudeCells = (int)(Math.round(Math.pow(2, zoomLevel[0])));
-                PoffenClusterCalculator<AsamBean> calculator = new PoffenClusterCalculator.Builder<AsamBean>(numLatitudeCells, numLongitudeCells).mergeLargeClusters(false).build();
-                for (AsamBean asam : mAsams) {
-                    calculator.add(asam, new PoffenPoint(asam.getLatitude(), asam.getLongitude()));
-                }
-
-                List<PoffenCluster<AsamBean>> poffenClusters = calculator.getPoffenClusters();
-                for (PoffenCluster<AsamBean> poffenCluster : poffenClusters) {
-                    PoffenPoint poffenPoint = poffenCluster.getClusterCoordinateClosestToMean();
-                    AsamMapClusterBean cluster = new AsamMapClusterBean(poffenCluster.getClusterItems(), new LatLng(poffenPoint.getLatitude(), poffenPoint.getLongitude()));
-                    mMapClusters.add(cluster);
-                }
-            }
-            synchronized (Mutex) {
-                mVisibleClusters.clear();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void empty) {
-            redrawMarkersOnMapBasedOnVisibleRegion();
-        }
+        double percentage = (currentDate.getTime() - date.getTime()) / (double) totalDateRangeInMilliseconds;
+        return (int) Math.round(TOTAL_TIME_SLIDER_TICKS * percentage);
     }
 
     private class QueryThread extends Thread {
@@ -727,52 +475,19 @@ public class AsamMapActivity extends AppCompatActivity implements OnCameraChange
 
         QueryThread() {
             mQueryType = STANDARD_QUERY;
-            mPerformBoundsAdjustmentWithQuery = true;
         }
 
         QueryThread(int timeSliderTick) {
             mQueryType = TIME_SLIDER_QUERY;
             mTimeSliderTick = timeSliderTick;
-            mPerformBoundsAdjustmentWithQuery = false;
-        }
-
-        QueryThread(Calendar timePeriod) {
-            mQueryType = TIME_PERIOD_QUERY;
-            mTimePeriod = timePeriod;
-            mPerformBoundsAdjustmentWithQuery = true;
         }
 
         @Override
         public void run() {
             Context context = AsamMapActivity.this;
-            String json = null;
             SQLiteDatabase db = null;
             if (!SyncTime.isSynched(context)) {
-                try {
-                    AsamWebService webService = new AsamWebService(context);
-                    json = webService.query();
-                    if (StringUtils.isNotBlank(json)) {
-                        AsamJsonParser parser = new AsamJsonParser();
-                        List<AsamBean> asams = parser.parseJson(json);
-                        if (asams.size() > 0) {
-
-                            // Do a diff of what the web service returned and what's currently in the db.
-                            AsamDbHelper dbHelper = new AsamDbHelper(context);
-                            db = dbHelper.getWritableDatabase();
-                            asams = dbHelper.removeDuplicates(db, asams);
-                            dbHelper.insertAsams(db, asams);
-                        }
-                    }
-                    SyncTime.finishedSync(context);
-                } catch (Exception caught) {
-                    AsamLog.e(AsamMapActivity.class.getName() + ":There was an error parsing ASAM feed", caught);
-                    mQueryError = true;
-                } finally {
-                    if (db != null) {
-                        db.close();
-                        db = null;
-                    }
-                }
+                asamIA.run();
             }
 
             try {
@@ -789,7 +504,7 @@ public class AsamMapActivity extends AppCompatActivity implements OnCameraChange
                         parameters.mDateTo = AsamDbHelper.TEXT_QUERY_DATE_FORMAT.format(mTextQueryDateLatest);
                     }
 
-                    if (mQueryType == STANDARD_QUERY ) {
+                    if (mQueryType == STANDARD_QUERY) {
                         if (mTextQueryDateEarliest != null) {
                             parameters.mDateFrom = AsamDbHelper.TEXT_QUERY_DATE_FORMAT.format(mTextQueryDateEarliest);
                         }
@@ -806,28 +521,29 @@ public class AsamMapActivity extends AppCompatActivity implements OnCameraChange
                     mAsams.addAll(dbHelper.queryWithFilters(db, parameters));
 
                     // TODO tablet specific, needs to move to a fragment
-                    if (mDateRangeTextViewUI != null) {
+                    if (mDateStartTextViewUI != null) {
                         Date earliest = mTextQueryDateEarliest != null ? mTextQueryDateEarliest : initAndGetEarliestAsamDate();
                         Date latest = mTextQueryDateLatest != null ? mTextQueryDateLatest : new Date();
                         if (mQueryType == STANDARD_QUERY) {
-                            mDateRangeText = String.format(DATE_RANGE_PATTERN, DATE_RANGE_FORMAT.format(latest), DATE_RANGE_FORMAT.format(earliest));
+                            mDateStart = DATE_RANGE_FORMAT.format(latest);
+                            mDateSelected = DATE_RANGE_FORMAT.format(earliest);
                         } else if (mQueryType == TIME_SLIDER_QUERY) {
-                            if (mTimeSliderTick == 0) {
-                                mDateRangeText = String.format(DATE_RANGE_PATTERN, DATE_RANGE_FORMAT.format(latest), DATE_RANGE_FORMAT.format(latest));
-                            } else if (mTimeSliderTick == TOTAL_TIME_SLIDER_TICKS - 1) {
-                                mDateRangeText = String.format(DATE_RANGE_PATTERN, DATE_RANGE_FORMAT.format(latest), DATE_RANGE_FORMAT.format(earliest));
+                            if (mTimeSliderTick == TOTAL_TIME_SLIDER_TICKS - 1) {
+                                mDateStart = DATE_RANGE_FORMAT.format(latest);
+                                mDateSelected = DATE_RANGE_FORMAT.format(earliest);
+                            } else if (mTimeSliderTick == 0) {
+                                mDateStart = DATE_RANGE_FORMAT.format(latest);
+                                mDateSelected = DATE_RANGE_FORMAT.format(latest);
                             } else {
                                 Date dateFromSlider = mTextQueryDateEarliest != null && mTextQueryDateLatest != null ? calculateTextQueryDateFromTimeSlider(mTimeSliderTick) : calculateQueryDateFromTimeSlider(mTimeSliderTick);
-                                mDateRangeText = String.format(DATE_RANGE_PATTERN, DATE_RANGE_FORMAT.format(latest), DATE_RANGE_FORMAT.format(dateFromSlider));
+                                mDateStart = DATE_RANGE_FORMAT.format(latest);
+                                mDateSelected = DATE_RANGE_FORMAT.format(dateFromSlider);
                             }
                         }
-
-                        mTotalAsamsText = String.format(TOTAL_ASAMS_PATTERN, mAsams.size(), totalNumberOfAsams);
                     }
 
                 }
-            }
-            finally {
+            } finally {
                 if (db != null) {
                     db.close();
                 }
@@ -836,74 +552,63 @@ public class AsamMapActivity extends AppCompatActivity implements OnCameraChange
         }
     }
 
-    private void clearAsamMarkers() {
-        for (AsamMapClusterBean mapCluster : mVisibleClusters) {
-            mapCluster.getMapMarker().remove(); // Remove from map.
-        }
-    }
-
     public void onMapTypeChanged(int mapType) {
+        boolean typeChanged = mMapType != mapType;
+
         mMapType = mapType;
 
         // Show/hide the offline alert fragment based on map type
-        if (mMapType == AsamConstants.MAP_TYPE_OFFLINE_110M) {
+        if (mMapType == AsamConstants.MAP_TYPE_OFFLINE) {
             getSupportFragmentManager()
-                .beginTransaction()
-                .hide(offlineAlertFragment)
-                .commit();
-        } else {
+                    .beginTransaction()
+                    .hide(offlineAlertFragment)
+                    .commit();
+        } else if (!NetworkChangeReceiver.getInstance().hasInternetConnectivity(getApplicationContext())) {
             getSupportFragmentManager()
-                .beginTransaction()
-                .show(offlineAlertFragment)
-                .commit();
+                    .beginTransaction()
+                    .show(offlineAlertFragment)
+                    .commit();
         }
 
-        // Change the map
-        if (mMapType == AsamConstants.MAP_TYPE_OFFLINE_110M) {
-        	if (offlineMap != null) offlineMap.clear();
+        if (typeChanged) {
 
-        	offlineMap = new OfflineMap(this, mMapUI, offlineGeometries);
-        } else {
-        	if (offlineMap != null) {
-        		offlineMap.clear();
-        		offlineMap = null;
-        	}
+            // Change the map
+            if (mMapType == AsamConstants.MAP_TYPE_OFFLINE) {
+                if (offlineMap != null) offlineMap.clear();
 
-            mMapUI.setMapType(mMapType);
+                offlineMap = new OfflineMap(this, mMapUI);
+            } else {
+                if (offlineMap != null) {
+                    offlineMap.clear();
+                    offlineMap = null;
+                }
+
+                mMapUI.setMapType(mMapType);
+            }
+
+            // update graticules
+            if (selectedGraticuleMenuItem != R.id.grat_none)
+                gratManager.refreshGraticules();
+            else
+                gratManager.removeGraticulesFromMap();
+
+            // Update shared preferences
+            SharedPreferences.Editor editor = mSharedPreferences.edit();
+            editor.putInt(AsamConstants.MAP_TYPE_KEY, mMapType);
+            editor.commit();
         }
-
-        // Update shared preferences
-        SharedPreferences.Editor editor = mSharedPreferences.edit();
-        editor.putInt(AsamConstants.MAP_TYPE_KEY, mMapType);
-        editor.commit();
-    }
-
-    @Override
-    public void onOfflineFeaturesLoaded(Collection<Geometry> offlineGeometries) {
-    	this.offlineGeometries = offlineGeometries;
-
-        if (offlineMap110mMenuItem != null) offlineMap110mMenuItem.setVisible(true);
-
-    	if (offlineMap == null && mMapType == AsamConstants.MAP_TYPE_OFFLINE_110M) {
-    		if (offlineMap != null) offlineMap.clear();
-    		offlineMap = new OfflineMap(this, mMapUI, offlineGeometries);
-    	}
     }
 
     @Override
     public void onOfflineBannerClick() {
-        onMapTypeChanged(AsamConstants.MAP_TYPE_OFFLINE_110M);
+        onMapTypeChanged(AsamConstants.MAP_TYPE_OFFLINE);
         supportInvalidateOptionsMenu();
     }
 
-    private boolean launchAdvancedFilter() {
-        return mFilterParameters != null && mFilterParameters.mType == FilterParameters.Type.ADVANCED;
-    }
-
     private void setupDateRangeView(View dateRangeView) {
-        mDateRangeTextViewUI = (TextView)dateRangeView.findViewById(R.id.all_asams_map_tablet_date_range_text_view_ui);
-        mTotalAsamsTextViewUI = (TextView)findViewById(R.id.all_asams_map_tablet_total_asams_text_view_ui);
-        mTimeSliderUI = (SeekBar)dateRangeView.findViewById(R.id.all_asams_map_tablet_time_slider_ui);
+        mDateStartTextViewUI = (TextView) dateRangeView.findViewById(R.id.all_modus_map_tablet_date_start_text_view_ui);
+        mDateSelectedTextViewUI = (TextView) dateRangeView.findViewById(R.id.all_modus_map_tablet_date_selected_text_view_ui);
+        mTimeSliderUI = (SeekBar) dateRangeView.findViewById(R.id.all_modus_map_tablet_time_slider_ui);
         mTimeSliderUI.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
             @Override
@@ -912,13 +617,18 @@ public class AsamMapActivity extends AppCompatActivity implements OnCameraChange
                 Date latest = mTextQueryDateLatest != null ? mTextQueryDateLatest : new Date();
 
                 if (progress == TOTAL_TIME_SLIDER_TICKS - 1) {
-                    mDateRangeTextViewUI.setText(String.format(DATE_RANGE_PATTERN, DATE_RANGE_FORMAT.format(latest), DATE_RANGE_FORMAT.format(earliest)));
+                    mDateStart = DATE_RANGE_FORMAT.format(latest);
+                    mDateSelected = DATE_RANGE_FORMAT.format(earliest);
                 } else if (progress == 0) {
-                    mDateRangeTextViewUI.setText(String.format(DATE_RANGE_PATTERN, DATE_RANGE_FORMAT.format(latest), DATE_RANGE_FORMAT.format(latest)));
+                    mDateStart = DATE_RANGE_FORMAT.format(latest);
+                    mDateSelected = DATE_RANGE_FORMAT.format(latest);
                 } else {
                     Date dateFromSlider = mTextQueryDateEarliest != null && mTextQueryDateLatest != null ? calculateTextQueryDateFromTimeSlider(progress) : calculateQueryDateFromTimeSlider(progress);
-                    mDateRangeTextViewUI.setText(String.format(DATE_RANGE_PATTERN, DATE_RANGE_FORMAT.format(latest), DATE_RANGE_FORMAT.format(dateFromSlider)));
+                    mDateStart = DATE_RANGE_FORMAT.format(latest);
+                    mDateSelected = DATE_RANGE_FORMAT.format(dateFromSlider);
                 }
+
+                setFilterStatus(mDateStart, mDateSelected);
             }
 
             @Override
@@ -948,13 +658,13 @@ public class AsamMapActivity extends AppCompatActivity implements OnCameraChange
         }
     }
 
-    private void setFilterStatus(String dateRangeText, String totalAsamsText) {
-        if (mDateRangeTextViewUI != null) {
-            mDateRangeTextViewUI.setText(dateRangeText);
+    private void setFilterStatus(String startDate, String selectedDate) {
+        if (mDateStartTextViewUI != null) {
+            mDateStartTextViewUI.setText(startDate);
         }
 
-        if (mTotalAsamsTextViewUI != null) {
-            mTotalAsamsTextViewUI.setText(totalAsamsText);
+        if (mDateSelectedTextViewUI != null) {
+            mDateSelectedTextViewUI.setText(selectedDate);
         }
 
         // Now set the feedback title.
@@ -966,6 +676,29 @@ public class AsamMapActivity extends AppCompatActivity implements OnCameraChange
         }
 
         mFilterStatus.setText(feedbackText.toString());
+    }
+
+    @Override
+    public boolean onClusterClick(Cluster<AsamBean> cluster) {
+        AsamListContainer.mAsams = new ArrayList(cluster.getItems());
+        Intent intent = new Intent(this, AsamListActivity.class);
+        startActivityForResult(intent, LIST_ACTIVITY_REQUEST_CODE);
+        return true;
+    }
+
+    @Override
+    public boolean onClusterItemClick(AsamBean asamBean) {
+        AsamListContainer.mAsams = Arrays.asList(asamBean);
+        Intent intent = new Intent(this, AsamListActivity.class);
+        startActivityForResult(intent, LIST_ACTIVITY_REQUEST_CODE);
+        return true;
+
+    }
+
+    @Override
+    public void onCameraChange(CameraPosition cameraPosition) {
+        mClusterManager.onCameraChange(cameraPosition);
+        gratManager.mapUpdate();
     }
 
 }

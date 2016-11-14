@@ -1,5 +1,6 @@
 package mil.nga.giat.asam;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
@@ -7,6 +8,7 @@ import android.view.View;
 
 import mil.nga.giat.asam.model.AsamBean;
 import mil.nga.giat.asam.util.AsamConstants;
+import mil.nga.giat.asam.util.AsamUtils;
 
 public class AsamReportActivity extends AppCompatActivity {
 
@@ -35,5 +37,15 @@ public class AsamReportActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        // Checks the orientation of the screen
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE && AsamUtils.isTablet(getApplicationContext())) {
+            finish();
+        }
     }
 }

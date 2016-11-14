@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<searchable xmlns:android="http://schemas.android.com/apk/res/android"
+    android:hint="@string/subregion_search_hint"
+    android:label="@string/app_name"
+    android:searchSuggestAuthority="mil.nga.giat.asam.model.SubregionIdProvider"
+    android:searchSuggestIntentAction="android.intent.action.VIEW"
+    android:searchSuggestIntentData="content://mil.nga.giat.asam.subregion"/>

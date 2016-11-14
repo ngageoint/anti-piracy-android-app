@@ -25,6 +25,7 @@ public class SettingsFragment extends Fragment implements AdapterView.OnItemClic
 
     public interface SettingClickListener {
         void onAboutClick();
+        void onReportClick();
         void onDisclaimerClick();
         void onPrivacyPolicyClick();
         void onOpenSourceClick();
@@ -63,19 +64,22 @@ public class SettingsFragment extends Fragment implements AdapterView.OnItemClic
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         switch (position) {
-            case 0:
+            case 1:
                 settingClickListener.onAboutClick();
                 break;
             case 2:
-                settingClickListener.onDisclaimerClick();
-                break;
-            case 3:
-                settingClickListener.onPrivacyPolicyClick();
+                settingClickListener.onReportClick();
                 break;
             case 4:
-                settingClickListener.onOpenSourceClick();
+                settingClickListener.onDisclaimerClick();
+                break;
+            case 5:
+                settingClickListener.onPrivacyPolicyClick();
                 break;
             case 6:
+                settingClickListener.onOpenSourceClick();
+                break;
+            case 8:
                 onSyncClick();
                 break;
         }

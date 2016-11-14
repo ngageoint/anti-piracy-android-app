@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+    <item android:id="@+id/grat_none"
+        android:title="@string/grat_none"/>
+
+    <item android:id="@+id/grat_degree_10"
+        android:title="@string/grat_10_degrees"/>
+
+    <item android:id="@+id/grat_degree_15"
+        android:title="@string/grat_15_degrees"/>
+
+    <item android:id="@+id/grat_degree_20"
+        android:title="@string/grat_20_degrees"/>
+
+    <item android:id="@+id/grat_degree_30"
+        android:title="@string/grat_30_degrees"/>
+    </group>
+</menu>

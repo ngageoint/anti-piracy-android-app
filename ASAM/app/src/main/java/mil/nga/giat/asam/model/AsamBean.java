@@ -3,13 +3,16 @@ package mil.nga.giat.asam.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.android.gms.maps.model.LatLng;
+import com.google.maps.android.clustering.ClusterItem;
+
 import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Locale;
 
 @SuppressWarnings("serial")
-public class AsamBean implements Comparable<AsamBean>, Parcelable {
+public class AsamBean implements Comparable<AsamBean>, Parcelable, ClusterItem {
 
     public static final SimpleDateFormat OCCURRENCE_DATE_FORMAT = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
 
@@ -27,6 +30,11 @@ public class AsamBean implements Comparable<AsamBean>, Parcelable {
 
     public AsamBean() {
 
+    }
+
+    @Override
+    public LatLng getPosition() {
+        return new LatLng(getLatitude(), getLongitude());
     }
 
     public Integer getId() {

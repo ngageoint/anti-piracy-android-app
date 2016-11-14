@@ -15,11 +15,8 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.vividsolutions.jts.geom.Geometry;
 
 import org.apache.commons.lang3.StringUtils;
-
-import java.util.Collection;
 
 import mil.nga.giat.asam.map.OfflineMap;
 import mil.nga.giat.asam.map.SingleAsamMapActivity;
@@ -27,7 +24,7 @@ import mil.nga.giat.asam.model.AsamBean;
 import mil.nga.giat.asam.util.AsamConstants;
 
 
-public class AsamReportFragment extends Fragment implements Asam.OnOfflineFeaturesListener {
+public class AsamReportFragment extends Fragment {
 
     private AsamBean mAsam;
     private TextView mOccurrenceDateUI;
@@ -41,7 +38,6 @@ public class AsamReportFragment extends Fragment implements Asam.OnOfflineFeatur
     private MapView mapView;
     private int mMapType;
     private OfflineMap offlineMap;
-    private Collection<Geometry> offlineGeometries = null;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -67,8 +63,6 @@ public class AsamReportFragment extends Fragment implements Asam.OnOfflineFeatur
 
         mapView.onResume();
 
-        ((Asam) getActivity().getApplication()).registerOfflineMapListener(this);
-
         GoogleMap map = mapView.getMap();
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
@@ -76,17 +70,15 @@ public class AsamReportFragment extends Fragment implements Asam.OnOfflineFeatur
         if (mMapType != mapType) setMapType(mapType);
 
         LatLng latLng = new LatLng(mAsam.getLatitude(), mAsam.getLongitude());
-        map.addMarker(new MarkerOptions().position(latLng).icon(AsamConstants.PIRATE_MARKER).anchor(0.5f, 0.5f));
+        map.addMarker(new MarkerOptions().position(latLng).icon(AsamConstants.ASAM_MARKER).anchor(0.5f, 0.5f));
 
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 13));
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 4));
     }
 
     @Override
     public void onPause() {
         super.onPause();
         mapView.onPause();
-
-        ((Asam) getActivity().getApplication()).unregisterOfflineMapListener(this);
     }
 
     @Override
@@ -110,6 +102,9 @@ public class AsamReportFragment extends Fragment implements Asam.OnOfflineFeatur
     public void updateContent(AsamBean asam) {
         mAsam = asam;
 
+        GoogleMap map = mapView.getMap();
+        map.clear();
+
         // Sometimes eye sore if there is no entry. Just make a single " ".
         mOccurrenceDateUI.setText(AsamBean.OCCURRENCE_DATE_FORMAT.format(mAsam.getOccurrenceDate()));
         mAggressorUI.setText(StringUtils.isBlank(mAsam.getAggressor()) ? " " : mAsam.getAggressor());
@@ -118,26 +113,21 @@ public class AsamReportFragment extends Fragment implements Asam.OnOfflineFeatur
         mReferenceNumberUI.setText(StringUtils.isBlank(mAsam.getReferenceNumber()) ? " " : mAsam.getReferenceNumber());
         mLocationUI.setText(mAsam.formatLatitutdeDegMinSec() + ", " + mAsam.formatLongitudeDegMinSec());
         mDescriptionUI.setText(StringUtils.isBlank(mAsam.getDescription()) ? " " : mAsam.getDescription());
-    }
 
-    @Override
-    public void onOfflineFeaturesLoaded(Collection<Geometry> offlineGeometries) {
-        this.offlineGeometries = offlineGeometries;
+        LatLng latLng = new LatLng(asam.getLatitude(), asam.getLongitude());
+        map.addMarker(new MarkerOptions().position(latLng).icon(AsamConstants.ASAM_MARKER).anchor(0.5f, 0.5f));
 
-        if (offlineMap == null && mMapType == AsamConstants.MAP_TYPE_OFFLINE_110M) {
-            if (offlineMap != null) offlineMap.clear();
-            offlineMap = new OfflineMap(getActivity(), mapView.getMap(), offlineGeometries);
-        }
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 4));
     }
 
     private void setMapType(int mapType) {
         mMapType = mapType;
 
         // Change the map
-        if (mapType == AsamConstants.MAP_TYPE_OFFLINE_110M) {
+        if (mapType == AsamConstants.MAP_TYPE_OFFLINE) {
             if (offlineMap != null) offlineMap.clear();
 
-            offlineMap = new OfflineMap(getActivity(), mapView.getMap(), offlineGeometries);
+            offlineMap = new OfflineMap(getActivity(), mapView.getMap());
         } else {
             if (offlineMap != null) {
                 offlineMap.clear();
@@ -146,5 +136,9 @@ public class AsamReportFragment extends Fragment implements Asam.OnOfflineFeatur
 
             mapView.getMap().setMapType(mapType);
         }
+    }
+
+    public AsamBean getAsam() {
+        return mAsam;
     }
 }

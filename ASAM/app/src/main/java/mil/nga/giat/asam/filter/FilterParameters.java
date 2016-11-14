@@ -12,13 +12,6 @@ import java.util.Date;
 
 public class FilterParameters implements Parcelable {
 
-    public enum Type {
-        SIMPLE,
-        ADVANCED;
-    }
-
-    public Type mType;
-
     public String mKeyword;
     public Integer mTimeInterval;
 
@@ -30,7 +23,7 @@ public class FilterParameters implements Parcelable {
     public String mAggressor;
     
     public static FilterParameters newInstance(FilterParameters parameters) {
-        FilterParameters copy = new FilterParameters(parameters.mType);
+        FilterParameters copy = new FilterParameters();
         copy.mKeyword = parameters.mKeyword;
         copy.mTimeInterval = parameters.mTimeInterval;
         copy.mDateFrom = parameters.mDateFrom;
@@ -42,13 +35,13 @@ public class FilterParameters implements Parcelable {
         return copy;
     }
 
-    public FilterParameters(Type type) {
-        this.mType = type;
+    public FilterParameters() {
+
     }
     
     public boolean isEmpty() {
         return StringUtils.isBlank(mKeyword) &&
-                (mTimeInterval == null || mTimeInterval == 0) &&
+                (mTimeInterval == null || mTimeInterval == 0 || mTimeInterval == -1) &&
                 StringUtils.isBlank(mDateFrom) &&
                 StringUtils.isBlank(mDateTo) &&
                 mSubregionIds.isEmpty() &&
@@ -162,7 +155,6 @@ public class FilterParameters implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(mType.name());
         dest.writeValue(mTimeInterval);
         dest.writeString(mKeyword);
         dest.writeString(mDateFrom);
@@ -174,7 +166,6 @@ public class FilterParameters implements Parcelable {
     }
 
     private FilterParameters(Parcel in) {
-        mType = Type.valueOf(in.readString());
         mTimeInterval = (Integer) in.readValue(Integer.class.getClassLoader());
         mKeyword = in.readString();
         mDateFrom = in.readString();

@@ -6,13 +6,29 @@
     android:windowSoftInputMode="stateVisible"
     android:background="@color/md_blue_grey_500">
 
-    <ImageView android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_logo"
-        android:layout_gravity="center"
-        android:paddingTop="25dp"
-        android:paddingBottom="25dp"
-        />
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="65dp"
+            android:layout_height="65dp"
+            android:src="@drawable/ic_asam_icon"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:paddingLeft="15dip"
+            android:text="ASAM"
+            android:textSize="42sp"
+            android:textIsSelectable="false"
+            android:textColor="@android:color/white"/>
+
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="fill_parent"
@@ -76,7 +92,7 @@
             <Button android:id="@+id/disclaimer_exit_button_ui"
                 style="?android:attr/borderlessButtonStyle"
                 android:text="@string/disclaimer_exit_button_text"
-                android:textColor="@color/md_teal_A700"
+                android:textColor="@android:color/white"
                 android:contentDescription="@string/disclaimer_exit_button_text"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -87,7 +103,7 @@
             <Button android:id="@+id/disclaimer_agree_button_ui"
                 style="?android:attr/borderlessButtonStyle"
                 android:text="@string/disclaimer_agree_button_text"
-                android:textColor="@color/md_teal_A700"
+                android:textColor="@android:color/white"
                 android:contentDescription="@string/disclaimer_agree_button_text"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
