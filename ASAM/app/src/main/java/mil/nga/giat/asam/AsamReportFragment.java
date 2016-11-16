@@ -13,6 +13,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.apache.commons.lang3.StringUtils;
@@ -36,6 +37,8 @@ public class AsamReportFragment extends Fragment {
     private MapView mapView;
     private int mMapType;
     private OfflineMap offlineMap;
+
+    private Marker reportMarker;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -62,13 +65,18 @@ public class AsamReportFragment extends Fragment {
         mapView.onResume();
 
         GoogleMap map = mapView.getMap();
+        map.clear();
+        if (reportMarker != null) {
+            reportMarker.remove();
+            reportMarker = null;
+        }
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         int mapType = preferences.getInt(AsamConstants.MAP_TYPE_KEY, GoogleMap.MAP_TYPE_NORMAL);
         if (mMapType != mapType) setMapType(mapType);
 
         LatLng latLng = new LatLng(mAsam.getLatitude(), mAsam.getLongitude());
-        map.addMarker(new MarkerOptions().position(latLng).icon(AsamConstants.ASAM_MARKER).anchor(0.5f, 0.5f));
+        reportMarker = map.addMarker(new MarkerOptions().position(latLng).icon(AsamConstants.ASAM_MARKER).anchor(0.5f, 1.0f));
 
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 4));
     }
@@ -97,6 +105,11 @@ public class AsamReportFragment extends Fragment {
         GoogleMap map = mapView.getMap();
         map.clear();
 
+        if (reportMarker != null) {
+            reportMarker.remove();
+            reportMarker = null;
+        }
+
         // Sometimes eye sore if there is no entry. Just make a single " ".
         mOccurrenceDateUI.setText(AsamBean.OCCURRENCE_DATE_FORMAT.format(mAsam.getOccurrenceDate()));
         mAggressorUI.setText(StringUtils.isBlank(mAsam.getAggressor()) ? " " : mAsam.getAggressor());
@@ -107,7 +120,7 @@ public class AsamReportFragment extends Fragment {
         mDescriptionUI.setText(StringUtils.isBlank(mAsam.getDescription()) ? " " : mAsam.getDescription());
 
         LatLng latLng = new LatLng(asam.getLatitude(), asam.getLongitude());
-        map.addMarker(new MarkerOptions().position(latLng).icon(AsamConstants.ASAM_MARKER).anchor(0.5f, 1.0f));
+        reportMarker = map.addMarker(new MarkerOptions().position(latLng).icon(AsamConstants.ASAM_MARKER).anchor(0.5f, 1.0f));
 
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 4));
     }
