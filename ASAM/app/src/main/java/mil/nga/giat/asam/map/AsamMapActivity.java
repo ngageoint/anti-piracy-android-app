@@ -124,9 +124,7 @@ public class AsamMapActivity extends AppCompatActivity implements CancelableCall
     private OfflineMap offlineMap;
     private OfflineBannerFragment offlineAlertFragment;
     private int selectedGraticuleMenuItem = R.id.grat_none;
-    public ClusterManager<AsamBean> getmClusterManager() {
-        return mClusterManager;
-    }
+
     private ClusterManager<AsamBean> mClusterManager;
     private AsamInputAdapter asamIA;
     private GraticulesManager gratManager;
@@ -699,6 +697,10 @@ public class AsamMapActivity extends AppCompatActivity implements CancelableCall
     public void onCameraChange(CameraPosition cameraPosition) {
         mClusterManager.onCameraChange(cameraPosition);
         gratManager.mapUpdate();
+    }
+
+    public ClusterManager<AsamBean> getmClusterManager() {
+        return mClusterManager;
     }
 
 }

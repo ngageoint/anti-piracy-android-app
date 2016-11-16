@@ -18,14 +18,15 @@ import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 
 import mil.nga.giat.asam.R;
 import mil.nga.giat.asam.util.AsamConstants;
-import mil.nga.giat.asam.util.AsamUtils;
-
 
 public class AsamBeanClusterRenderer extends DefaultClusterRenderer<AsamBean> {
     private Context context;
     private Paint primaryColor;
     private Paint primaryDarkColor;
     private Paint accentColor;
+    private Paint textPaint;
+    private Bitmap[] bitmapSizes;
+    private Rect bounds;
 
     public AsamBeanClusterRenderer(Context context, GoogleMap map, ClusterManager<AsamBean> clusterManager) {
         super(context, map, clusterManager);
@@ -42,6 +43,36 @@ public class AsamBeanClusterRenderer extends DefaultClusterRenderer<AsamBean> {
         accentColor.setColor(fetchAccentColor(context));
         accentColor.setStyle(Paint.Style.FILL);
         accentColor.setAntiAlias(true);
+
+        textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        textPaint.setColor(Color.rgb(255, 255, 255));
+        textPaint.setTextSize((int)(AsamConstants.CLUSTER_TEXT_POINT_SIZE * context.getResources().getDisplayMetrics().scaledDensity));
+
+        bounds = new Rect();
+
+        initializeBitmaps();
+    }
+
+    /**
+     * initialize the bitmaps
+     */
+    private void initializeBitmaps() {
+        bitmapSizes = new Bitmap[4];
+        float density = context.getResources().getDisplayMetrics().density;
+        int i = 0;
+        for (int px = 30; px <= 60; px+=10) {
+            int pxD = px * (int) density;
+            Bitmap bitmap = Bitmap.createBitmap(pxD, pxD, Bitmap.Config.ARGB_8888);
+            Canvas c = new Canvas(bitmap);
+            c.drawCircle(pxD / 2, pxD / 2, pxD / 2, accentColor);
+            c.drawCircle(pxD / 2, pxD / 2, pxD / 2 - pxD / 10, primaryDarkColor);
+            Bitmap.Config bitmapConfig = bitmap.getConfig();
+            if (bitmapConfig == null) {
+                bitmapConfig = android.graphics.Bitmap.Config.ARGB_8888;
+            }
+            bitmapSizes[i] = bitmap.copy(bitmapConfig, true);
+            i++;
+        }
     }
 
     @Override
@@ -79,45 +110,23 @@ public class AsamBeanClusterRenderer extends DefaultClusterRenderer<AsamBean> {
     }
 
     public Bitmap drawNumberOnClusterMarker(Context context, int number) {
-        String numberOfPoints = "" + number;
-        float density = context.getResources().getDisplayMetrics().density;
-        float scaledDensity = context.getResources().getDisplayMetrics().scaledDensity;
+        String numberOfPoints = String.valueOf(number);
 
-        int px = 0;
-
+        Bitmap bitmap = Bitmap.createBitmap(bitmapSizes[0]);
         if (number > 100)  {
-            px = 60 * (int) density;
+            bitmap = Bitmap.createBitmap(bitmapSizes[3]);
         } else if (number > 50) {
-            px = 50 * (int) density;
+            bitmap = Bitmap.createBitmap(bitmapSizes[2]);
         } else if (number > 10) {
-            px = 40 * (int) density;
-        } else {
-            px = 30 * (int) density;
+            bitmap = Bitmap.createBitmap(bitmapSizes[1]);
         }
 
-        Bitmap bitmap = Bitmap.createBitmap(px, px, Bitmap.Config.ARGB_8888);
-        Canvas c = new Canvas(bitmap);
-
-
-
-        c.drawCircle(px/2, px/2, px/2, accentColor);
-        c.drawCircle(px/2, px/2, px/2 - px/10, primaryDarkColor);
-
-
-        Bitmap.Config bitmapConfig = bitmap.getConfig();
-        if (bitmapConfig == null) {
-            bitmapConfig = android.graphics.Bitmap.Config.ARGB_8888;
-        }
-        bitmap = bitmap.copy(bitmapConfig, true);
         Canvas canvas = new Canvas(bitmap);
-        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        paint.setColor(Color.rgb(255, 255, 255));
-        paint.setTextSize((int)(AsamConstants.CLUSTER_TEXT_POINT_SIZE * scaledDensity));
-        Rect bounds = new Rect();
-        paint.getTextBounds(numberOfPoints, 0, numberOfPoints.length(), bounds);
+        textPaint.getTextBounds(numberOfPoints, 0, numberOfPoints.length(), bounds);
         int centerX = (bitmap.getWidth() - bounds.width()) / 2;
         int centerY = (bitmap.getHeight() + bounds.height()) / 2;
-        canvas.drawText(numberOfPoints, centerX, centerY, paint);
+        canvas.drawText(numberOfPoints, centerX, centerY, textPaint);
+
         return new BitmapDrawable(context.getResources(), bitmap).getBitmap();
     }
 }
