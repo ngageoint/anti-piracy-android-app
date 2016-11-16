@@ -4,7 +4,6 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
-import android.view.View;
 
 import mil.nga.giat.asam.model.AsamBean;
 import mil.nga.giat.asam.util.AsamConstants;
@@ -12,8 +11,6 @@ import mil.nga.giat.asam.util.AsamUtils;
 
 public class AsamReportActivity extends AppCompatActivity {
 
-    private AsamReportFragment mAsamReportFragment;
-    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -23,10 +20,6 @@ public class AsamReportActivity extends AppCompatActivity {
         AsamBean asam = (AsamBean) getIntent().getParcelableExtra(AsamConstants.ASAM_KEY);
         AsamReportFragment asamReportFragment = (AsamReportFragment) getSupportFragmentManager().findFragmentById(R.id.asam_list_report_tablet_asam_report_fragment);
         asamReportFragment.updateContent(asam);
-    }
-    
-    public void mapAsamLocation(View view) {
-        mAsamReportFragment.mapAsamLocation(view);
     }
     
     @Override

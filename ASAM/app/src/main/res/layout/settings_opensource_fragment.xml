@@ -114,14 +114,14 @@
                 <ImageView
                     android:layout_width="32dp"
                     android:layout_height="32dp"
-                    android:src="@drawable/noun_424495_cc"
+                    android:src="@drawable/noun_147744"
                     />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom"
-                    android:text="'Jolly Roger' by Santiago Arango from the Noun Project"
+                    android:text="'Crossbones' by Lizzy Gregory from the Noun Project"
                     android:textStyle="bold"  />
 
             </LinearLayout>
@@ -132,7 +132,7 @@
                 android:autoLink="web"
                 android:paddingBottom="20dp"
                 android:paddingTop="10dp"
-                android:text="This product contains icons under the Creative Commons License https://creativecommons.org/licenses/by/3.0/us/"
+                android:text="This product contains icons under Public Domain https://creativecommons.org/publicdomain/zero/1.0/"
                 android:textStyle="bold" />
         </TableLayout>
         <TableLayout android:layout_width="match_parent"

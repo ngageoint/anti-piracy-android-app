@@ -111,13 +111,7 @@
             android:theme="@style/asam_theme"
             android:configChanges="orientation|keyboardHidden|screenSize">
         </activity>
-        
-        <activity android:name=".map.SingleAsamMapActivity"
-            android:label="@string/app_name"
-            android:theme="@style/asam_theme"
-            android:configChanges="orientation|keyboardHidden|screenSize">
-        </activity>
-        
+
         <meta-data android:name="web_service_url" android:value="http://msi.nga.mil/MSI_JWS/ASAM_JSON/getJSON?typename=DateRange_AllRefNumbers&amp;fromDate=%s&amp;toDate=%s" />
         <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
 

@@ -1,6 +1,5 @@
 package mil.nga.giat.asam;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -19,7 +18,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import org.apache.commons.lang3.StringUtils;
 
 import mil.nga.giat.asam.map.OfflineMap;
-import mil.nga.giat.asam.map.SingleAsamMapActivity;
 import mil.nga.giat.asam.model.AsamBean;
 import mil.nga.giat.asam.util.AsamConstants;
 
@@ -93,12 +91,6 @@ public class AsamReportFragment extends Fragment {
         mapView.onLowMemory();
     }
 
-    public void mapAsamLocation(View view) {
-        Intent intent = new Intent(getActivity(), SingleAsamMapActivity.class);
-        intent.putExtra(AsamConstants.ASAM_KEY, mAsam);
-        startActivity(intent);
-    }
-
     public void updateContent(AsamBean asam) {
         mAsam = asam;
 
@@ -115,7 +107,7 @@ public class AsamReportFragment extends Fragment {
         mDescriptionUI.setText(StringUtils.isBlank(mAsam.getDescription()) ? " " : mAsam.getDescription());
 
         LatLng latLng = new LatLng(asam.getLatitude(), asam.getLongitude());
-        map.addMarker(new MarkerOptions().position(latLng).icon(AsamConstants.ASAM_MARKER).anchor(0.5f, 0.5f));
+        map.addMarker(new MarkerOptions().position(latLng).icon(AsamConstants.ASAM_MARKER).anchor(0.5f, 1.0f));
 
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 4));
     }
