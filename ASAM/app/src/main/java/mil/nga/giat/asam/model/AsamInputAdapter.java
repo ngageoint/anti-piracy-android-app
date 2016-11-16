@@ -14,7 +14,7 @@ import mil.nga.giat.asam.util.AsamLog;
 import mil.nga.giat.asam.util.SyncTime;
 
 /**
- * ModuInputAdapter handles the retrieval, parsing, and storage of MODUs
+ * AsamInputAdapter handles the retrieval, parsing, and storage of ASAMs
  */
 public class AsamInputAdapter {
 
@@ -43,7 +43,7 @@ public class AsamInputAdapter {
             }
             SyncTime.finishedSync(ctx);
         } catch (Exception caught) {
-            AsamLog.e("There was an error parsing MODU feed", caught);
+            AsamLog.e("There was an error parsing ASAM feed", caught);
         } finally {
             if (db != null) {
                 db.close();

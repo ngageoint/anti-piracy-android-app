@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:modu="http://schemas.android.com/apk/res-auto">
+    xmlns:asam="http://schemas.android.com/apk/res-auto">
 
     <group android:checkableBehavior="single">
     <item android:id="@+id/map_type_normal"

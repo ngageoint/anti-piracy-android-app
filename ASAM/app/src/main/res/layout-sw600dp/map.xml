@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <fragment android:id="@+id/all_modus_map_tablet_map_view_ui"
+    <fragment android:id="@+id/all_asams_map_tablet_map_view_ui"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="?android:attr/actionBarSize"
@@ -13,7 +13,7 @@
         <LinearLayout android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-            <LinearLayout android:id="@+id/all_modus_map_tablet_query_mode_message_container_ui"
+            <LinearLayout android:id="@+id/all_asams_map_tablet_query_mode_message_container_ui"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:animateLayoutChanges="true"
@@ -24,7 +24,7 @@
                 android:background="@color/md_blue_grey_500"
                 android:alpha="0.85">
 
-                <TextView android:id="@+id/all_modus_map_query_feedback_text_ui"
+                <TextView android:id="@+id/all_asams_map_query_feedback_text_ui"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -72,20 +72,20 @@
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
         <LinearLayout
-            android:id="@+id/all_modus_map_tablet_date_range"
+            android:id="@+id/all_asams_map_tablet_date_range"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center_vertical">
 
             <TextView
-                android:id="@+id/all_modus_map_tablet_date_selected_text_view_ui"
+                android:id="@+id/all_asams_map_tablet_date_selected_text_view_ui"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
                 android:text="@string/all_asams_map_tablet_date_text"/>
 
             <SeekBar
-                android:id="@+id/all_modus_map_tablet_time_slider_ui"
+                android:id="@+id/all_asams_map_tablet_time_slider_ui"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -96,7 +96,7 @@
                 android:mirrorForRtl="true"/>
 
             <TextView
-                android:id="@+id/all_modus_map_tablet_date_start_text_view_ui"
+                android:id="@+id/all_asams_map_tablet_date_start_text_view_ui"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="16dp"

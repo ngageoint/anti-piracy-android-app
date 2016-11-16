@@ -76,7 +76,7 @@ public class SubregionMapActivity extends AppCompatActivity implements OnMapClic
 
     final String LOCATION_PERMISSION = Manifest.permission.ACCESS_FINE_LOCATION;
     final String DIALOG_TITLE = "Access Fine Location";
-    final String DIALOG_MESSAGE = "MODU needs to access your Fine Location to get the Current Subregion";
+    final String DIALOG_MESSAGE = "ASAM needs to access your Fine Location to get the Current Subregion";
 
     private CurrentSubregionHelper currentSubregionHelper;
     private Context mContext;

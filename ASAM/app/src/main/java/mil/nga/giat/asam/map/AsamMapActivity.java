@@ -66,15 +66,15 @@ public class AsamMapActivity extends AppCompatActivity implements CancelableCall
 
     private static class QueryHandler extends Handler {
 
-        WeakReference<AsamMapActivity> mAllModusMapTabletActivity;
+        WeakReference<AsamMapActivity> mAllAsamsMapTabletActivity;
 
-        QueryHandler(AsamMapActivity moduMapActivity) {
-            mAllModusMapTabletActivity = new WeakReference<AsamMapActivity>(moduMapActivity);
+        QueryHandler(AsamMapActivity asamMapActivity) {
+            mAllAsamsMapTabletActivity = new WeakReference<AsamMapActivity>(asamMapActivity);
         }
 
         @Override
         public void handleMessage(Message message) {
-            AsamMapActivity asamMapActivity = mAllModusMapTabletActivity.get();
+            AsamMapActivity asamMapActivity = mAllAsamsMapTabletActivity.get();
 
             asamMapActivity.setFilterStatus(asamMapActivity.mDateStart, asamMapActivity.mDateSelected);
 
@@ -183,7 +183,7 @@ public class AsamMapActivity extends AppCompatActivity implements CancelableCall
 
         Calendar timePeriod = new GregorianCalendar();
         timePeriod.add(Calendar.YEAR, -1);
-        View dateRangeView = findViewById(R.id.all_modus_map_tablet_date_range);
+        View dateRangeView = findViewById(R.id.all_asams_map_tablet_date_range);
         if (dateRangeView != null) {
             setupDateRangeView(dateRangeView);
             mTimeSliderUI.setProgress(calculateTimeSliderTicksFromDate(timePeriod.getTime()));
@@ -606,9 +606,9 @@ public class AsamMapActivity extends AppCompatActivity implements CancelableCall
     }
 
     private void setupDateRangeView(View dateRangeView) {
-        mDateStartTextViewUI = (TextView) dateRangeView.findViewById(R.id.all_modus_map_tablet_date_start_text_view_ui);
-        mDateSelectedTextViewUI = (TextView) dateRangeView.findViewById(R.id.all_modus_map_tablet_date_selected_text_view_ui);
-        mTimeSliderUI = (SeekBar) dateRangeView.findViewById(R.id.all_modus_map_tablet_time_slider_ui);
+        mDateStartTextViewUI = (TextView) dateRangeView.findViewById(R.id.all_asams_map_tablet_date_start_text_view_ui);
+        mDateSelectedTextViewUI = (TextView) dateRangeView.findViewById(R.id.all_asams_map_tablet_date_selected_text_view_ui);
+        mTimeSliderUI = (SeekBar) dateRangeView.findViewById(R.id.all_asams_map_tablet_time_slider_ui);
         mTimeSliderUI.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
             @Override
