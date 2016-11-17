@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.util.Log;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -142,7 +141,7 @@ public class GraticulesManager {
             modValue = 20;
         }
 
-        double southerLat = bounds.southwest.latitude - 1;
+        double southerLat = bounds.southwest.latitude + 1;
         double easternLon = bounds.northeast.longitude - 1;
 
         // determine which latitudinal lines are visible
