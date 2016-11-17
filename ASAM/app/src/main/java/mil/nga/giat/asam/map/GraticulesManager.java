@@ -224,16 +224,15 @@ public class GraticulesManager {
      * Updates graticules should be called when map events occur such as camera changes
      */
     public void mapUpdate() {
-        if (!graticuleNumberMarkers.isEmpty()) {
-
+        if (!gratTileOverlays.isEmpty()) {
             // remove markers
             for (Marker marker : graticuleNumberMarkers){
                 marker.remove();
             }
             graticuleNumberMarkers.clear();
+            // add markers
+            addGraticuleNumbersToMap(selectedGraticuleGeoPackage);
         }
-        // add markers
-        addGraticuleNumbersToMap(selectedGraticuleGeoPackage);
     }
 
     /**
