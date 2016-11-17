@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -23,7 +24,7 @@ import mil.nga.giat.asam.model.AsamBean;
 import mil.nga.giat.asam.util.AsamConstants;
 
 
-public class AsamReportFragment extends Fragment {
+public class AsamReportFragment extends Fragment implements OnMapReadyCallback {
 
     private AsamBean mAsam;
     private TextView mOccurrenceDateUI;
@@ -37,6 +38,7 @@ public class AsamReportFragment extends Fragment {
     private MapView mapView;
     private int mMapType;
     private OfflineMap offlineMap;
+    private GoogleMap map;
 
     private Marker reportMarker;
 
@@ -54,31 +56,22 @@ public class AsamReportFragment extends Fragment {
 
         mapView = (MapView) view.findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
+        mapView.getMapAsync(this);
 
         return view;
     }
 
     @Override
+    public void onMapReady(GoogleMap googleMap) {
+        this.map = googleMap;
+        updateMap();
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
-
         mapView.onResume();
-
-        GoogleMap map = mapView.getMap();
-        map.clear();
-        if (reportMarker != null) {
-            reportMarker.remove();
-            reportMarker = null;
-        }
-
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        int mapType = preferences.getInt(AsamConstants.MAP_TYPE_KEY, GoogleMap.MAP_TYPE_NORMAL);
-        if (mMapType != mapType) setMapType(mapType);
-
-        LatLng latLng = new LatLng(mAsam.getLatitude(), mAsam.getLongitude());
-        reportMarker = map.addMarker(new MarkerOptions().position(latLng).icon(AsamConstants.ASAM_MARKER).anchor(0.5f, 1.0f));
-
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 4));
+        mapView.getMapAsync(this);
     }
 
     @Override
@@ -102,14 +95,6 @@ public class AsamReportFragment extends Fragment {
     public void updateContent(AsamBean asam) {
         mAsam = asam;
 
-        GoogleMap map = mapView.getMap();
-        map.clear();
-
-        if (reportMarker != null) {
-            reportMarker.remove();
-            reportMarker = null;
-        }
-
         // Sometimes eye sore if there is no entry. Just make a single " ".
         mOccurrenceDateUI.setText(AsamBean.OCCURRENCE_DATE_FORMAT.format(mAsam.getOccurrenceDate()));
         mAggressorUI.setText(StringUtils.isBlank(mAsam.getAggressor()) ? " " : mAsam.getAggressor());
@@ -119,10 +104,28 @@ public class AsamReportFragment extends Fragment {
         mLocationUI.setText(mAsam.formatLatitutdeDegMinSec() + ", " + mAsam.formatLongitudeDegMinSec());
         mDescriptionUI.setText(StringUtils.isBlank(mAsam.getDescription()) ? " " : mAsam.getDescription());
 
-        LatLng latLng = new LatLng(asam.getLatitude(), asam.getLongitude());
-        reportMarker = map.addMarker(new MarkerOptions().position(latLng).icon(AsamConstants.ASAM_MARKER).anchor(0.5f, 1.0f));
+        updateMap();
+    }
 
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 4));
+    private void updateMap() {
+        if (map != null) {
+            map.clear();
+
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            int mapType = preferences.getInt(AsamConstants.MAP_TYPE_KEY, GoogleMap.MAP_TYPE_NORMAL);
+            if (mMapType != mapType) setMapType(mapType);
+
+            if (reportMarker != null) {
+                reportMarker.remove();
+                reportMarker = null;
+            }
+
+            if (mAsam != null) {
+                LatLng latLng = new LatLng(mAsam.getLatitude(), mAsam.getLongitude());
+                reportMarker = map.addMarker(new MarkerOptions().position(latLng).icon(AsamConstants.ASAM_MARKER).anchor(0.5f, 1.0f));
+                map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 4));
+            }
+        }
     }
 
     private void setMapType(int mapType) {
@@ -132,14 +135,14 @@ public class AsamReportFragment extends Fragment {
         if (mapType == AsamConstants.MAP_TYPE_OFFLINE) {
             if (offlineMap != null) offlineMap.clear();
 
-            offlineMap = new OfflineMap(getActivity(), mapView.getMap());
+            offlineMap = new OfflineMap(getActivity(), map);
         } else {
             if (offlineMap != null) {
                 offlineMap.clear();
                 offlineMap = null;
             }
 
-            mapView.getMap().setMapType(mapType);
+            map.setMapType(mapType);
         }
     }
 

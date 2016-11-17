@@ -26,6 +26,7 @@ import android.widget.SearchView;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
@@ -52,7 +53,7 @@ import mil.nga.giat.asam.util.AsamConstants;
 import mil.nga.giat.asam.util.AsamLog;
 
 
-public class SubregionMapActivity extends AppCompatActivity implements OnMapClickListener, View.OnClickListener, OfflineBannerFragment.OnOfflineBannerClick, OnPermissionCallback {
+public class SubregionMapActivity extends AppCompatActivity implements OnMapClickListener, View.OnClickListener, OfflineBannerFragment.OnOfflineBannerClick, OnPermissionCallback, OnMapReadyCallback {
 
     private static final int INITIAL_ZOOM_LEVEL = 2;
     private static final float OUTLINE_WIDTH = 2.0f;
@@ -101,9 +102,6 @@ public class SubregionMapActivity extends AppCompatActivity implements OnMapClic
         myLocationButton = (ImageButton) findViewById(R.id.location);
         myLocationButton.setOnClickListener(this);
 
-        mMapUI = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.subregion_map_map_view_ui)).getMap();
-        mMapUI.setOnMapClickListener(this);
-
         findViewById(R.id.apply).setOnClickListener(this);
         findViewById(R.id.cancel).setOnClickListener(this);
 
@@ -116,6 +114,28 @@ public class SubregionMapActivity extends AppCompatActivity implements OnMapClic
         });
 
         initiallySelectedSubregionIds = getIntent().getIntegerArrayListExtra(FilterActivity.SUBREGIONS_EXTRA);
+
+        offlineAlertFragment = new OfflineBannerFragment();
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.subregion_connectivity_fragment_container, offlineAlertFragment)
+                .commit();
+
+        permissionHelper = PermissionHelper.getInstance(this);
+
+        permissionHelper.setForceAccepting(false).request(LOCATION_PERMISSION);
+
+        checkFineLocationAccess();
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.subregion_map_map_view_ui)).getMapAsync(this);
+
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMapUI = googleMap;
+        mMapUI.setOnMapClickListener(this);
 
         // Initialize subregions and place on map.
         mSubregions = new SubregionTextParser().parseSubregions(this);
@@ -133,18 +153,11 @@ public class SubregionMapActivity extends AppCompatActivity implements OnMapClic
             subregion.setMapPolygon(polygon);
         }
 
-        offlineAlertFragment = new OfflineBannerFragment();
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.subregion_connectivity_fragment_container, offlineAlertFragment)
-                .commit();
+        CameraPosition cameraPosition = new CameraPosition.Builder().target(lastSearchedPosition).zoom(INITIAL_ZOOM_LEVEL).build();
+        mMapUI.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
-        permissionHelper = PermissionHelper.getInstance(this);
-
-        permissionHelper.setForceAccepting(false).request(LOCATION_PERMISSION);
-
-        checkFineLocationAccess();
-
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        int mapType = mSharedPreferences.getInt(AsamConstants.MAP_TYPE_KEY, GoogleMap.MAP_TYPE_NORMAL);
+        if (mapType != mMapType) onMapTypeChanged(mapType);
     }
 
     public void showMapTypeMenu(View v) {
@@ -276,14 +289,15 @@ public class SubregionMapActivity extends AppCompatActivity implements OnMapClic
         super.onResume();
 
         AsamLog.i(SubregionMapActivity.class.getName() + ":onResume");
-
-        CameraPosition cameraPosition = new CameraPosition.Builder().target(lastSearchedPosition).zoom(INITIAL_ZOOM_LEVEL).build();
-        mMapUI.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-
         supportInvalidateOptionsMenu();
 
-        int mapType = mSharedPreferences.getInt(AsamConstants.MAP_TYPE_KEY, GoogleMap.MAP_TYPE_NORMAL);
-        if (mapType != mMapType) onMapTypeChanged(mapType);
+        if (mMapUI != null) {
+            CameraPosition cameraPosition = new CameraPosition.Builder().target(lastSearchedPosition).zoom(INITIAL_ZOOM_LEVEL).build();
+            mMapUI.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
+            int mapType = mSharedPreferences.getInt(AsamConstants.MAP_TYPE_KEY, GoogleMap.MAP_TYPE_NORMAL);
+            if (mapType != mMapType) onMapTypeChanged(mapType);
+        }
 
         checkFineLocationAccess();
     }

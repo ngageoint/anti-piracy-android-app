@@ -16,7 +16,9 @@ import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import mil.nga.giat.asam.R;
 
@@ -30,11 +32,11 @@ public class GraticulesManager {
     private Context ctx;
     private GoogleMap mMapUI;
     private ArrayList<Marker> graticuleNumberMarkers = new ArrayList<>();
-    private LatLng previousAdjustedCenter;
     private GeoPackageUtils geoPackageUtils;
     private List<TileOverlay> gratTileOverlays;
     private String selectedGraticuleGeoPackage = "";
-
+    private Map<Integer, Bitmap> darkBitmaps;
+    private Map<Integer, Bitmap> lightBitmaps;
 
     /**
      * Constructor
@@ -46,12 +48,24 @@ public class GraticulesManager {
         this.mMapUI = mMapUI;
         gratTileOverlays = new ArrayList<>();
         geoPackageUtils = new GeoPackageUtils(ctx);
+
+        initializeBitmaps();
+    }
+
+    private void initializeBitmaps() {
+        darkBitmaps = new HashMap<>();
+        lightBitmaps = new HashMap<>();
+        for (int i = -180; i < 180; i+=5) {
+            String strText = i + "°";
+            darkBitmaps.put(i, textAsBitmap(strText, (14.0f * this.ctx.getResources().getDisplayMetrics().density), Color.BLACK));
+            lightBitmaps.put(i, textAsBitmap(strText, (14.0f * this.ctx.getResources().getDisplayMetrics().density), Color.WHITE));
+        }
     }
 
     /**
      * Clear out graticules
      */
-    public void clear() {
+    public void clearNumbers() {
         for (Marker marker : graticuleNumberMarkers){
             marker.remove();
         }
@@ -96,7 +110,7 @@ public class GraticulesManager {
             gratTileOverlay.remove();
         }
 
-        clear();
+        clearNumbers();
 
         if (gratTileOverlays != null)
             gratTileOverlays.clear();
@@ -109,10 +123,10 @@ public class GraticulesManager {
      */
     private void addGraticuleNumbersToMap(String geopackage) {
 
-        int textColor = Color.BLACK;
+        Map<Integer, Bitmap> bitmaps = darkBitmaps;
 
         if (mMapUI.getMapType() == GoogleMap.MAP_TYPE_HYBRID || mMapUI.getMapType() == GoogleMap.MAP_TYPE_SATELLITE) {
-            textColor = Color.WHITE;
+            bitmaps = lightBitmaps;
         }
 
         // determine bounds of visible region
@@ -127,30 +141,25 @@ public class GraticulesManager {
             modValue = 20;
         }
 
-        double centerLat = Math.round(bounds.getCenter().latitude);
-        centerLat = centerLat - centerLat % modValue;
-        double centerLon = Math.round(bounds.getCenter().longitude);
-        centerLon = centerLon - centerLon % modValue;
-
-        previousAdjustedCenter = new LatLng(centerLat, centerLon);
+        double southerLat = bounds.southwest.latitude;
+        double easternLon = bounds.northeast.longitude;
 
         // determine which latitudinal lines are visible
         int[] latitudes = getLatitudes(geopackage);
 
         // determine location of lines
         for(Integer lat : latitudes) {
-            if (lat == centerLat){
+            if (Math.abs(lat - southerLat) < (modValue / 2)){
                 continue;
             }
-            LatLng latitudeLine = new LatLng(lat.doubleValue(), centerLon);
+            LatLng latitudeLine = new LatLng(lat.doubleValue(), easternLon);
 
-            String strText = lat.toString() + "°";
-            Bitmap bmpText = textAsBitmap(strText, (14.0f * this.ctx.getResources().getDisplayMetrics().density), textColor);
+            Bitmap bmpText = bitmaps.get(lat);
 
             MarkerOptions markerOptions = new MarkerOptions()
                     .position(latitudeLine)
                     .icon(BitmapDescriptorFactory.fromBitmap(bmpText))
-                    .anchor(0.5f, 0.5f);
+                    .anchor(1.0f, 0.5f);
 
             graticuleNumberMarkers.add(mMapUI.addMarker(markerOptions));
 
@@ -161,18 +170,14 @@ public class GraticulesManager {
 
         // determine location of lines
         for(Integer lon : longitudes) {
-            if (lon == centerLon) {
-                continue;
-            }
-            LatLng longitudeLine = new LatLng(centerLat, lon.doubleValue());
+            LatLng longitudeLine = new LatLng(southerLat, lon.doubleValue());
 
-            String strText = lon.toString() + "°";
-            Bitmap bmpText = textAsBitmap(strText, (14.0f * this.ctx.getResources().getDisplayMetrics().density), textColor);
+            Bitmap bmpText = bitmaps.get(lon);
 
             MarkerOptions markerOptions = new MarkerOptions()
                     .position(longitudeLine)
                     .icon(BitmapDescriptorFactory.fromBitmap(bmpText))
-                    .anchor(0.5f, 0.5f);
+                    .anchor(0.5f, 1.0f);
 
             graticuleNumberMarkers.add(mMapUI.addMarker(markerOptions));
 
@@ -220,37 +225,15 @@ public class GraticulesManager {
      */
     public void mapUpdate() {
         if (!graticuleNumberMarkers.isEmpty()) {
-            // determine bounds of visible region
-            LatLngBounds bounds = mMapUI.getProjection().getVisibleRegion().latLngBounds;
 
-            int modValue = 30;
-            if (this.ctx.getString(R.string.grat_10_geopackage).equals(selectedGraticuleGeoPackage)) {
-                modValue = 10;
-            } else if (this.ctx.getString(R.string.grat_15_geopackage).equals(selectedGraticuleGeoPackage)) {
-                modValue = 15;
-            } else if (this.ctx.getString(R.string.grat_20_geopackage).equals(selectedGraticuleGeoPackage)) {
-                modValue = 20;
+            // remove markers
+            for (Marker marker : graticuleNumberMarkers){
+                marker.remove();
             }
-
-            double centerLat = Math.round(bounds.getCenter().latitude);
-            centerLat = centerLat - centerLat % modValue;
-            double centerLon = Math.round(bounds.getCenter().longitude);
-            centerLon = centerLon - centerLon % modValue;
-
-            if (previousAdjustedCenter != null) {
-                if (centerLat != previousAdjustedCenter.latitude ||
-                        centerLon != previousAdjustedCenter.longitude) {
-                    // remove markers
-                    for (Marker marker : graticuleNumberMarkers){
-                        marker.remove();
-                    }
-                    graticuleNumberMarkers.clear();
-
-                    // add markers
-                    addGraticuleNumbersToMap(selectedGraticuleGeoPackage);
-                }
-            }
+            graticuleNumberMarkers.clear();
         }
+        // add markers
+        addGraticuleNumbersToMap(selectedGraticuleGeoPackage);
     }
 
     /**
@@ -260,7 +243,7 @@ public class GraticulesManager {
      * @param textColor
      * @return
      */
-    public Bitmap textAsBitmap(String text, float textSize, int textColor) {
+    private Bitmap textAsBitmap(String text, float textSize, int textColor) {
         Paint paint = new Paint(ANTI_ALIAS_FLAG);
         paint.setTextSize(textSize);
         paint.setColor(textColor);

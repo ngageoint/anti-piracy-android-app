@@ -25,8 +25,8 @@ import android.widget.Toast;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.CancelableCallback;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
@@ -61,8 +61,7 @@ import mil.nga.giat.asam.util.AsamLog;
 import mil.nga.giat.asam.util.SyncTime;
 
 
-public class AsamMapActivity extends AppCompatActivity implements CancelableCallback, OfflineBannerFragment.OnOfflineBannerClick, ClusterManager.OnClusterClickListener<AsamBean>, ClusterManager.OnClusterItemClickListener<AsamBean>, GoogleMap.OnCameraChangeListener {
-
+public class AsamMapActivity extends AppCompatActivity implements CancelableCallback, OfflineBannerFragment.OnOfflineBannerClick, ClusterManager.OnClusterClickListener<AsamBean>, ClusterManager.OnClusterItemClickListener<AsamBean>, GoogleMap.OnCameraIdleListener, OnMapReadyCallback, GoogleMap.OnCameraMoveStartedListener {
 
     private static class QueryHandler extends Handler {
 
@@ -106,7 +105,7 @@ public class AsamMapActivity extends AppCompatActivity implements CancelableCall
     private final Object Mutex = new Object();
     private volatile boolean mQueryError;
     private List<AsamBean> mAsams;
-    private GoogleMap mMapUI;
+    private GoogleMap map;
     private int mMapType;
 
 
@@ -138,15 +137,9 @@ public class AsamMapActivity extends AppCompatActivity implements CancelableCall
 
         asamIA = new AsamInputAdapter(getApplicationContext());
 
-
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-
         mQueryError = false;
         mAsams = new ArrayList();
-
-        mMapUI = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.all_asams_map_tablet_map_view_ui)).getMap();
-
-        gratManager = new GraticulesManager(getApplicationContext(), mMapUI);
 
         mFilterStatus = (TextView) findViewById(R.id.all_asams_map_query_feedback_text_ui);
 
@@ -166,18 +159,34 @@ public class AsamMapActivity extends AppCompatActivity implements CancelableCall
             }
         });
 
-        // initialize the cluster manager
-        mClusterManager = new ClusterManager(this, mMapUI);
-        mClusterManager.setRenderer(new AsamBeanClusterRenderer(this, mMapUI, mClusterManager));
-        mMapUI.setOnCameraChangeListener(this);
-        mMapUI.setOnMarkerClickListener(mClusterManager);
-        mClusterManager.setOnClusterClickListener(this);
-        mClusterManager.setOnClusterItemClickListener(this);
-
         offlineAlertFragment = new OfflineBannerFragment();
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.connectivity_fragment_container, offlineAlertFragment)
                 .commit();
+
+        ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.all_asams_map_tablet_map_view_ui)).getMapAsync(this);
+    }
+
+    @Override
+    public void onMapReady(GoogleMap map) {
+
+        this.map = map;
+
+
+
+        gratManager = new GraticulesManager(getApplicationContext(), this.map);
+
+        // initialize the cluster manager
+        mClusterManager = new ClusterManager(this, this.map);
+        mClusterManager.setRenderer(new AsamBeanClusterRenderer(this, this.map, mClusterManager));
+        this.map.setOnCameraIdleListener(this);
+        this.map.setOnCameraMoveStartedListener(this);
+        this.map.setOnMarkerClickListener(mClusterManager);
+        mClusterManager.setOnClusterClickListener(this);
+        mClusterManager.setOnClusterItemClickListener(this);
+
+        int mapType = mSharedPreferences.getInt(AsamConstants.MAP_TYPE_KEY, GoogleMap.MAP_TYPE_NORMAL);
+        if (mapType != mMapType) onMapTypeChanged(mapType);
 
         Calendar timePeriod = new GregorianCalendar();
         timePeriod.add(Calendar.YEAR, -1);
@@ -261,11 +270,7 @@ public class AsamMapActivity extends AppCompatActivity implements CancelableCall
     @Override
     public void onResume() {
         super.onResume();
-
         supportInvalidateOptionsMenu();
-
-        int mapType = mSharedPreferences.getInt(AsamConstants.MAP_TYPE_KEY, GoogleMap.MAP_TYPE_NORMAL);
-        if (mapType != mMapType) onMapTypeChanged(mapType);
     }
 
     @Override
@@ -364,7 +369,7 @@ public class AsamMapActivity extends AppCompatActivity implements CancelableCall
             case (LIST_ACTIVITY_REQUEST_CODE): {
                 if (resultCode == Activity.RESULT_OK) {
                     LatLng latLng = data.getParcelableExtra(MAP_LOCATION);
-                    mMapUI.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14));
+                    map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14));
                 }
                 break;
             }
@@ -574,14 +579,14 @@ public class AsamMapActivity extends AppCompatActivity implements CancelableCall
             if (mMapType == AsamConstants.MAP_TYPE_OFFLINE) {
                 if (offlineMap != null) offlineMap.clear();
 
-                offlineMap = new OfflineMap(this, mMapUI);
+                offlineMap = new OfflineMap(this, map);
             } else {
                 if (offlineMap != null) {
                     offlineMap.clear();
                     offlineMap = null;
                 }
 
-                mMapUI.setMapType(mMapType);
+                map.setMapType(mMapType);
             }
 
             // update graticules
@@ -694,9 +699,14 @@ public class AsamMapActivity extends AppCompatActivity implements CancelableCall
     }
 
     @Override
-    public void onCameraChange(CameraPosition cameraPosition) {
-        mClusterManager.onCameraChange(cameraPosition);
+    public void onCameraIdle() {
         gratManager.mapUpdate();
+        mClusterManager.onCameraIdle();
+    }
+
+    @Override
+    public void onCameraMoveStarted(int i) {
+        gratManager.clearNumbers();
     }
 
     public ClusterManager<AsamBean> getmClusterManager() {

@@ -14,8 +14,6 @@ import com.google.maps.android.geojson.GeoJsonPolygonStyle;
 import org.json.JSONException;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import mil.nga.giat.asam.R;
 
@@ -24,7 +22,7 @@ public class OfflineMap {
     private static int FILL_COLOR = 0xFFDDDDDD;
 
     private Context mContext;
-    private GoogleMap mMapUI;
+    private GoogleMap map;
     private TileOverlay backgroundTileOverlay;
 //    private List<TileOverlay> featureOverlays;
     private ProgressDialog progressDialog;
@@ -33,7 +31,7 @@ public class OfflineMap {
 
     public OfflineMap(Context context, GoogleMap map) {
         this.mContext = context;
-        this.mMapUI = map;
+        this.map = map;
 //        featureOverlays = new ArrayList<>();
         geoPackageUtils = new GeoPackageUtils(context);
         loadOfflineMaps();
@@ -64,17 +62,17 @@ public class OfflineMap {
         protected void onPreExecute() {
             progressDialog = ProgressDialog.show(mContext, mContext.getString(R.string.offline_map_progress_dialog_title_text), mContext.getString(R.string.offline_map_progress_dialog_content_text), true);
 
-            mMapUI.setMapType(GoogleMap.MAP_TYPE_NONE);
+            map.setMapType(GoogleMap.MAP_TYPE_NONE);
 
             BackgroundTileProvider tileProvider = new BackgroundTileProvider(mContext);
-            backgroundTileOverlay = mMapUI.addTileOverlay(new TileOverlayOptions().tileProvider(tileProvider).zIndex(1).visible(false));
+            backgroundTileOverlay = map.addTileOverlay(new TileOverlayOptions().tileProvider(tileProvider).zIndex(1).visible(false));
             backgroundTileOverlay.setVisible(true);
         }
 
         @Override
         protected GeoJsonLayer doInBackground(Void... params) {
             try {
-                return new GeoJsonLayer(mMapUI, R.raw.ne_110m_land, mContext);
+                return new GeoJsonLayer(map, R.raw.ne_110m_land, mContext);
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (JSONException e) {
@@ -120,17 +118,17 @@ public class OfflineMap {
 //        protected void onPreExecute() {
 //            progressDialog = ProgressDialog.show(mContext, mContext.getString(R.string.offline_map_progress_dialog_title_text), mContext.getString(R.string.offline_map_progress_dialog_content_text), true);
 //
-//            mMapUI.setMapType(GoogleMap.MAP_TYPE_NONE);
+//            map.setMapType(GoogleMap.MAP_TYPE_NONE);
 //
 //            BackgroundTileProvider tileProvider = new BackgroundTileProvider(mContext);
-//            backgroundTileOverlay = mMapUI.addTileOverlay(new TileOverlayOptions().tileProvider(tileProvider).zIndex(1).visible(false));
+//            backgroundTileOverlay = map.addTileOverlay(new TileOverlayOptions().tileProvider(tileProvider).zIndex(1).visible(false));
 //            backgroundTileOverlay.setVisible(true);
 //        }
 //
 //        @Override
 //        protected List<TileOverlayOptions> doInBackground(Void... params) {
 //
-//            return geoPackageUtils.getOfflineMapOverlays(mMapUI);
+//            return geoPackageUtils.getOfflineMapOverlays(map);
 //        }
 //
 //
@@ -145,7 +143,7 @@ public class OfflineMap {
 //            featureOverlays.clear();
 //
 //            for(TileOverlayOptions overlayOptions : newFeatureOverlays) {
-//                featureOverlays.add(mMapUI.addTileOverlay(overlayOptions));
+//                featureOverlays.add(map.addTileOverlay(overlayOptions));
 //            }
 //
 //            progressDialog.dismiss();
