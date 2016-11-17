@@ -152,12 +152,4 @@ public class GeoPackageUtils {
 
         return overlays;
     }
-
-    public int getGratColorLight() {
-        return gratColorLight;
-    }
-
-    public int getGratColorDark() {
-        return gratColorDark;
-    }
 }

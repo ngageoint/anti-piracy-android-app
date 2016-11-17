@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.util.Log;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -141,8 +142,8 @@ public class GraticulesManager {
             modValue = 20;
         }
 
-        double southerLat = bounds.southwest.latitude;
-        double easternLon = bounds.northeast.longitude;
+        double southerLat = bounds.southwest.latitude - 1;
+        double easternLon = bounds.northeast.longitude - 1;
 
         // determine which latitudinal lines are visible
         int[] latitudes = getLatitudes(geopackage);
@@ -152,6 +153,7 @@ public class GraticulesManager {
             if (Math.abs(lat - southerLat) < (modValue / 2)){
                 continue;
             }
+
             LatLng latitudeLine = new LatLng(lat.doubleValue(), easternLon);
 
             Bitmap bmpText = bitmaps.get(lat);
@@ -159,6 +161,7 @@ public class GraticulesManager {
             MarkerOptions markerOptions = new MarkerOptions()
                     .position(latitudeLine)
                     .icon(BitmapDescriptorFactory.fromBitmap(bmpText))
+                    .zIndex(100)
                     .anchor(1.0f, 0.5f);
 
             graticuleNumberMarkers.add(mMapUI.addMarker(markerOptions));
@@ -177,6 +180,7 @@ public class GraticulesManager {
             MarkerOptions markerOptions = new MarkerOptions()
                     .position(longitudeLine)
                     .icon(BitmapDescriptorFactory.fromBitmap(bmpText))
+                    .zIndex(100)
                     .anchor(0.5f, 1.0f);
 
             graticuleNumberMarkers.add(mMapUI.addMarker(markerOptions));
