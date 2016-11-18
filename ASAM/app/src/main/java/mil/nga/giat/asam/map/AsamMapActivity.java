@@ -102,6 +102,7 @@ public class AsamMapActivity extends AppCompatActivity implements CancelableCall
 
     private String mDateStart;
     private String mDateSelected;
+    private long totalNumberOfAsams = 0;
     private final Object Mutex = new Object();
     private volatile boolean mQueryError;
     private List<AsamBean> mAsams;
@@ -499,7 +500,8 @@ public class AsamMapActivity extends AppCompatActivity implements CancelableCall
                     mAsams.clear();
                     AsamDbHelper dbHelper = new AsamDbHelper(context);
                     db = dbHelper.getReadableDatabase();
-                    long totalNumberOfAsams = dbHelper.getTotalNumberOfAsams(db);
+
+                    totalNumberOfAsams = dbHelper.getTotalNumberOfAsams(db);
 
                     FilterParameters parameters = FilterParameters.newInstance(mFilterParameters);
 
@@ -671,14 +673,8 @@ public class AsamMapActivity extends AppCompatActivity implements CancelableCall
         }
 
         // Now set the feedback title.
-        StringBuilder feedbackText = new StringBuilder("");
-        if (mAsams.size() == 1) {
-            feedbackText.append(getString(R.string.all_asams_map_1_asam_text_with_timespan));
-        } else {
-            feedbackText.append(String.format(getString(R.string.all_asams_map_multiple_asams_text_with_timespan), mAsams.size()));
-        }
-
-        mFilterStatus.setText(feedbackText.toString());
+        String feedbackText = String.format(getString(R.string.all_asams_map_multiple_asams_text_with_timespan), mAsams.size(), totalNumberOfAsams);
+        mFilterStatus.setText(feedbackText);
     }
 
     @Override

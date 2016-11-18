@@ -10,47 +10,56 @@
         android:orientation="vertical"
         android:scrollbars="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="10dp">
+        android:layout_height="match_parent">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="5dp">
-
-            <TextView android:id="@+id/asam_report_fragment_occurrence_date_ui"
-                style="@style/AsamReportHeader"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:textIsSelectable="false"/>
-
-        </RelativeLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="15dp">
+            android:orientation="vertical"
+            android:padding="10dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
+                android:orientation="horizontal"
+                android:layout_marginBottom="5dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/ListTextPrimary"
+                    android:textStyle="bold"
+                    android:text="@string/asam_report_occurrence_date_label_text" />
+
+                <TextView android:id="@+id/asam_report_fragment_occurrence_date_ui"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/ListTextSecondary"
+                    android:paddingLeft="10dp"
+                    android:textIsSelectable="false"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="5dp">
 
                 <!-- Aggressor -->
                 <TextView
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     style="@style/ListTextPrimary"
+                    android:textStyle="bold"
                     android:text="@string/asam_report_aggressor_label_text" />
 
                 <TextView android:id="@+id/asam_report_fragment_aggressor_ui"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     style="@style/ListTextSecondary"
+                    android:paddingLeft="10dp"
                     android:textIsSelectable="false"/>
 
             </LinearLayout>
@@ -59,20 +68,94 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
+                android:orientation="horizontal"
+                android:layout_marginBottom="5dp">
 
                 <!-- Victim -->
                 <TextView
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     style="@style/ListTextPrimary"
+                    android:textStyle="bold"
                     android:text="@string/asam_report_victim_label_text" />
 
                 <TextView android:id="@+id/asam_report_fragment_victim_ui"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     style="@style/ListTextSecondary"
+                    android:paddingLeft="10dp"
+                    android:textIsSelectable="false"/>
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="5dp">
+
+                <!-- Coordinates -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/ListTextPrimary"
+                    android:textStyle="bold"
+                    android:text="@string/asam_report_coordinates_label_text" />
+
+                <TextView android:id="@+id/asam_report_fragment_location_ui"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/ListTextSecondary"
+                    android:paddingLeft="10dp"
+                    android:textIsSelectable="false"/>
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="5dp">
+
+                <!-- Reference Number -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/ListTextPrimary"
+                    android:textStyle="bold"
+                    android:text="@string/asam_report_reference_number_label_text"/>
+
+                <TextView android:id="@+id/asam_report_fragment_reference_number_ui"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/ListTextSecondary"
+                    android:paddingLeft="10dp"
+                    android:textIsSelectable="false"/>
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="5dp">
+
+                <!-- Subregion -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/ListTextPrimary"
+                    android:textStyle="bold"
+                    android:text="@string/asam_report_subregion_label_text" />
+
+                <TextView android:id="@+id/asam_report_fragment_subregion_ui"
+                    style="@style/ListTextSecondary"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="10dp"
                     android:textIsSelectable="false"/>
 
             </LinearLayout>
@@ -81,8 +164,9 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:layout_marginBottom="15dp">
+            android:layout_height="250dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp">
 
             <com.google.android.gms.maps.MapView
                 android:id="@+id/mapView"
@@ -92,15 +176,6 @@
                 app:uiRotateGestures="false"
                 app:uiTiltGestures="false"/>
 
-            <TextView android:id="@+id/asam_report_fragment_location_ui"
-                style="@style/MapText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentTop="true"
-                android:padding="5dp"
-                android:textIsSelectable="false"/>
-
         </RelativeLayout>
 
 
@@ -109,51 +184,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textIsSelectable="false"
-            android:layout_marginBottom="25dp"/>
+            android:padding="10dp"/>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="5dp">
-
-            <!-- Reference Number -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="@style/ListTextPrimary"
-                android:text="@string/asam_report_reference_number_label_text"/>
-
-            <TextView android:id="@+id/asam_report_fragment_reference_number_ui"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="@style/ListTextSecondary"
-                android:paddingLeft="10dp"
-                android:textIsSelectable="false"/>
-
-        </LinearLayout>
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <!-- Subregion -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="@style/ListTextPrimary"
-                android:text="@string/asam_report_subregion_label_text" />
-
-            <TextView android:id="@+id/asam_report_fragment_subregion_ui"
-                style="@style/ListTextSecondary"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingLeft="10dp"
-                android:textIsSelectable="false"/>
-
-        </LinearLayout>
 
     </LinearLayout>
 

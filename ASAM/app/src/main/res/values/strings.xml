@@ -19,15 +19,8 @@
     <string name="all_asams_show_regions_title_text">Show Regions</string>
     <string name="all_asams_map_title_text">ASAM</string>
     <string name="all_asams_map_query_error_text">There was an error retrieving new ASAMs.</string>
-    <string name="all_asams_map_no_asams_text">No ASAM activity found</string>
-    <string name="all_asams_map_1_asam_text">1 Result</string>
-    <string name="all_asams_map_1_asam_text_with_timespan">1 Filtered ASAM</string>
-    <string name="all_asams_map_1_asam_text_with_timespan_with_subregions">1 Result; %1$s; %2$s</string>
     <string name="all_asams_map_multiple_asams_text">%d Results</string>
-    <string name="all_asams_map_multiple_asams_text_with_timespan">%1$d Filtered ASAMs</string>
-    <string name="all_asams_map_multiple_asams_text_with_timespan_with_subregions">%1$d Results; %2$s; %3$s</string>
-    <string name="all_asams_map_1_subregion_text">1 Subregion</string>
-    <string name="all_asams_map_multiple_subregions_text">%d Subregions</string>
+    <string name="all_asams_map_multiple_asams_text_with_timespan">Showing %1$d of %2$d ASAMs</string>
     <string name="all_asams_map_query_progress_dialog_title_text">ASAM Query</string>
     <string name="all_asams_map_query_progress_dialog_content_text">Checking for new ASAMs</string>
     <string name="all_asams_map_menu_list_view_text">List View</string>
@@ -46,7 +39,6 @@
     <string name="all_asams_map_tablet_query_progress_dialog_content_text">Checking for new ASAMs</string>
     <string name="all_asams_map_tablet_date_text">--/--/----</string>
     <string name="all_asams_map_tablet_selected_date_text">(--/--/----)</string>
-
     <string name="all_asams_map_tablet_subregions_query_mode_message_text"><![CDATA[<u><b>Selected Subregion(s)</b></u><p>&nbsp;&nbsp;&nbsp;%s</p>Click <i>Menu->Reset</i> to return to "All ASAMs" mode.]]></string>
     <string name="all_asams_map_tablet_text_query_mode_message_text"><![CDATA[%s<br/>]]></string>
     <string name="all_asams_map_tablet_menu_list_view_text">List View</string>
@@ -77,6 +69,7 @@
     <string name="asam_report_occurrence_date_label_text">Date of Occurrence</string>
     <string name="asam_report_aggressor_label_text">Aggressor</string>
     <string name="asam_report_victim_label_text">Victim</string>
+    <string name="asam_report_coordinates_label_text">Coordinates</string>
     <string name="asam_report_subregion_label_text">Geographical Subregion</string>
     <string name="asam_report_reference_number_label_text">Reference Number</string>
     <string name="asam_report_location_label_text">Geographical Location</string>
