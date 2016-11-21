@@ -10,7 +10,7 @@
     <string name="offline_map_progress_dialog_title_text">Please wait...</string>
     <string name="offline_map_progress_dialog_content_text">Loading offline map data</string>
     <string name="asam_map_label">ASAM</string>
-    <string name="filter_label">Filters</string>
+    <string name="filter_label">Filter</string>
     <string name="filter_interval_label">Time Interval</string>
     <string name="filter_current_subregion_label">Current Subregion</string>
     <string name="all_asams_list_title_text">List View</string>

@@ -12,13 +12,12 @@ import android.widget.Spinner;
 
 import mil.nga.giat.asam.util.AsamConstants;
 
-
 public class SortAsamListDialogFragment extends DialogFragment {
 
     public interface OnSortAsamListListener {
-        public void onSortAsamList(int sortDirection, int sortPopupSpinnerSelection);
+        void onSortAsamList(int sortDirection, int sortPopupSpinnerSelection);
     }
-    
+
     public static SortAsamListDialogFragment newInstance(int sortDirection, int sortPopupSpinnerSelection) {
         SortAsamListDialogFragment dialogFragment = new SortAsamListDialogFragment();
         Bundle arguments = new Bundle();
@@ -27,30 +26,31 @@ public class SortAsamListDialogFragment extends DialogFragment {
         dialogFragment.setArguments(arguments);
         return dialogFragment;
     }
-    
+
     private Spinner mSortSpinnerUI;
     private RadioButton mSortAscendingRadioButtonUI;
     private RadioButton mSortDescendingRadioButtonUI;
-    
+
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AppCompatAlertDialogStyle);
-        builder.setTitle(getString(R.string.sort_asam_list_dialog_fragment_title_text));
-        View popupView = getActivity().getLayoutInflater().inflate(R.layout.sort_asam_list_dialog_fragment, null);
-        mSortSpinnerUI = (Spinner)popupView.findViewById(R.id.sort_asam_list_dialog_fragment_sort_spinner_ui);
-        mSortAscendingRadioButtonUI = (RadioButton)popupView.findViewById(R.id.sort_asam_list_dialog_fragment_sort_ascending_radio_button_ui);
-        mSortDescendingRadioButtonUI = (RadioButton)popupView.findViewById(R.id.sort_asam_list_dialog_fragment_sort_descending_radio_button_ui);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), mil.nga.giat.asam.R.style.AppCompatAlertDialogStyle);
+        builder.setTitle(getString(mil.nga.giat.asam.R.string.sort_asam_list_dialog_fragment_title_text));
+        View popupView = getActivity().getLayoutInflater().inflate(mil.nga.giat.asam.R.layout.sort_asam_list_dialog_fragment, null);
+        mSortSpinnerUI = (Spinner)popupView.findViewById(mil.nga.giat.asam.R.id.sort_asam_list_dialog_fragment_sort_spinner_ui);
+        mSortAscendingRadioButtonUI = (RadioButton)popupView.findViewById(mil.nga.giat.asam.R.id.sort_asam_list_dialog_fragment_sort_ascending_radio_button_ui);
+        mSortDescendingRadioButtonUI = (RadioButton)popupView.findViewById(mil.nga.giat.asam.R.id.sort_asam_list_dialog_fragment_sort_descending_radio_button_ui);
         builder.setView(popupView);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(), R.array.sort_types, R.layout.sort_asam_list_dialog_fragment_spinner_item);
-        adapter.setDropDownViewResource(R.layout.sort_asam_list_dialog_fragment_spinner_dropdown_item);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), mil.nga.giat.asam.R.layout.sort_asam_list_dialog_fragment_spinner_item, getResources().getStringArray(R.array.sort_types));
+        adapter.setDropDownViewResource(mil.nga.giat.asam.R.layout.sort_asam_list_dialog_fragment_spinner_dropdown_item);
         mSortSpinnerUI.setAdapter(adapter);
         mSortSpinnerUI.setSelection(getArguments().getInt(AsamConstants.SPINNER_SELECTION_KEY));
+
         mSortAscendingRadioButtonUI.setChecked(getArguments().getInt(AsamConstants.SORT_DIRECTION_KEY) == AsamConstants.SORT_ASCENDING);
         mSortDescendingRadioButtonUI.setChecked(getArguments().getInt(AsamConstants.SORT_DIRECTION_KEY) == AsamConstants.SORT_DESCENDING);
-        builder.setPositiveButton(getString(R.string.sort_asam_list_dialog_fragment_sort_button_text), new DialogInterface.OnClickListener() {
-            
+        builder.setPositiveButton(getString(mil.nga.giat.asam.R.string.sort_asam_list_dialog_fragment_sort_button_text), new DialogInterface.OnClickListener() {
+
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 int sortPopupSpinnerSelection = mSortSpinnerUI.getSelectedItemPosition();
@@ -59,8 +59,8 @@ public class SortAsamListDialogFragment extends DialogFragment {
                 dialog.dismiss();
             }
         });
-        builder.setNegativeButton(getString(R.string.sort_asam_list_dialog_fragment_cancel_button_text), new DialogInterface.OnClickListener() {
-            
+        builder.setNegativeButton(getString(mil.nga.giat.asam.R.string.sort_asam_list_dialog_fragment_cancel_button_text), new DialogInterface.OnClickListener() {
+
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
