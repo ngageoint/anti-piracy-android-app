@@ -1,8 +1,12 @@
 package mil.nga.giat.asam.net;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -12,17 +16,9 @@ import mil.nga.giat.asam.util.AsamLog;
 import mil.nga.giat.asam.util.AsamUtils;
 import mil.nga.giat.asam.util.ManifestMetaData;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.params.HttpParams;
-
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 
 public class AsamWebService {
@@ -34,28 +30,40 @@ public class AsamWebService {
     public AsamWebService(Context context) {
         mContext = context;
     }
-    
+
     public String query() throws IOException {
+        AsamLog.i(AsamWebService.class.getName() + ":AsamWebService->query");
         String results = null;
         Date maxDate = null;
         AsamDbHelper dbHelper = new AsamDbHelper(mContext);
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         maxDate = dbHelper.getMaxOccurrenceDate(db);
         db.close();
-        
-        String url = String.format(ManifestMetaData.getString(mContext, "web_service_url"), DATE_FORMAT.format(maxDate), DATE_FORMAT.format(new Date()));
-        AsamLog.i(AsamWebService.class.getName() + ":" + url);
-        HttpParams httpParameters = new BasicHttpParams();
-        HttpConnectionParams.setConnectionTimeout(httpParameters, AsamConstants.QUERY_TIMEOUT_THRESHOLD_IN_MILLISECONDS);
-        HttpConnectionParams.setSoTimeout(httpParameters, AsamConstants.QUERY_TIMEOUT_THRESHOLD_IN_MILLISECONDS);
-        HttpClient httpClient = new DefaultHttpClient(httpParameters);
-        HttpResponse response = httpClient.execute(new HttpGet(url));
-        HttpEntity entity = response.getEntity();
-        if (entity != null) {
-            InputStream in = entity.getContent();
+
+        Calendar c = Calendar.getInstance();
+        c.setTime(maxDate);
+        c.add(Calendar.DAY_OF_YEAR, -60);
+
+        URL url = new URL(String.format(ManifestMetaData.getString(mContext, "web_service_url"), DATE_FORMAT.format(c.getTime()), DATE_FORMAT.format(new Date())));
+        HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+        urlConnection.setConnectTimeout(AsamConstants.QUERY_TIMEOUT_THRESHOLD_IN_MILLISECONDS);
+
+
+        try {
+            InputStream in = new BufferedInputStream(urlConnection.getInputStream());
             results = AsamUtils.readStream(in);
-            in.close();
+        } catch (IOException e) {
+            InputStream err = urlConnection.getErrorStream();
+            results = AsamUtils.readStream(err);
+            throw new IOException(results);
+        } finally {
+
+            if (urlConnection != null) {
+                Log.d("query", "response code: " + urlConnection.getResponseCode());
+                urlConnection.disconnect();
+            }
         }
+
         return results;
     }
 }
