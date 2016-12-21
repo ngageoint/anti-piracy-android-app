@@ -11,13 +11,12 @@ Software source code previously released under an open source license and then m
 
 ![googleplay](https://cloud.githubusercontent.com/assets/5178768/3282093/2e291564-f4d7-11e3-82be-8ecd3d98a4b4.png)
 
-https://play.google.com/store/apps/details?id=mil.nga.giat.asam
-
 ###Screenshots
-![asam1] (https://cloud.githubusercontent.com/assets/3793883/3378303/63959296-fbe8-11e3-864f-c98508c8c6e8.png)
-![asam2] (https://cloud.githubusercontent.com/assets/3793883/3378304/63962198-fbe8-11e3-94f2-cd4cd3c7ab7f.png)
-![asam3] (https://cloud.githubusercontent.com/assets/3793883/3378306/63a3ce42-fbe8-11e3-8b46-83a6239dc0f8.png)
-![asam4] (https://cloud.githubusercontent.com/assets/3793883/3378305/63a2f7ce-fbe8-11e3-9dcd-351c6adfead1.png)
+![asam_screenshot_map] (https://raw.githubusercontent.com/ngageoint/anti-piracy-android-app/Refactor/screenshots/asam_screenshot_map.jpg)
+
+![asam_screenshot_filters] (https://raw.githubusercontent.com/ngageoint/anti-piracy-android-app/Refactor/screenshots/asam_screenshot_filters.jpg)
+
+![asam_screenshot_details] (https://raw.githubusercontent.com/ngageoint/anti-piracy-android-app/Refactor/screenshots/asam_screenshot_details.jpg)
 
 
 #### ASAM offline map data
