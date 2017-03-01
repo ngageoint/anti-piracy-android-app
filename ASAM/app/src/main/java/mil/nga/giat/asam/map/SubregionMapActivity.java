@@ -6,6 +6,7 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.InputFilter;
 import android.text.InputType;
 
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -52,8 +54,10 @@ import mil.nga.giat.asam.util.CurrentSubregionHelper;
 import mil.nga.giat.asam.util.AsamConstants;
 import mil.nga.giat.asam.util.AsamLog;
 
+import static mil.nga.giat.asam.util.AsamConstants.MAP_TYPE_OFFLINE;
 
-public class SubregionMapActivity extends AppCompatActivity implements OnMapClickListener, View.OnClickListener, OfflineBannerFragment.OnOfflineBannerClick, OnPermissionCallback, OnMapReadyCallback {
+
+public class SubregionMapActivity extends AppCompatActivity implements OnMapClickListener, View.OnClickListener, OfflineBannerFragment.OnOfflineBannerClick, NetworkChangeReceiver.ConnectivityEventListener, OnPermissionCallback, OnMapReadyCallback {
 
     private static final int INITIAL_ZOOM_LEVEL = 2;
     private static final float OUTLINE_WIDTH = 2.0f;
@@ -289,6 +293,12 @@ public class SubregionMapActivity extends AppCompatActivity implements OnMapClic
         super.onResume();
 
         AsamLog.i(SubregionMapActivity.class.getName() + ":onResume");
+
+        NetworkChangeReceiver.getInstance().addListener(this);
+        IntentFilter filter = new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE");
+        registerReceiver(NetworkChangeReceiver.getInstance(), filter);
+        showOfflineAlertFragment(!NetworkChangeReceiver.getInstance().hasInternetConnectivity(getApplicationContext()));
+
         supportInvalidateOptionsMenu();
 
         if (mMapUI != null) {
@@ -314,6 +324,12 @@ public class SubregionMapActivity extends AppCompatActivity implements OnMapClic
     @Override
     public void onPause() {
         super.onPause();
+        NetworkChangeReceiver.getInstance().removeListener(this);
+        try {
+            unregisterReceiver(NetworkChangeReceiver.getInstance());
+        } catch (IllegalArgumentException e) {
+            Log.e("SubregionMapActivity", "NetworkChangeReceiver was never registered");
+        }
     }
 
 
@@ -446,18 +462,8 @@ public class SubregionMapActivity extends AppCompatActivity implements OnMapClic
 
         mMapType = mapType;
 
-        // Show/hide the offline alert fragment based on map type
-        if (mMapType == AsamConstants.MAP_TYPE_OFFLINE) {
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .hide(offlineAlertFragment)
-                    .commit();
-        } else if (!NetworkChangeReceiver.getInstance().hasInternetConnectivity(getApplicationContext())){
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .show(offlineAlertFragment)
-                    .commit();
-        }
+        // show if there is no internet connectivity and the map type is not offline map
+        showOfflineAlertFragment(!(NetworkChangeReceiver.getInstance().hasInternetConnectivity(getApplicationContext()) || mMapType == MAP_TYPE_OFFLINE));
 
         if (typeChanged) {
             // Change the map
@@ -662,4 +668,39 @@ public class SubregionMapActivity extends AppCompatActivity implements OnMapClic
         dialog.show();
     }
 
+    /**
+     * Show or Hides the fragment
+     * @param show
+     */
+    private void showOfflineAlertFragment(final boolean show) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (show) {
+                    getSupportFragmentManager()
+                            .beginTransaction()
+                            .show(offlineAlertFragment)
+                            .commit();
+                    offlineAlertFragment.show();
+                } else {
+                    getSupportFragmentManager()
+                            .beginTransaction()
+                            .hide(offlineAlertFragment)
+                            .commit();
+                    offlineAlertFragment.hide();
+                }
+            }
+        });
+    }
+
+
+    @Override
+    public void onAllDisconnected() {
+        showOfflineAlertFragment(mMapType != MAP_TYPE_OFFLINE);
+    }
+
+    @Override
+    public void onAnyConnected() {
+        showOfflineAlertFragment(false);
+    }
 }

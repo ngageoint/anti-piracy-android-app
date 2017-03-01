@@ -1,9 +1,12 @@
 package mil.nga.giat.asam.map;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -12,6 +15,7 @@ import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -45,8 +49,8 @@ import java.util.List;
 import java.util.Locale;
 
 import mil.nga.giat.asam.AsamListActivity;
+import mil.nga.giat.asam.PullAsamsTask;
 import mil.nga.giat.asam.model.AsamBeanClusterRenderer;
-import mil.nga.giat.asam.model.AsamInputAdapter;
 import mil.nga.giat.asam.settings.SettingsActivity;
 import mil.nga.giat.asam.R;
 import mil.nga.giat.asam.connectivity.NetworkChangeReceiver;
@@ -60,8 +64,9 @@ import mil.nga.giat.asam.util.AsamListContainer;
 import mil.nga.giat.asam.util.AsamLog;
 import mil.nga.giat.asam.util.SyncTime;
 
+import static mil.nga.giat.asam.util.AsamConstants.MAP_TYPE_OFFLINE;
 
-public class AsamMapActivity extends AppCompatActivity implements CancelableCallback, OfflineBannerFragment.OnOfflineBannerClick, ClusterManager.OnClusterClickListener<AsamBean>, ClusterManager.OnClusterItemClickListener<AsamBean>, GoogleMap.OnCameraIdleListener, OnMapReadyCallback, GoogleMap.OnCameraMoveStartedListener {
+public class AsamMapActivity extends AppCompatActivity implements CancelableCallback, OfflineBannerFragment.OnOfflineBannerClick, NetworkChangeReceiver.ConnectivityEventListener, ClusterManager.OnClusterClickListener<AsamBean>, ClusterManager.OnClusterItemClickListener<AsamBean>, GoogleMap.OnCameraIdleListener, OnMapReadyCallback, GoogleMap.OnCameraMoveStartedListener, PullAsamsTask.OnSyncResultListener {
 
     private static class QueryHandler extends Handler {
 
@@ -126,8 +131,9 @@ public class AsamMapActivity extends AppCompatActivity implements CancelableCall
     private int selectedGraticuleMenuItem = R.id.grat_none;
 
     private ClusterManager<AsamBean> mClusterManager;
-    private AsamInputAdapter asamIA;
     private GraticulesManager gratManager;
+
+    private String lastSyncTime;
 
 
     @Override
@@ -136,7 +142,7 @@ public class AsamMapActivity extends AppCompatActivity implements CancelableCall
         AsamLog.i(AsamMapActivity.class.getName() + ":onCreate");
         setContentView(R.layout.map);
 
-        asamIA = new AsamInputAdapter(getApplicationContext());
+        lastSyncTime = SyncTime.getLastSyncTimeAsText(this);
 
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mQueryError = false;
@@ -173,8 +179,6 @@ public class AsamMapActivity extends AppCompatActivity implements CancelableCall
 
         this.map = map;
 
-
-
         gratManager = new GraticulesManager(getApplicationContext(), this.map);
 
         // initialize the cluster manager
@@ -201,7 +205,37 @@ public class AsamMapActivity extends AppCompatActivity implements CancelableCall
 
         mFilterParameters = new FilterParameters();
         mFilterParameters.mTimeInterval = 365;
+
+        pullAsams();
+
         onFilter();
+
+    }
+
+    private void pullAsams() {
+        if (!SyncTime.isSynched(this)) {
+            new PullAsamsTask(this, this).execute();
+        }
+    }
+
+    @Override
+    public void onSyncCompleted() {
+        lastSyncTime = SyncTime.getLastSyncTimeAsText(this);
+        onFilter();
+    }
+
+    @Override
+    public void onSyncFailed() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AppCompatAlertDialogStyle);
+        builder.setTitle(getString(R.string.preferences_query_progress_dialog_error_title_text));
+        builder.setMessage(getString(R.string.preferences_query_error_text));
+        builder.setPositiveButton(getString(R.string.preferences_ok_button_text), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.cancel();
+            }
+        });
+        builder.show();
     }
 
     public void showGraticulesMenu(View v) {
@@ -241,7 +275,7 @@ public class AsamMapActivity extends AppCompatActivity implements CancelableCall
             case GoogleMap.MAP_TYPE_HYBRID:
                 popup.getMenu().findItem(R.id.map_type_hybrid).setChecked(true);
                 break;
-            case AsamConstants.MAP_TYPE_OFFLINE:
+            case MAP_TYPE_OFFLINE:
                 popup.getMenu().findItem(R.id.map_type_offline).setChecked(true);
                 break;
             default:
@@ -263,7 +297,6 @@ public class AsamMapActivity extends AppCompatActivity implements CancelableCall
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -271,12 +304,27 @@ public class AsamMapActivity extends AppCompatActivity implements CancelableCall
     @Override
     public void onResume() {
         super.onResume();
+
+        if (!lastSyncTime.equals(SyncTime.getLastSyncTimeAsText(this))) {
+            onSyncCompleted();
+        }
+
+        NetworkChangeReceiver.getInstance().addListener(this);
+        IntentFilter filter = new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE");
+        registerReceiver(NetworkChangeReceiver.getInstance(), filter);
+        showOfflineAlertFragment(!NetworkChangeReceiver.getInstance().hasInternetConnectivity(getApplicationContext()));
         supportInvalidateOptionsMenu();
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        NetworkChangeReceiver.getInstance().removeListener(this);
+        try {
+            unregisterReceiver(NetworkChangeReceiver.getInstance());
+        } catch (IllegalArgumentException e) {
+            Log.e("AsamMapActivity", "NetworkChangeReceiver was never registered");
+        }
     }
 
     @Override
@@ -296,7 +344,7 @@ public class AsamMapActivity extends AppCompatActivity implements CancelableCall
                 return true;
             case R.id.map_type_offline:
                 item.setChecked(!item.isChecked());
-                onMapTypeChanged(AsamConstants.MAP_TYPE_OFFLINE);
+                onMapTypeChanged(MAP_TYPE_OFFLINE);
                 return true;
             case R.id.all_asams_map_menu_list_view_ui: {
                 AsamListContainer.mAsams = mAsams;
@@ -471,11 +519,9 @@ public class AsamMapActivity extends AppCompatActivity implements CancelableCall
     private class QueryThread extends Thread {
 
         private static final int TIME_SLIDER_QUERY = 0;
-        private static final int TIME_PERIOD_QUERY = 1;
         private static final int STANDARD_QUERY = 2;
         private int mQueryType;
         private int mTimeSliderTick;
-        private Calendar mTimePeriod;
 
         QueryThread() {
             mQueryType = STANDARD_QUERY;
@@ -490,9 +536,6 @@ public class AsamMapActivity extends AppCompatActivity implements CancelableCall
         public void run() {
             Context context = AsamMapActivity.this;
             SQLiteDatabase db = null;
-            if (!SyncTime.isSynched(context)) {
-                asamIA.run();
-            }
 
             try {
                 // Query for the time period based on the slider.
@@ -562,23 +605,13 @@ public class AsamMapActivity extends AppCompatActivity implements CancelableCall
 
         mMapType = mapType;
 
-        // Show/hide the offline alert fragment based on map type
-        if (mMapType == AsamConstants.MAP_TYPE_OFFLINE) {
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .hide(offlineAlertFragment)
-                    .commit();
-        } else if (!NetworkChangeReceiver.getInstance().hasInternetConnectivity(getApplicationContext())) {
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .show(offlineAlertFragment)
-                    .commit();
-        }
+        // show if there is no internet connectivity and the map type is not offline map
+        showOfflineAlertFragment(!(NetworkChangeReceiver.getInstance().hasInternetConnectivity(getApplicationContext()) || mMapType == MAP_TYPE_OFFLINE));
 
         if (typeChanged) {
 
             // Change the map
-            if (mMapType == AsamConstants.MAP_TYPE_OFFLINE) {
+            if (mMapType == MAP_TYPE_OFFLINE) {
                 if (offlineMap != null) offlineMap.clear();
 
                 offlineMap = new OfflineMap(this, map);
@@ -606,7 +639,7 @@ public class AsamMapActivity extends AppCompatActivity implements CancelableCall
 
     @Override
     public void onOfflineBannerClick() {
-        onMapTypeChanged(AsamConstants.MAP_TYPE_OFFLINE);
+        onMapTypeChanged(MAP_TYPE_OFFLINE);
         supportInvalidateOptionsMenu();
     }
 
@@ -707,6 +740,42 @@ public class AsamMapActivity extends AppCompatActivity implements CancelableCall
 
     public ClusterManager<AsamBean> getmClusterManager() {
         return mClusterManager;
+    }
+
+    /**
+     * Show or Hides the fragment
+     * @param show
+     */
+    private void showOfflineAlertFragment(final boolean show) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (show) {
+                    getSupportFragmentManager()
+                            .beginTransaction()
+                            .show(offlineAlertFragment)
+                            .commit();
+                    offlineAlertFragment.show();
+                } else {
+                    getSupportFragmentManager()
+                            .beginTransaction()
+                            .hide(offlineAlertFragment)
+                            .commit();
+                    offlineAlertFragment.hide();
+                }
+            }
+        });
+    }
+
+
+    @Override
+    public void onAllDisconnected() {
+        showOfflineAlertFragment(mMapType != MAP_TYPE_OFFLINE);
+    }
+
+    @Override
+    public void onAnyConnected() {
+        showOfflineAlertFragment(false);
     }
 
 }

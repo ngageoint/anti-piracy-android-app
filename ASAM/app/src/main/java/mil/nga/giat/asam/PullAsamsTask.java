@@ -1,41 +1,29 @@
 package mil.nga.giat.asam;
 
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
+import android.util.Log;
 
-import org.apache.commons.lang3.StringUtils;
-
-import java.util.List;
-
-import mil.nga.giat.asam.db.AsamDbHelper;
-import mil.nga.giat.asam.model.AsamBean;
 import mil.nga.giat.asam.model.AsamInputAdapter;
-import mil.nga.giat.asam.model.AsamJsonParser;
-import mil.nga.giat.asam.net.AsamWebService;
-import mil.nga.giat.asam.util.AsamLog;
-import mil.nga.giat.asam.util.SyncTime;
 
 /**
  * Created by wnewman on 5/26/15.
  */
-public class PullAsamsTask extends AsyncTask<Void, Void, Void> {
+public class PullAsamsTask extends AsyncTask<Void, Void, Error> {
 
-    public interface OnSyncCompletedListener {
+    public interface OnSyncResultListener {
         void onSyncCompleted();
+        void onSyncFailed();
     }
 
     private Context context;
     private ProgressDialog progressDialog;
-    private boolean error = false;
-    private OnSyncCompletedListener onSyncCompletedListener;
+    private OnSyncResultListener onSyncCompletedListener;
     private AsamInputAdapter asamIA;
 
 
-    public PullAsamsTask(Context context, OnSyncCompletedListener onSyncCompletedListener) {
+    public PullAsamsTask(Context context, OnSyncResultListener onSyncCompletedListener) {
         this.context = context;
         this.onSyncCompletedListener = onSyncCompletedListener;
         this.asamIA = new AsamInputAdapter(this.context);
@@ -51,30 +39,19 @@ public class PullAsamsTask extends AsyncTask<Void, Void, Void> {
     }
 
     @Override
-    protected Void doInBackground(Void... params) {
-        asamIA.run();
-        return null;
+    protected Error doInBackground(Void... params) {
+        return asamIA.run();
     }
 
     @Override
-    protected void onPostExecute(Void result) {
+    protected void onPostExecute(Error error) {
         progressDialog.dismiss();
-
-        if (error) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.AppCompatAlertDialogStyle);
-            builder.setTitle(context.getString(R.string.preferences_query_error_text));
-            builder.setMessage(context.getString(R.string.preferences_query_error_text));
-            builder.setPositiveButton(context.getString(R.string.preferences_ok_button_text), new DialogInterface.OnClickListener() {
-
-                @Override
-                public void onClick(DialogInterface dialog, int id) {
-                    dialog.cancel();
-                }
-            });
-            builder.show();
+        if (error != null) {
+            Log.e("PullAsamsTask", error.getMessage());
+            onSyncCompletedListener.onSyncFailed();
+        } else {
+            onSyncCompletedListener.onSyncCompleted();
         }
-
-        onSyncCompletedListener.onSyncCompleted();
     }
 
 }

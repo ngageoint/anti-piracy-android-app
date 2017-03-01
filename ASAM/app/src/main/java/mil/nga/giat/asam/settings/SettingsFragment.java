@@ -18,7 +18,7 @@ import mil.nga.giat.asam.R;
 import mil.nga.giat.asam.util.SyncTime;
 
 
-public class SettingsFragment extends Fragment implements AdapterView.OnItemClickListener, PullAsamsTask.OnSyncCompletedListener {
+public class SettingsFragment extends Fragment implements AdapterView.OnItemClickListener, PullAsamsTask.OnSyncResultListener {
 
     private ListView listView;
     private ListAdapter listAdapter;
@@ -100,6 +100,20 @@ public class SettingsFragment extends Fragment implements AdapterView.OnItemClic
         builder.setMessage(getString(R.string.preferences_sync_complete_description_text));
         builder.setPositiveButton(getString(R.string.preferences_ok_button_text), new DialogInterface.OnClickListener() {
 
+            @Override
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.cancel();
+            }
+        });
+        builder.show();
+    }
+
+    @Override
+    public void onSyncFailed() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(), R.style.AppCompatAlertDialogStyle);
+        builder.setTitle(getContext().getString(R.string.preferences_query_progress_dialog_error_title_text));
+        builder.setMessage(getContext().getString(R.string.preferences_query_error_text));
+        builder.setPositiveButton(getContext().getString(R.string.preferences_ok_button_text), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
                 dialog.cancel();

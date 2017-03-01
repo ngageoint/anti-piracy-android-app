@@ -25,16 +25,13 @@ public class NetworkChangeReceiver extends BroadcastReceiver  {
 		void onAnyConnected();
 	}
 
-
 	/**
 	 * Singleton.
 	 */
 	private static NetworkChangeReceiver mNetworkChangeReceiver;
 
-	/**
-	 * Do not use!
-	 */
-	public NetworkChangeReceiver() {
+
+	private NetworkChangeReceiver() {
 
 	}
 
@@ -45,7 +42,7 @@ public class NetworkChangeReceiver extends BroadcastReceiver  {
 		return mNetworkChangeReceiver;
 	}
 
-	private static final int sleepDelay = 10; // in seconds
+	private static final int sleepDelay = 3; // in seconds
 
 	private static final String LOG_NAME = NetworkChangeReceiver.class.getName();
 
@@ -57,7 +54,14 @@ public class NetworkChangeReceiver extends BroadcastReceiver  {
 
 	@Override
 	public void onReceive(final Context context, final Intent intent) {
+		checkForConnectivityChange(context);
+	}
 
+	/**
+	 * checks for changes to connectivity state
+	 * @param context
+     */
+	public void checkForConnectivityChange(Context context) {
 		boolean newConnectionAvailabilityState = hasInternetConnectivity(context);
 
 		// set the old state if it's the first time through!

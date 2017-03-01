@@ -173,6 +173,7 @@
     <string name="preferences_hide_disclaimer_label_text">Disclaimer</string>
     <string name="preferences_hide_disclaimer_checkbox_text">Hide Disclaimer</string>
     <string name="preferences_query_progress_dialog_title_text">ASAM Query</string>
+    <string name="preferences_query_progress_dialog_error_title_text">ASAM Query Error</string>
     <string name="preferences_query_progress_dialog_content_text">Checking for new ASAMs</string>
     <string name="preferences_query_error_text">There was an error retrieving new ASAMs.</string>
     <string name="preferences_ok_button_text">OK</string>

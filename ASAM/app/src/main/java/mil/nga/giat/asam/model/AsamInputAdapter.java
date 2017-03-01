@@ -26,7 +26,8 @@ public class AsamInputAdapter {
         parser = new AsamJsonParser();
     }
 
-    public void run() {
+    public Error run() {
+        Error error = null;
         SQLiteDatabase db = null;
         try {
             String json = requestAsamData();
@@ -39,17 +40,21 @@ public class AsamInputAdapter {
                     db = dbHelper.getWritableDatabase();
                     asams = dbHelper.removeDuplicates(db, asams);
                     dbHelper.insertAsams(db, asams);
+                } else {
+                    error = new Error("No ASAMs in response");
                 }
             }
             SyncTime.finishedSync(ctx);
         } catch (Exception caught) {
             AsamLog.e("There was an error parsing ASAM feed", caught);
+            error = new Error("Error retrieving ASAMs.");
         } finally {
             if (db != null) {
                 db.close();
                 db = null;
             }
         }
+        return error;
     }
 
     /**
