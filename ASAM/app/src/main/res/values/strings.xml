@@ -6,27 +6,21 @@
     <string name="map_type_normal_text">Normal</string>
     <string name="map_type_satellite_text">Satellite</string>
     <string name="map_type_hybrid_text">Hybrid</string>
-    <string name="map_type_offline_110m_text">Offline 1:110m</string>
-    <string name="map_type_offline_50m_text">Offline 1:50m</string>
+    <string name="map_type_offline_text">Offline 1:110m</string>
     <string name="offline_map_progress_dialog_title_text">Please wait...</string>
     <string name="offline_map_progress_dialog_content_text">Loading offline map data</string>
     <string name="asam_map_label">ASAM</string>
-    <string name="filter_label">Filters</string>
+    <string name="filter_label">Filter</string>
     <string name="filter_interval_label">Time Interval</string>
     <string name="filter_current_subregion_label">Current Subregion</string>
     <string name="all_asams_list_title_text">List View</string>
-    <string name="all_asams_about_title_text">About</string>
+    <string name="all_asams_about_title_text">Help</string>
+    <string name="all_asams_report_title_text">Submit Report</string>
+    <string name="all_asams_show_regions_title_text">Show Regions</string>
     <string name="all_asams_map_title_text">ASAM</string>
     <string name="all_asams_map_query_error_text">There was an error retrieving new ASAMs.</string>
-    <string name="all_asams_map_no_asams_text">No ASAM activity found</string>
-    <string name="all_asams_map_1_asam_text">1 Result</string>
-    <string name="all_asams_map_1_asam_text_with_timespan">1 Filtered ASAM</string>
-    <string name="all_asams_map_1_asam_text_with_timespan_with_subregions">1 Result; %1$s; %2$s</string>
     <string name="all_asams_map_multiple_asams_text">%d Results</string>
-    <string name="all_asams_map_multiple_asams_text_with_timespan">%1$d Filtered ASAMs</string>
-    <string name="all_asams_map_multiple_asams_text_with_timespan_with_subregions">%1$d Results; %2$s; %3$s</string>
-    <string name="all_asams_map_1_subregion_text">1 Subregion</string>
-    <string name="all_asams_map_multiple_subregions_text">%d Subregions</string>
+    <string name="all_asams_map_multiple_asams_text_with_timespan">Showing %1$d of %2$d ASAMs</string>
     <string name="all_asams_map_query_progress_dialog_title_text">ASAM Query</string>
     <string name="all_asams_map_query_progress_dialog_content_text">Checking for new ASAMs</string>
     <string name="all_asams_map_menu_list_view_text">List View</string>
@@ -43,12 +37,12 @@
     <string name="all_asams_map_tablet_no_asams_text">No ASAM activity found</string>
     <string name="all_asams_map_tablet_query_progress_dialog_title_text">ASAM Query</string>
     <string name="all_asams_map_tablet_query_progress_dialog_content_text">Checking for new ASAMs</string>
-    <string name="all_asams_map_tablet_date_range_text">--/--/---- to --/--/----</string>
-    <string name="all_asams_map_tablet_total_asams_text">----- of ---- ASAMs</string>
+    <string name="all_asams_map_tablet_date_text">--/--/----</string>
+    <string name="all_asams_map_tablet_selected_date_text">(--/--/----)</string>
     <string name="all_asams_map_tablet_subregions_query_mode_message_text"><![CDATA[<u><b>Selected Subregion(s)</b></u><p>&nbsp;&nbsp;&nbsp;%s</p>Click <i>Menu->Reset</i> to return to "All ASAMs" mode.]]></string>
     <string name="all_asams_map_tablet_text_query_mode_message_text"><![CDATA[%s<br/>]]></string>
     <string name="all_asams_map_tablet_menu_list_view_text">List View</string>
-    <string name="all_asams_map_tablet_change_subregions_text">Change</string>
+    <string name="all_asams_map_tablet_change_subregions_text">Select Regions</string>
     <string name="all_asams_map_tablet_menu_subregions_text">Subregions</string>
     <string name="all_asams_map_tablet_menu_settings_text">Settings</string>
     <string name="all_asams_map_tablet_menu_text_filter_text">Filters</string>
@@ -75,6 +69,7 @@
     <string name="asam_report_occurrence_date_label_text">Date of Occurrence</string>
     <string name="asam_report_aggressor_label_text">Aggressor</string>
     <string name="asam_report_victim_label_text">Victim</string>
+    <string name="asam_report_coordinates_label_text">Coordinates</string>
     <string name="asam_report_subregion_label_text">Geographical Subregion</string>
     <string name="asam_report_reference_number_label_text">Reference Number</string>
     <string name="asam_report_location_label_text">Geographical Location</string>
@@ -101,12 +96,17 @@
     <string name="info_fragment_image_content_description_text">NGA Logo</string>
     <string name="info_fragment_version_text">ASAM v1.0.0</string>
     <string name="info_fragment_info_text">Anti-Shipping Activity Messages (ASAM) include the locations and descriptive accounts of specific hostile acts against ships and mariners. The reports may be useful for recognition, prevention and avoidance of potential hostile activity.</string>
+    <string name="info_fragment_about_link_text">ASAM Website</string>
+    <string name="info_fragment_about_asam_link_text">http://msi.nga.mil/NGAPortal/MSI.portal?_nfpb=true&amp;_st=&amp;_pageLabel=msi_portal_page_65</string>
     <string name="info_fragment_contact_text">Contact Us</string>
     <string name="info_fragment_phone_number_text">1-800-362-6289</string>
+    <string name="info_fragment_report_info_text">To report ASAM information please reference the $$Submit Report$$ section of the Maritime Safety Information portal.</string>
+    <string name="info_fragment_report_url_text">http://msi.nga.mil/NGAPortal/MSI.portal?_nfpb=true&amp;_st=&amp;_pageLabel=msi_portal_page_70&amp;subCode=01</string>
     <string name="info_fragment_email_subject_text">ASAM app feedback</string>
     <string name="info_fragment_email_text"><a href="mailto:MCDASAM@nga.mil">MCDASAM@nga.mil</a></string>
     <string name="info_fragment_email_address">MCDASAM@nga.mil</string>
     <string name="info_fragment_menu_info_text">About</string>
+    <string name="info_fragment_menu_asam_info_text">ASAM Information</string>
     <string name="info_fragment_legal_row_text">Legal Information</string>
     <string name="launch_screen_all_asams_label_text">Map View</string>
     <string name="launch_screen_subregions_label_text">Subregions</string>
@@ -173,6 +173,7 @@
     <string name="preferences_hide_disclaimer_label_text">Disclaimer</string>
     <string name="preferences_hide_disclaimer_checkbox_text">Hide Disclaimer</string>
     <string name="preferences_query_progress_dialog_title_text">ASAM Query</string>
+    <string name="preferences_query_progress_dialog_error_title_text">ASAM Query Error</string>
     <string name="preferences_query_progress_dialog_content_text">Checking for new ASAMs</string>
     <string name="preferences_query_error_text">There was an error retrieving new ASAMs.</string>
     <string name="preferences_ok_button_text">OK</string>
@@ -195,7 +196,10 @@
     <string name="sort_asam_list_dialog_fragment_descending_radio_button_text">Descending</string>
     <string name="subregion_map_title_text">Subregions</string>
     <string name="subregion_map_menu_selected_subregions_text">Selected Subregions</string>
+    <string name="selected_subregion_dialog_title">Selected Subregions</string>
+    <string name="invalid_subregion_query_id">Invalid Subregion ID</string>
     <string name="subregion_map_menu_query_text">Query</string>
+    <string name="subregion_map_menu_reset_text">Reset</string>
     <string name="subregion_map_menu_clear_text">Clear</string>
     <string name="subregion_map_menu_60_days_text">60 days</string>
     <string name="subregion_map_menu_90_days_text">90 days</string>
@@ -205,6 +209,7 @@
     <string name="subregion_map_menu_all_text">All</string>
     <string name="text_query_select_subregion_label_text">Subregions</string>
     <string name="text_query_select_subregion_prompt_text">Select A Subregion</string>
+    <string name="text_query_status_content_description_text">Current Status</string>
     <string name="text_query_reference_number_label_text">Reference Number</string>
     <string name="text_query_victim_label_text">Victim</string>
     <string name="text_query_victim_content_description_text">Victim</string>
@@ -219,6 +224,7 @@
     <string name="text_query_query_button_text">Search</string>
     <string name="text_query_menu_reset_text">Reset</string>
     <string name="text_query_menu_query_text">Search</string>
+    <string name="subregion_search_hint">Enter Subregion ID</string>
     <string name="text_query_dialog_fragment_title_text">ASAM Query</string>
     <string name="text_query_dialog_fragment_select_subregion_label_text">Subregion</string>
     <string name="text_query_dialog_fragment_select_subregion_prompt_text">Select A Subregion</string>
@@ -315,5 +321,165 @@
     <string name="layer_button_desc">Map type selection</string>
     <string name="dialog_map_type">Map Layer</string>
     
-	<string name="offline_warning_text">You have no/limited connectivity,\n click to switch to offline map view.</string>        
+	<string name="offline_warning_text">You have no/limited connectivity,\n click to switch to offline map view.</string>
+
+    <string name="grat_none">No Graticules</string>
+    <string name="grat_10_degrees">10°</string>
+    <string name="grat_15_degrees">15°</string>
+    <string name="grat_20_degrees">20°</string>
+    <string name="grat_30_degrees">30°</string>
+
+
+    <string name="offline_map_geopackage">ne_10m_land_countries_indexed</string>
+    <string name="grat_10_geopackage">graticules_10</string>
+    <string name="grat_15_geopackage">graticules_15</string>
+    <string name="grat_20_geopackage">graticules_20</string>
+    <string name="grat_30_geopackage">graticules_30</string>
+    <string name="grat_tiles_light_table_name">tiles_grey_300</string>
+    <string name="grat_tiles_dark_table_name">tiles_grey_600</string>
+
+    <integer-array name="grat_10_latitudes">
+        <item>-80</item>
+        <item>-70</item>
+        <item>-60</item>
+        <item>-50</item>
+        <item>-40</item>
+        <item>-30</item>
+        <item>-20</item>
+        <item>-10</item>
+        <item>0</item>
+        <item>10</item>
+        <item>20</item>
+        <item>30</item>
+        <item>40</item>
+        <item>50</item>
+        <item>60</item>
+        <item>70</item>
+        <item>80</item>
+    </integer-array>
+    <integer-array name="grat_15_latitudes">
+        <item>-75</item>
+        <item>-60</item>
+        <item>-45</item>
+        <item>-30</item>
+        <item>-15</item>
+        <item>0</item>
+        <item>15</item>
+        <item>30</item>
+        <item>45</item>
+        <item>60</item>
+        <item>75</item>
+    </integer-array>
+    <integer-array name="grat_20_latitudes">
+        <item>-80</item>
+        <item>-60</item>
+        <item>-40</item>
+        <item>-20</item>
+        <item>0</item>
+        <item>20</item>
+        <item>40</item>
+        <item>60</item>
+        <item>80</item>
+    </integer-array>
+    <integer-array name="grat_30_latitudes">
+        <item>-60</item>
+        <item>-30</item>
+        <item>0</item>
+        <item>30</item>
+        <item>60</item>
+    </integer-array>
+    <integer-array name="grat_10_longitudes">
+        <item>-170</item>
+        <item>-160</item>
+        <item>-150</item>
+        <item>-140</item>
+        <item>-130</item>
+        <item>-120</item>
+        <item>-110</item>
+        <item>-100</item>
+        <item>-90</item>
+        <item>-80</item>
+        <item>-70</item>
+        <item>-60</item>
+        <item>-50</item>
+        <item>-40</item>
+        <item>-30</item>
+        <item>-20</item>
+        <item>-10</item>
+        <item>0</item>
+        <item>10</item>
+        <item>20</item>
+        <item>30</item>
+        <item>40</item>
+        <item>50</item>
+        <item>60</item>
+        <item>70</item>
+        <item>80</item>
+        <item>90</item>
+        <item>100</item>
+        <item>110</item>
+        <item>120</item>
+        <item>130</item>
+        <item>140</item>
+        <item>150</item>
+        <item>160</item>
+        <item>170</item>
+    </integer-array>
+    <integer-array name="grat_15_longitudes">
+        <item>-165</item>
+        <item>-150</item>
+        <item>-135</item>
+        <item>-120</item>
+        <item>-105</item>
+        <item>-90</item>
+        <item>-75</item>
+        <item>-60</item>
+        <item>-45</item>
+        <item>-30</item>
+        <item>-15</item>
+        <item>0</item>
+        <item>15</item>
+        <item>30</item>
+        <item>45</item>
+        <item>60</item>
+        <item>75</item>
+        <item>90</item>
+        <item>105</item>
+        <item>120</item>
+        <item>135</item>
+        <item>150</item>
+        <item>165</item>
+    </integer-array>
+    <integer-array name="grat_20_longitudes">
+        <item>-160</item>
+        <item>-140</item>
+        <item>-120</item>
+        <item>-100</item>
+        <item>-80</item>
+        <item>-60</item>
+        <item>-40</item>
+        <item>-20</item>
+        <item>0</item>
+        <item>20</item>
+        <item>40</item>
+        <item>60</item>
+        <item>80</item>
+        <item>100</item>
+        <item>120</item>
+        <item>140</item>
+        <item>160</item>
+    </integer-array>
+    <integer-array name="grat_30_longitudes">
+        <item>-150</item>
+        <item>-120</item>
+        <item>-90</item>
+        <item>-60</item>
+        <item>-30</item>
+        <item>0</item>
+        <item>30</item>
+        <item>60</item>
+        <item>90</item>
+        <item>120</item>
+        <item>150</item>
+    </integer-array>
 </resources>

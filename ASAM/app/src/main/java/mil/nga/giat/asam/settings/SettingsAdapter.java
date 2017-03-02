@@ -24,7 +24,7 @@ public class SettingsAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return 7;
+        return 9;
     }
 
     @Override
@@ -40,15 +40,17 @@ public class SettingsAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View view = null;
-        if (position == 1 || position == 5) {
+        if (position == 0 || position == 3 || position == 7) {
             view = layoutInflater.inflate(R.layout.settings_header_row, null);
             view.setEnabled(false);
             view.setOnClickListener(null);
             HeaderViewHolder viewHolder = new HeaderViewHolder(view);
 
-            if (position == 1) {
+            if (position == 0) {
+                viewHolder.headerTitle.setText(R.string.info_fragment_menu_asam_info_text);
+            } else if (position == 3) {
                 viewHolder.headerTitle.setText(R.string.info_fragment_legal_row_text);
-            } else if (position == 5) {
+            }else if (position == 7) {
                 viewHolder.headerTitle.setText(R.string.preferences_date_title_text);
             }
         } else {
@@ -57,22 +59,25 @@ public class SettingsAdapter extends BaseAdapter {
             SettingsViewHolder viewHolder = new SettingsViewHolder(view);
             view.setTag(viewHolder);
 
-            viewHolder.subtitle.setVisibility(position == 6? View.VISIBLE : View.GONE);
+            viewHolder.subtitle.setVisibility(position == 8? View.VISIBLE : View.GONE);
 
             switch (position) {
-                case 0:
+                case 1:
                     viewHolder.title.setText(context.getString(R.string.all_asams_about_title_text));
                     break;
                 case 2:
-                    viewHolder.title.setText(context.getString(R.string.disclaimer_title_text));
-                    break;
-                case 3:
-                    viewHolder.title.setText(context.getString(R.string.legal_fragment_nga_privacy_policy_label_text));
+                    viewHolder.title.setText(context.getString(R.string.all_asams_report_title_text));
                     break;
                 case 4:
-                    viewHolder.title.setText(context.getString(R.string.legal_fragment_nga_open_source_licenses_label_text));
+                    viewHolder.title.setText(context.getString(R.string.disclaimer_title_text));
+                    break;
+                case 5:
+                    viewHolder.title.setText(context.getString(R.string.legal_fragment_nga_privacy_policy_label_text));
                     break;
                 case 6:
+                    viewHolder.title.setText(context.getString(R.string.legal_fragment_nga_open_source_licenses_label_text));
+                    break;
+                case 8:
                     viewHolder.title.setText(String.format(context.getString(R.string.preferences_last_sync_time_label_text), SyncTime.getLastSyncTimeAsText(context)));
                     viewHolder.subtitle.setText(context.getString(R.string.preferences_click_to_sync_label_text));
                     break;

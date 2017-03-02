@@ -2,6 +2,7 @@ package mil.nga.giat.asam;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
@@ -15,6 +16,7 @@ import mil.nga.giat.asam.map.AsamMapActivity;
 import mil.nga.giat.asam.model.AsamBean;
 import mil.nga.giat.asam.util.AsamConstants;
 import mil.nga.giat.asam.util.AsamListContainer;
+import mil.nga.giat.asam.util.AsamUtils;
 
 public class AsamListActivity extends AppCompatActivity implements AsamListFragment.OnAsamSelectedListener, SortAsamListDialogFragment.OnSortAsamListListener {
 
@@ -96,6 +98,18 @@ public class AsamListActivity extends AppCompatActivity implements AsamListFragm
                 }
                 break;
             }
+        }
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        // Checks the orientation of the screen
+        if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT && AsamUtils.isTablet(getApplicationContext())) {
+            Intent intent = new Intent(this, AsamReportActivity.class);
+            intent.putExtra(AsamConstants.ASAM_KEY, reportFragment.getAsam());
+            startActivity(intent);
         }
     }
 }

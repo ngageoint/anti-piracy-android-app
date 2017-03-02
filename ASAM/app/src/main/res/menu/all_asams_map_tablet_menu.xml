@@ -16,38 +16,11 @@
         android:menuCategory="system"
         android:orderInCategory="200"/>
 
-    <item android:id="@+id/all_asams_map_menu_map_type"
-        android:title="@string/all_asams_map_menu_map_type_text"
-        asam:showAsAction="always"
-        android:icon="@drawable/ic_map_white"
-        android:menuCategory="system"
-        android:orderInCategory="300">
-        <menu android:id="@+id/map_types_menu">
-            <group android:checkableBehavior="single">
-                <item android:id="@+id/map_type_normal"
-                    android:title="@string/map_type_normal_text"
-                    />
-
-                <item android:id="@+id/map_type_satellite"
-                    android:title="@string/map_type_satellite_text"
-                    />
-
-                <item android:id="@+id/map_type_hybrid"
-                    android:title="@string/map_type_hybrid_text"
-                    />
-
-                <item android:id="@+id/map_type_offline_110m"
-                    android:title="@string/map_type_offline_110m_text"
-                    android:visible="false"
-                    />
-            </group>
-        </menu>
-    </item>
-
     <item android:id="@+id/about"
         android:title="@string/all_asams_about_title_text"
-        asam:showAsAction="never"
+        asam:showAsAction="always"
         android:menuCategory="system"
-        android:orderInCategory="400"/>
+        android:icon="@drawable/ic_help_outline_white_24dp"
+        android:orderInCategory="300"/>
 
 </menu>

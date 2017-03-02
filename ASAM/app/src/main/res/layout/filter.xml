@@ -1,27 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="match_parent">
-
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="?android:attr/actionBarSize"
-        android:title="Filters"
-        android:background="?attr/colorPrimary"
-        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
     <ScrollView
         android:id="@+id/scroll"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:fillViewport="true"
-        android:focusable="true"
-        android:focusableInTouchMode="true" >
+        android:fillViewport="true">
 
         <LinearLayout
             android:layout_width="fill_parent"
@@ -31,45 +19,179 @@
             android:paddingStart="15dp"
             android:paddingEnd="15dp">
 
-            <TextView
+            <TextView android:id="@+id/searchLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
                 android:text="Keyword"
-                android:id="@+id/searchLabel" />
+                android:textSize="18sp"/>
 
-            <EditText
-                android:id="@+id/keyword"
+            <EditText android:id="@+id/keyword"
                 android:inputType="text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"/>
+                android:layout_marginTop="10dp"/>
 
-            <TextView
-                android:layout_width="wrap_content"
+            <TextView android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:layout_marginBottom="10dp"
-                android:text="@string/filter_interval_label" />
+                android:text="@string/filter_interval_label"
+                android:layout_marginTop="10dp"
+                android:textSize="18sp"/>
 
             <Spinner
                 android:id="@+id/interval_spinner"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginBottom="10dp"
+                android:inputType="text"
+                android:contentDescription="@string/text_query_status_content_description_text"
                 android:entries="@array/filter_interval_labels"
                 android:labelFor="@string/asam_map_label" />
 
-            <CheckBox android:id="@+id/current_subregion"
-                android:layout_width="wrap_content"
+            <LinearLayout android:id="@+id/filter_custom_date_range_picker_id"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/filter_current_subregion_label" />
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="10dp">
+
+                    <TextView
+                        android:text="@string/text_query_date_from_text"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="left"
+                        android:textSize="18sp"/>
+
+                    <TextView
+                        android:text="@string/text_query_date_to_text"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="left"
+                        android:textSize="18sp"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <EditText android:id="@+id/text_query_date_from_edit_text_ui"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:inputType="date"
+                        android:gravity="left"
+                        android:hint="@string/text_query_date_hint_text"
+                        android:focusable="false"/>
+
+                    <TextView android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/hyphen_text"/>
+
+                    <EditText android:id="@+id/text_query_date_to_edit_text_ui"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:inputType="date"
+                        android:hint="@string/text_query_date_hint_text"
+                        android:focusable="false"/>
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <TextView android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/text_query_select_subregion_label_text"
+                android:layout_marginTop="10dp"
+                android:textSize="18sp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <EditText android:id="@+id/subregions"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:inputType="text"
+                    android:ellipsize="end"
+                    android:scrollHorizontally="true"
+                    android:editable="false"
+                    android:focusable="false"
+                    android:textIsSelectable="false"
+                    android:focusableInTouchMode="false"
+                    android:cursorVisible="false"
+                    android:clickable="true"
+                    android:longClickable="false"
+                    android:singleLine="true" />
+
+            </LinearLayout>
+
+            <TextView android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/text_query_reference_number_label_text"
+                android:layout_marginTop="10dp"
+                android:textSize="18sp"/>
+
+            <LinearLayout android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <EditText android:id="@+id/text_query_reference_number_year_edit_text_ui"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:inputType="number"
+                    android:hint="@string/text_query_year_hint_text"/>
+
+                <TextView android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/hyphen_text"/>
+
+                <EditText android:id="@+id/text_query_reference_number_id_edit_text_ui"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:inputType="number"
+                    android:hint="@string/text_query_number_hint_text"/>
+
+            </LinearLayout>
+
+
+            <TextView android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/text_query_victim_label_text"
+                android:layout_marginTop="10dp"
+                android:textSize="18sp"/>
+
+            <EditText android:id="@+id/text_query_victim_edit_text_ui"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:contentDescription="@string/text_query_victim_content_description_text"/>
+
+            <TextView android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/text_query_aggressor_label_text"
+                android:layout_marginTop="10dp"
+                android:textSize="18sp"/>
+
+            <EditText android:id="@+id/text_query_aggressor_edit_text_ui"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:contentDescription="@string/text_query_aggressor_content_description_text"/>
 
         </LinearLayout>
 
     </ScrollView>
-
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -81,9 +203,11 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_marginRight="16dp"
-            android:textColor="@color/md_teal_A700"
+            android:textColor="?attr/colorAccent"
             android:text="Apply"
-            android:background="?attr/selectableItemBackgroundBorderless"/>
+            android:background="?attr/selectableItemBackgroundBorderless"
+            />
+        <!-- android:background="?android:attr/selectableItemBackgroundBorderless"/> -->
 
         <Button android:id="@+id/cancel"
             style="?android:attr/borderlessButtonStyle"
@@ -91,10 +215,11 @@
             android:layout_height="wrap_content"
             android:layout_toLeftOf="@id/apply"
             android:layout_marginRight="8dp"
-            android:textColor="@color/md_teal_A700"
+            android:textColor="?attr/colorAccent"
             android:text="@android:string/cancel"
-            android:background="?attr/selectableItemBackgroundBorderless"/>
-
+            android:background="?attr/selectableItemBackgroundBorderless"
+            />
+        <!-- android:background="?android:attr/selectableItemBackgroundBorderless"/> -->
     </RelativeLayout>
 
 

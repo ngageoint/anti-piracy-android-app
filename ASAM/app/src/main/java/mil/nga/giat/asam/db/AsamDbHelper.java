@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteStatement;
 import android.provider.BaseColumns;
+import android.util.Log;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -22,6 +23,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import mil.nga.geopackage.GeoPackageManager;
+import mil.nga.geopackage.factory.GeoPackageFactory;
 import mil.nga.giat.asam.filter.FilterParameters;
 import mil.nga.giat.asam.model.AsamBean;
 import mil.nga.giat.asam.util.AsamLog;
@@ -34,7 +37,7 @@ public class AsamDbHelper extends SQLiteOpenHelper {
     public static final SimpleDateFormat TEXT_QUERY_DATE_FORMAT = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
     private static final String DB_PATH = "/data/data/mil.nga.giat.asam/databases/";
     private static final String DB_NAME = "asams.db";
-    private static final int DB_VERSION = 1;
+    private static final int DB_VERSION = 2;
     public static final String TABLE_NAME = "asams";
     public static final String ID = BaseColumns._ID;
     public static final String DATE_OF_OCCURRENCE = "date_of_occurrence";
@@ -55,11 +58,76 @@ public class AsamDbHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         AsamLog.i(AsamDbHelper.class.getName() + ":onCreate");
+        addGeopackagesToDatabase();
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         AsamLog.i(AsamDbHelper.class.getName() + ":onUpgrade");
+
+        if (newVersion == 2) {
+            addGeopackagesToDatabase();
+        }
+
+    }
+
+    private void addGeopackagesToDatabase() {
+        // Get a manager
+        GeoPackageManager manager = GeoPackageFactory.getManager(mContext);
+
+        // Available databases
+        List<String> databases = manager.databases();
+
+        if (!databases.contains("ne_10m_land_countries_indexed")) {
+            // Import database
+            try {
+                if (! manager.importGeoPackage("ne_10m_land_countries_indexed", mContext.getAssets().open("ne_10m_land_countries_indexed.gpkg"))) {
+                    Log.d( "doInBackground", "Failed to import GeoPackage '" + "ne_10m_land_countries_indexed" + "'");
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        if (!databases.contains("graticules_10")) {
+            // Import database
+            try {
+                if (! manager.importGeoPackage("graticules_10", mContext.getAssets().open("graticules_10.gpkg"))) {
+                    Log.d( "doInBackground", "Failed to import GeoPackage '" + "graticules_10" + "'");
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        if (!databases.contains("graticules_15")) {
+            // Import database
+            try {
+                if (! manager.importGeoPackage("graticules_15", mContext.getAssets().open("graticules_15.gpkg"))) {
+                    Log.d( "doInBackground", "Failed to import GeoPackage '" + "graticules_15" + "'");
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        if (!databases.contains("graticules_20")) {
+            // Import database
+            try {
+                if (! manager.importGeoPackage("graticules_20", mContext.getAssets().open("graticules_20.gpkg"))) {
+                    Log.d( "doInBackground", "Failed to import GeoPackage '" + "graticules_20" + "'");
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        if (!databases.contains("graticules_30")) {
+            // Import database
+            try {
+                if (! manager.importGeoPackage("graticules_30", mContext.getAssets().open("graticules_30.gpkg"))) {
+                    Log.d( "doInBackground", "Failed to import GeoPackage '" + "graticules_30" + "'");
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
     
     public void initializeSeededAsamDb() throws IOException {
@@ -162,82 +230,6 @@ public class AsamDbHelper extends SQLiteOpenHelper {
     }
 
     public List<AsamBean> queryWithFilters(SQLiteDatabase db, FilterParameters filterParameters) {
-        return filterParameters.mType == FilterParameters.Type.SIMPLE ?
-            simpleFilter(db, filterParameters) :
-            advancedFilter(db, filterParameters);
-    }
-
-    private List<AsamBean> simpleFilter(SQLiteDatabase db, FilterParameters filterParameters) {
-        Collection<String> clauses = new ArrayList<String>();
-        String textClause = null;
-        if (StringUtils.isNotBlank(filterParameters.mKeyword)) {
-            List<String> textClauses = new ArrayList<String>();
-            textClauses.add("LOWER(" + AsamDbHelper.VICTIM + ") LIKE '%" + filterParameters.mKeyword.toLowerCase(Locale.US) + "%'");
-            textClauses.add("LOWER(" + AsamDbHelper.AGGRESSOR + ") LIKE '%" + filterParameters.mKeyword.toLowerCase(Locale.US) + "%'");
-            if (StringUtils.isNumeric(filterParameters.mKeyword)) {
-                textClauses.add(AsamDbHelper.SUBREGION + " == " + filterParameters.mKeyword);
-            }
-            textClauses.add(AsamDbHelper.REFERENCE_NUMBER + " == '" + filterParameters.mKeyword + "'");
-            textClauses.add("LOWER(" + AsamDbHelper.DESCRIPTION + ") LIKE '%" + filterParameters.mKeyword.toLowerCase(Locale.US) + "%'");
-
-
-            clauses.add("(" + StringUtils.join(textClauses, " OR ") + ")");
-        }
-
-        // From and to dates.
-        List<String> dateClauses = new ArrayList<String>();
-        if (StringUtils.isNotBlank(filterParameters.mDateFrom)) {
-            try {
-                dateClauses.add(AsamDbHelper.DATE_OF_OCCURRENCE + " >= '" + AsamDbHelper.SQLITE_DATE_FORMAT.format(TEXT_QUERY_DATE_FORMAT.parse(filterParameters.mDateFrom).getTime()) + "'");
-            } catch (ParseException caught) {
-                AsamLog.e(AsamDbHelper.class.getName() + ":" + caught.getMessage(), caught);
-            }
-        }
-        if (StringUtils.isNotBlank(filterParameters.mDateTo)) {
-            try {
-                dateClauses.add(AsamDbHelper.DATE_OF_OCCURRENCE + " <= '" + AsamDbHelper.SQLITE_DATE_FORMAT.format(TEXT_QUERY_DATE_FORMAT.parse(filterParameters.mDateTo).getTime()) + "'");
-            } catch (ParseException caught) {
-                AsamLog.e(AsamDbHelper.class.getName() + ":" + caught.getMessage(), caught);
-            }
-        }
-
-        if (!dateClauses.isEmpty()) {
-            clauses.add("(" + StringUtils.join(dateClauses, " AND ") + ")");
-        }
-
-        Collection<String> subregionPlaceholders = new ArrayList<String>(filterParameters.mSubregionIds.size());
-        Collection<String> subregionParameters = new ArrayList<String>(filterParameters.mSubregionIds.size());
-        for (Integer subregionId : filterParameters.mSubregionIds) {
-            subregionPlaceholders.add("?");
-            subregionParameters.add(subregionId.toString());
-        }
-
-        if (!subregionParameters.isEmpty()) {
-            StringBuilder subregionQuery = new StringBuilder();
-            subregionQuery.append(SUBREGION).append(" IN ( ").append(StringUtils.join(subregionPlaceholders, ",")).append(" )");
-            clauses.add(subregionQuery.toString());
-        }
-
-        String columns = StringUtils.join(new String[] {ID, DATE_OF_OCCURRENCE, REFERENCE_NUMBER, SUBREGION, LATITUDE, LONGITUDE, AGGRESSOR, VICTIM, DESCRIPTION}, ", ");
-        StringBuilder sql = new StringBuilder("SELECT ").append(columns).append(" FROM ").append(TABLE_NAME);
-        if (!clauses.isEmpty()) {
-            sql.append(" WHERE ").append(StringUtils.join(clauses, " AND "));
-        }
-
-        try {
-            db.beginTransaction();
-            AsamLog.i(AsamDbHelper.class.getName() + ":" + sql);
-            Cursor cursor = db.rawQuery(sql.toString(), new String[] {});
-            List<AsamBean> asams = translate(cursor);
-            cursor.close();
-            db.setTransactionSuccessful();
-            return asams;
-        } finally {
-            db.endTransaction();
-        }
-    }
-
-    private List<AsamBean> advancedFilter(SQLiteDatabase db, FilterParameters filterParameters) {
         Collection<String> clauses = new ArrayList<String>();
         if (StringUtils.isNotBlank(filterParameters.mKeyword)) {
             List<String> textClauses = new ArrayList<String>();
@@ -269,11 +261,11 @@ public class AsamDbHelper extends SQLiteOpenHelper {
                 AsamLog.e(AsamDbHelper.class.getName() + ":" + caught.getMessage(), caught);
             }
         }
-        
+
         if (StringUtils.isNotBlank(filterParameters.mVictim)) {
             whereClauses.add("LOWER(" + AsamDbHelper.VICTIM + ") LIKE '%" + filterParameters.mVictim.toLowerCase(Locale.US) + "%'");
         }
-        
+
         if (StringUtils.isNotBlank(filterParameters.mAggressor)) {
             whereClauses.add("LOWER(" + AsamDbHelper.AGGRESSOR + ") LIKE '%" + filterParameters.mAggressor.toLowerCase(Locale.US) + "%'");
         }
@@ -290,7 +282,7 @@ public class AsamDbHelper extends SQLiteOpenHelper {
             subregionQuery.append(SUBREGION).append(" IN ( ").append(StringUtils.join(subregionPlaceholders, ",")).append(" )");
             whereClauses.add(subregionQuery.toString());
         }
-        
+
         if (StringUtils.isNotBlank(filterParameters.mReferenceNumber)) {
             whereClauses.add(AsamDbHelper.REFERENCE_NUMBER + " == '" + filterParameters.mReferenceNumber + "'");
         }
@@ -305,7 +297,7 @@ public class AsamDbHelper extends SQLiteOpenHelper {
         if (!clauses.isEmpty()) {
             sql.append(" WHERE ").append(StringUtils.join(clauses, " AND "));
         }
-        
+
         try {
             db.beginTransaction();
             AsamLog.i(AsamDbHelper.class.getName() + ":" + sql);

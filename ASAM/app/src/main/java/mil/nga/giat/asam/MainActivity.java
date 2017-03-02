@@ -7,6 +7,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 
 import java.io.IOException;
@@ -17,7 +18,7 @@ import mil.nga.giat.asam.util.AsamConstants;
 import mil.nga.giat.asam.util.AsamLog;
 
 
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends FragmentActivity implements OnMapReadyCallback {
     
     private GoogleMap mMapUI;
     private boolean mApplicationLaunching;
@@ -35,16 +36,20 @@ public class MainActivity extends FragmentActivity {
         super.onResume();
         setUpMapIfNeeded();
     }
-    
+
     private void setUpMapIfNeeded() {
         if (mMapUI == null) {
-            SupportMapFragment mapFragment = (SupportMapFragment)getSupportFragmentManager().findFragmentById(R.id.main_map_view_ui);
-            mMapUI = mapFragment.getMap();
-            if (mMapUI != null) {
-                getSupportFragmentManager().beginTransaction().hide(mapFragment).commit();
-                launchApplication();
-            }
+            SupportMapFragment mapFragment = (SupportMapFragment)getSupportFragmentManager().findFragmentById(mil.nga.giat.asam.R.id.main_map_view_ui);
+            mapFragment.getMapAsync(this);
         }
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMapUI = googleMap;
+        SupportMapFragment mapFragment = (SupportMapFragment)getSupportFragmentManager().findFragmentById(mil.nga.giat.asam.R.id.main_map_view_ui);
+        getSupportFragmentManager().beginTransaction().hide(mapFragment).commit();
+        launchApplication();
     }
     
     private void launchApplication() {

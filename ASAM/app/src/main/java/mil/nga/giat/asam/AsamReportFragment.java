@@ -1,6 +1,5 @@
 package mil.nga.giat.asam;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -13,21 +12,19 @@ import android.widget.TextView;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.vividsolutions.jts.geom.Geometry;
 
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.Collection;
-
 import mil.nga.giat.asam.map.OfflineMap;
-import mil.nga.giat.asam.map.SingleAsamMapActivity;
 import mil.nga.giat.asam.model.AsamBean;
 import mil.nga.giat.asam.util.AsamConstants;
 
 
-public class AsamReportFragment extends Fragment implements Asam.OnOfflineFeaturesListener {
+public class AsamReportFragment extends Fragment implements OnMapReadyCallback {
 
     private AsamBean mAsam;
     private TextView mOccurrenceDateUI;
@@ -41,7 +38,9 @@ public class AsamReportFragment extends Fragment implements Asam.OnOfflineFeatur
     private MapView mapView;
     private int mMapType;
     private OfflineMap offlineMap;
-    private Collection<Geometry> offlineGeometries = null;
+    private GoogleMap map;
+
+    private Marker reportMarker;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -57,36 +56,28 @@ public class AsamReportFragment extends Fragment implements Asam.OnOfflineFeatur
 
         mapView = (MapView) view.findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
+        mapView.getMapAsync(this);
 
         return view;
     }
 
     @Override
+    public void onMapReady(GoogleMap googleMap) {
+        this.map = googleMap;
+        updateMap();
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
-
         mapView.onResume();
-
-        ((Asam) getActivity().getApplication()).registerOfflineMapListener(this);
-
-        GoogleMap map = mapView.getMap();
-
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        int mapType = preferences.getInt(AsamConstants.MAP_TYPE_KEY, GoogleMap.MAP_TYPE_NORMAL);
-        if (mMapType != mapType) setMapType(mapType);
-
-        LatLng latLng = new LatLng(mAsam.getLatitude(), mAsam.getLongitude());
-        map.addMarker(new MarkerOptions().position(latLng).icon(AsamConstants.PIRATE_MARKER).anchor(0.5f, 0.5f));
-
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 13));
+        mapView.getMapAsync(this);
     }
 
     @Override
     public void onPause() {
         super.onPause();
         mapView.onPause();
-
-        ((Asam) getActivity().getApplication()).unregisterOfflineMapListener(this);
     }
 
     @Override
@@ -101,12 +92,6 @@ public class AsamReportFragment extends Fragment implements Asam.OnOfflineFeatur
         mapView.onLowMemory();
     }
 
-    public void mapAsamLocation(View view) {
-        Intent intent = new Intent(getActivity(), SingleAsamMapActivity.class);
-        intent.putExtra(AsamConstants.ASAM_KEY, mAsam);
-        startActivity(intent);
-    }
-
     public void updateContent(AsamBean asam) {
         mAsam = asam;
 
@@ -118,15 +103,28 @@ public class AsamReportFragment extends Fragment implements Asam.OnOfflineFeatur
         mReferenceNumberUI.setText(StringUtils.isBlank(mAsam.getReferenceNumber()) ? " " : mAsam.getReferenceNumber());
         mLocationUI.setText(mAsam.formatLatitutdeDegMinSec() + ", " + mAsam.formatLongitudeDegMinSec());
         mDescriptionUI.setText(StringUtils.isBlank(mAsam.getDescription()) ? " " : mAsam.getDescription());
+
+        updateMap();
     }
 
-    @Override
-    public void onOfflineFeaturesLoaded(Collection<Geometry> offlineGeometries) {
-        this.offlineGeometries = offlineGeometries;
+    private void updateMap() {
+        if (map != null) {
+            map.clear();
 
-        if (offlineMap == null && mMapType == AsamConstants.MAP_TYPE_OFFLINE_110M) {
-            if (offlineMap != null) offlineMap.clear();
-            offlineMap = new OfflineMap(getActivity(), mapView.getMap(), offlineGeometries);
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            int mapType = preferences.getInt(AsamConstants.MAP_TYPE_KEY, GoogleMap.MAP_TYPE_NORMAL);
+            if (mMapType != mapType) setMapType(mapType);
+
+            if (reportMarker != null) {
+                reportMarker.remove();
+                reportMarker = null;
+            }
+
+            if (mAsam != null) {
+                LatLng latLng = new LatLng(mAsam.getLatitude(), mAsam.getLongitude());
+                reportMarker = map.addMarker(new MarkerOptions().position(latLng).icon(AsamConstants.ASAM_MARKER).anchor(0.5f, 1.0f));
+                map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 4));
+            }
         }
     }
 
@@ -134,17 +132,21 @@ public class AsamReportFragment extends Fragment implements Asam.OnOfflineFeatur
         mMapType = mapType;
 
         // Change the map
-        if (mapType == AsamConstants.MAP_TYPE_OFFLINE_110M) {
+        if (mapType == AsamConstants.MAP_TYPE_OFFLINE) {
             if (offlineMap != null) offlineMap.clear();
 
-            offlineMap = new OfflineMap(getActivity(), mapView.getMap(), offlineGeometries);
+            offlineMap = new OfflineMap(getActivity(), map);
         } else {
             if (offlineMap != null) {
                 offlineMap.clear();
                 offlineMap = null;
             }
 
-            mapView.getMap().setMapType(mapType);
+            map.setMapType(mapType);
         }
+    }
+
+    public AsamBean getAsam() {
+        return mAsam;
     }
 }

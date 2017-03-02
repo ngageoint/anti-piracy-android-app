@@ -1,133 +1,152 @@
 package mil.nga.giat.asam.map;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
-import mil.nga.giat.asam.R;
-
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Polygon;
-import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.MultiPolygon;
+import com.google.maps.android.geojson.GeoJsonFeature;
+import com.google.maps.android.geojson.GeoJsonLayer;
+import com.google.maps.android.geojson.GeoJsonPolygonStyle;
+
+import org.json.JSONException;
+
+import java.io.IOException;
+
+import mil.nga.giat.asam.R;
 
 public class OfflineMap {
-    private static int FILL_COLOR = 0xFFDDDDDD;
-    
-    private Context mContext;
-    private GoogleMap mMapUI;
-    private Collection<Geometry> mOfflineFeatures;
-    private TileOverlay backgroundTileOverlay;
-    private Collection<Polygon> offlinePolygons = null;
-    private ProgressDialog progressDialog;
 
-    public OfflineMap(Context context, GoogleMap map, Collection<Geometry> offlineFeatures) {
+    private static int FILL_COLOR = 0xFFDDDDDD;
+
+    private Context mContext;
+    private GoogleMap map;
+    private TileOverlay backgroundTileOverlay;
+//    private List<TileOverlay> featureOverlays;
+    private ProgressDialog progressDialog;
+    private GeoPackageUtils geoPackageUtils;
+    private GeoJsonLayer geoJsonLayer = null;
+
+    public OfflineMap(Context context, GoogleMap map) {
         this.mContext = context;
-        this.mMapUI = map;
-        this.mOfflineFeatures = offlineFeatures;
-        
+        this.map = map;
+//        featureOverlays = new ArrayList<>();
+        geoPackageUtils = new GeoPackageUtils(context);
         loadOfflineMaps();
     }
-    
+
     public void clear() {
         backgroundTileOverlay.clearTileCache();
         backgroundTileOverlay.remove();
-        
-        for (Polygon polygon : offlinePolygons) {
-            polygon.remove();
-        }
-        offlinePolygons.clear();
+
+        geoJsonLayer.removeLayerFromMap();
+
+//        for (TileOverlay featureOverlay : featureOverlays) {
+//            featureOverlay.clearTileCache();
+//            featureOverlay.remove();
+//        }
+
+//        featureOverlays.clear();
     }
-    
+
     private void loadOfflineMaps() {
-        OfflineMapsTask task = new OfflineMapsTask();
-        task.execute(mOfflineFeatures.toArray(new Geometry[mOfflineFeatures.size()]));
+        GeoJSONOfflineMapsTask task = new GeoJSONOfflineMapsTask();
+//        OfflineMapsTask task = new OfflineMapsTask();
+        task.execute();
     }
-       
-    private class OfflineMapsTask extends AsyncTask<Geometry, Void, Collection<PolygonOptions>> {
+
+    private class GeoJSONOfflineMapsTask extends AsyncTask<Void, Void, GeoJsonLayer> {
         @Override
         protected void onPreExecute() {
-        	progressDialog = ProgressDialog.show(mContext, mContext.getString(R.string.offline_map_progress_dialog_title_text), mContext.getString(R.string.offline_map_progress_dialog_content_text), true);
+            progressDialog = ProgressDialog.show(mContext, mContext.getString(R.string.offline_map_progress_dialog_title_text), mContext.getString(R.string.offline_map_progress_dialog_content_text), true);
 
-            mMapUI.setMapType(GoogleMap.MAP_TYPE_NONE);
-            
-            BackgroundTileProvider tileProvider = new BackgroundTileProvider(mContext);           
-            backgroundTileOverlay = mMapUI.addTileOverlay(new TileOverlayOptions().tileProvider(tileProvider).zIndex(1).visible(false));
+            map.setMapType(GoogleMap.MAP_TYPE_NONE);
+
+            BackgroundTileProvider tileProvider = new BackgroundTileProvider(mContext);
+            backgroundTileOverlay = map.addTileOverlay(new TileOverlayOptions().tileProvider(tileProvider).zIndex(1).visible(false));
             backgroundTileOverlay.setVisible(true);
         }
-    	
+
         @Override
-        protected Collection<PolygonOptions> doInBackground(Geometry... features) {  	
-            Collection<PolygonOptions> polygons = new ArrayList<PolygonOptions>(features.length);
-            for (Geometry feature : features) { 
-                if (feature instanceof com.vividsolutions.jts.geom.Polygon) {      
-                	polygons.add(generatePolygon((com.vividsolutions.jts.geom.Polygon)feature));                    
-                }
-                else if(feature instanceof com.vividsolutions.jts.geom.MultiPolygon) {                	
-                	MultiPolygon multiPolygon = (MultiPolygon)feature;
-                	for(int i = 0; i < multiPolygon.getNumGeometries(); i++) {
-                		Geometry geometry = multiPolygon.getGeometryN(i);
-                		if(geometry instanceof com.vividsolutions.jts.geom.Polygon) {
-                			polygons.add(generatePolygon((com.vividsolutions.jts.geom.Polygon)geometry));
-                		}
-                		                		
-                		//nested MultiPolygons are ignored for now.  Recursive solution has performance implications.                		
-                	}                	
-                }
-            }    
-            
-            return polygons;
+        protected GeoJsonLayer doInBackground(Void... params) {
+            try {
+                return new GeoJsonLayer(map, R.raw.ne_110m_land, mContext);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return null;
         }
 
-		@Override
-        protected void onPostExecute(Collection<PolygonOptions> polygons) {
-    		offlinePolygons = new ArrayList<Polygon>(polygons.size());
-        	for (PolygonOptions polygon : polygons) {
-                offlinePolygons.add(mMapUI.addPolygon(polygon));  
-        	}
-        	
-        	progressDialog.dismiss();
+
+        @Override
+        protected void onPostExecute(GeoJsonLayer layer) {
+            updateLayerStyle(layer);
+            addGeoJsonLayerToMap(layer);
+            geoJsonLayer = layer;
+
+            progressDialog.dismiss();
         }
-		     
+
         /**
-         * Utility method for generating PolygonOptions from a Polygon.
-         * @param pPolygon A Polygon to generate.
-         * @return A fully constructed PolygonOptions object complete with style and 
-         *         z-index positioning.
+         * Update the layer style
+         * @param layer
          */
-        private PolygonOptions generatePolygon(com.vividsolutions.jts.geom.Polygon pPolygon) {
-        	
-        	PolygonOptions options = new PolygonOptions()
-        		.visible(true)
-                .zIndex(2)
-                .fillColor(FILL_COLOR)
-                .strokeWidth(0);
-        	
-        	//Exterior Polygon
-        	for (Coordinate coordinate : pPolygon.getExteriorRing().getCoordinates()) {
-                options.add(new LatLng(coordinate.y, coordinate.x));
+        private void updateLayerStyle(GeoJsonLayer layer) {
+            GeoJsonPolygonStyle style = new GeoJsonPolygonStyle();
+            style.setVisible(true);
+            style.setZIndex(2);
+            style.setFillColor(FILL_COLOR);
+            style.setStrokeWidth(0);
+            for (GeoJsonFeature feature : layer.getFeatures()) {
+                feature.setPolygonStyle(style);
             }
-        	
-        	//Interior Polygons
-        	for (int i = 0; i < pPolygon.getNumInteriorRing(); i++) {
-                Coordinate[] coordinates = pPolygon.getInteriorRingN(0).getCoordinates();
-                Collection<LatLng> hole = new ArrayList<LatLng>(coordinates.length);
-                for (Coordinate coordinate : coordinates) {
-                    hole.add(new LatLng(coordinate.y, coordinate.x));
-                }                                     
-                options.addHole(hole);
-            }        	
-        	
-        	return options;
-        }    
-    } 
+        }
+
+        private void addGeoJsonLayerToMap(GeoJsonLayer layer) {
+            layer.addLayerToMap();
+        }
+    }
+
+
+
+//    private class OfflineMapsTask extends AsyncTask<Void, Void, List<TileOverlayOptions>> {
+//        @Override
+//        protected void onPreExecute() {
+//            progressDialog = ProgressDialog.show(mContext, mContext.getString(R.string.offline_map_progress_dialog_title_text), mContext.getString(R.string.offline_map_progress_dialog_content_text), true);
+//
+//            map.setMapType(GoogleMap.MAP_TYPE_NONE);
+//
+//            BackgroundTileProvider tileProvider = new BackgroundTileProvider(mContext);
+//            backgroundTileOverlay = map.addTileOverlay(new TileOverlayOptions().tileProvider(tileProvider).zIndex(1).visible(false));
+//            backgroundTileOverlay.setVisible(true);
+//        }
+//
+//        @Override
+//        protected List<TileOverlayOptions> doInBackground(Void... params) {
+//
+//            return geoPackageUtils.getOfflineMapOverlays(map);
+//        }
+//
+//
+//        @Override
+//        protected void onPostExecute(List<TileOverlayOptions> newFeatureOverlays) {
+//
+//            for (TileOverlay featureOverlay : featureOverlays) {
+//                featureOverlay.clearTileCache();
+//                featureOverlay.remove();
+//            }
+//
+//            featureOverlays.clear();
+//
+//            for(TileOverlayOptions overlayOptions : newFeatureOverlays) {
+//                featureOverlays.add(map.addTileOverlay(overlayOptions));
+//            }
+//
+//            progressDialog.dismiss();
+//        }
+//    }
 }

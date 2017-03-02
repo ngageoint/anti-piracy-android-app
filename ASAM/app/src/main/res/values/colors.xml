@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="list_selected">#EEEEEE</color>
+    <color name="graticules_line_color_light">#FFE0E0E0</color>
+    <color name="graticules_line_color_dark">#FF757575</color>
+    <color name="offline_map_fill_color">#FFDDDDDD</color>
+    <color name="offline_map_line_color">#FF000000</color>
 </resources>

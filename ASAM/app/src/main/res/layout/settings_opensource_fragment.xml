@@ -12,6 +12,7 @@
 
         <TableLayout android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/md_grey_200"
             android:stretchColumns="0">
 
             <TextView
@@ -19,14 +20,14 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="start|center_vertical"
                 android:paddingTop="10dp"
-                android:text="Jackson"
+                android:text="Permission Helper"
                 android:textStyle="bold" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start|center_vertical"
-                android:text="Copyright @2009 FasterXML, LLC"
+                android:text="Copyright @2015 Kosh"
                 android:textColor="#BBB" />
 
             <TextView
@@ -35,7 +36,7 @@
                 android:layout_gravity="start|center_vertical"
                 android:autoLink="web"
                 android:paddingBottom="20dp"
-                android:paddingTop="35dp"
+                android:paddingTop="10dp"
                 android:text="This product includes software licensed under the Apache License version 2.0 http://www.apache.org/licenses/LICENSE-2.0"
                 android:textStyle="bold" />
 
@@ -49,15 +50,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start|center_vertical"
-                android:paddingTop="20dp"
-                android:text="JTS Topolgy Suite"
+                android:paddingTop="10dp"
+                android:text="GeoPackage Android"
                 android:textStyle="bold" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start|center_vertical"
-                android:text="Copyright © 2014 Vivid Solutions Inc."
+                android:autoLink="web"
+                android:text="https://github.com/ngageoint/geopackage-android"
                 android:textColor="#BBB" />
 
             <TextView
@@ -66,12 +68,86 @@
                 android:layout_gravity="start|center_vertical"
                 android:autoLink="web"
                 android:paddingBottom="20dp"
-                android:paddingTop="35dp"
-                android:text="This product includes software licenesed under the GNU Lesser General Public License v3 https://www.gnu.org/licenses/lgpl.html"
+                android:paddingTop="10dp"
+                android:text="This product includes software licensed under the MIT License http://choosealicense.com/licenses/mit/"
                 android:textStyle="bold" />
 
         </TableLayout>
 
+        <TableLayout android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/md_grey_200"
+            android:stretchColumns="0">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start|center_vertical"
+                android:paddingBottom="10dp"
+                android:text="Icons"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:src="@drawable/ic_asam_icon"
+                    />
+
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:src="@drawable/ic_map_pin"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:text="derived from "
+                    android:textStyle="bold"  />
+
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:src="@drawable/noun_147744"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:text="'Crossbones' by Lizzy Gregory from the Noun Project"
+                    android:textStyle="bold"  />
+
+            </LinearLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start|center_vertical"
+                android:autoLink="web"
+                android:paddingBottom="20dp"
+                android:paddingTop="10dp"
+                android:text="This product contains icons under Public Domain https://creativecommons.org/publicdomain/zero/1.0/"
+                android:textStyle="bold" />
+        </TableLayout>
+        <TableLayout android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:stretchColumns="0">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:scaleType="fitStart"
+                android:src="@drawable/nev_logo_black"
+                android:textStyle="bold" />
+
+        </TableLayout>
 
     </LinearLayout>
 

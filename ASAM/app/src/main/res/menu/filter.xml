@@ -8,10 +8,4 @@
         android:menuCategory="system"
         android:orderInCategory="100"/>
 
-    <item android:id="@+id/advanced"
-        android:title="Advanced"
-        asam:showAsAction="always|withText"
-        android:menuCategory="system"
-        android:orderInCategory="200"/>
-
 </menu>

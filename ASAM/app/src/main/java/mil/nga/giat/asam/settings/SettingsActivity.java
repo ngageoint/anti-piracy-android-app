@@ -16,6 +16,8 @@ import mil.nga.giat.asam.settings.opensource.OpenSourceActivity;
 import mil.nga.giat.asam.settings.opensource.OpenSourceFragment;
 import mil.nga.giat.asam.settings.privacy.PrivacyActivity;
 import mil.nga.giat.asam.settings.privacy.PrivacyFragment;
+import mil.nga.giat.asam.settings.report.ReportActivity;
+import mil.nga.giat.asam.settings.report.ReportFragment;
 
 
 public class SettingsActivity extends AppCompatActivity implements SettingsFragment.SettingClickListener {
@@ -32,7 +34,7 @@ public class SettingsActivity extends AppCompatActivity implements SettingsFragm
 
         detailContainer = findViewById(R.id.detail_container);
         if (detailContainer != null) {
-            settingsFragment.selectSetting(0);
+            settingsFragment.selectSetting(1);
         }
     }
 
@@ -61,6 +63,20 @@ public class SettingsActivity extends AppCompatActivity implements SettingsFragm
             startActivity(intent);
         } else {
             detailFragment = new AboutFragment();
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(detailContainer.getId(), detailFragment)
+                    .commit();
+        }
+    }
+
+    @Override
+    public void onReportClick() {
+        if (detailContainer == null) {
+            Intent intent = new Intent(this, ReportActivity.class);
+            startActivity(intent);
+        } else {
+            detailFragment = new ReportFragment();
             getSupportFragmentManager()
                     .beginTransaction()
                     .replace(detailContainer.getId(), detailFragment)
