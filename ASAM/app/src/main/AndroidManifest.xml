@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="mil.nga.giat.asam"
-      android:versionCode="4"
-      android:versionName="1.0.1">
-      
-    <uses-sdk android:minSdkVersion="10" android:targetSdkVersion="19"/>
-    
+      android:versionCode="5"
+      android:versionName="1.0.2">
+
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
