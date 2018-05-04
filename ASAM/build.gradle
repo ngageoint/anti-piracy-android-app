@@ -2,10 +2,15 @@
 buildscript {
     repositories {
         jcenter()
+        google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.0.0'
+        classpath 'com.android.tools.build:gradle:2.3.3'
     }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.9'
 }
 
 allprojects {
