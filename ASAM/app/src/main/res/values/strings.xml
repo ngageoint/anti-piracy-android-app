@@ -91,7 +91,7 @@
     <string name="info_title_text">ASAM Info</string>
     <string name="info_dialog_fragment_close_button_text">Close</string>
     <string name="info_fragment_image_content_description_text">NGA Logo</string>
-    <string name="info_fragment_version_text">ASAM v1.0.1</string>
+    <string name="info_fragment_version_text">ASAM v1.0.2</string>
     <string name="info_fragment_info_text">Anti-Shipping Activity Messages (ASAM) include the locations and descriptive accounts of specific hostile acts against ships and mariners. The reports may be useful for recognition, prevention and avoidance of potential hostile activity.</string>
     <string name="info_fragment_contact_text"><u>Contact Us</u></string>
     <string name="info_fragment_phone_number_text">Phone: 1-800-362-6289</string>
