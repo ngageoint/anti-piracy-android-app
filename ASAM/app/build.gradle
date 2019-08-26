@@ -1,7 +1,15 @@
 apply plugin: 'com.android.application'
+apply plugin: 'maven-publish'
+archivesBaseName = 'asam'
+version '2.0.0'
+ext {
+    versionCode = 8
+}
 
 def googleMapsApiDebugKey = hasProperty('DEBUG_MAPS_API_KEY') ? DEBUG_MAPS_API_KEY: ''
-def googleMapsApiReleaseKey = hasProperty('RELEASE_MAPS_API_KEY') ? DEBUG_MAPS_API_KEY: ''
+def googleMapsApiReleaseKey = hasProperty('RELEASE_MAPS_API_KEY') ? RELEASE_MAPS_API_KEY: ''
+def signedApkPath = hasProperty('SIGNED_APK_PATH') ? SIGNED_APK_PATH : "${project.buildDir}/outputs/apk/release/${archivesBaseName}-release.apk"
+def signedDebugApkPath = hasProperty('SIGNED_DEBUG_APK_PATH') ? SIGNED_DEBUG_APK_PATH : "${project.buildDir}/outputs/apk/debug/${archivesBaseName}-debug.apk"
 
 android {
     compileSdkVersion 28
@@ -13,6 +21,8 @@ android {
 
     defaultConfig {
         applicationId "mil.nga.giat.asam"
+        versionName project.version
+        versionCode project.versionCode as int
         minSdkVersion 16
         targetSdkVersion 28
         multiDexEnabled true
@@ -36,6 +46,78 @@ android {
         exclude 'META-INF/NOTICE'
         exclude 'META-INF/NOTICE.txt'
     }
+}
+
+def configurePom(pom) {
+    pom.withXml {
+        // for dependencies and exclusions
+        def dependenciesNode = asNode().appendNode('dependencies')
+        project.configurations.compile.allDependencies.each { Dependency dep ->
+            if (dep instanceof SelfResolvingDependency) {
+                // apparently the files() dependency results in a SelfResolvingDependency - skip it
+                return
+            }
+
+            def dependencyNode = dependenciesNode.appendNode('dependency')
+            dependencyNode.appendNode('groupId', dep.group)
+            dependencyNode.appendNode('artifactId', dep.name)
+            dependencyNode.appendNode('version', dep.version)
+
+            // for exclusions
+            if (dep.excludeRules.size() > 0) {
+                def exclusions = dependencyNode.appendNode('exclusions')
+                dep.excludeRules.each { ExcludeRule ex ->
+                    def exclusion = exclusions.appendNode('exclusion')
+                    exclusion.appendNode('groupId', ex.group)
+                    exclusion.appendNode('artifactId', ex.module)
+                }
+            }
+        }
+    }
+}
+
+
+publishing {
+    publications {
+        defaultsApk(MavenPublication) {
+            artifactId archivesBaseName
+            pom.packaging 'apk'
+            configurePom(pom)
+            artifact "${project.buildDir}/outputs/apk/release/${archivesBaseName}-release-unsigned.apk", {
+                classifier 'unsigned'
+            }
+            if (file(signedApkPath).exists()) {
+                artifact signedApkPath
+            }
+            if (file(signedDebugApkPath).exists()) {
+                artifact signedDebugApkPath, {
+                    classifier 'debug'
+                }
+            }
+            if (project.hasProperty('SKIP_DEBUG_SIGNING')) {
+                artifact "${project.buildDir}/outputs/apk/debug/${archivesBaseName}-debug-unsigned.apk", {
+                    classifier 'debug-unsigned'
+                }
+            }
+        }
+    }
+}
+
+repositories {
+    def buildRepo = maven {
+        name 'build'
+        url project.properties['repositories.build.url'] ?: "${buildDir}/m2"
+    }
+    publishing.repositories.add buildRepo
+
+    if (project.hasProperty('repositories.shared.name')) {
+        def sharedRepo = maven {
+            name project.properties['repositories.shared.name']
+            url project.properties['repositories.shared.url']
+        }
+        publishing.repositories.add sharedRepo
+    }
+    mavenCentral()
 }
 
 dependencies {
