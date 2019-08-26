@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <domain-config>
+        <domain includeSubdomains="true">nga.mil</domain>
+        <trust-anchors>
+            <certificates src="@raw/trustid_server_ca_a52"/>
+        </trust-anchors>
+    </domain-config>
+</network-security-config>
