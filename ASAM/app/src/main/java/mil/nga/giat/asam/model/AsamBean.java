@@ -19,7 +19,8 @@ public class AsamBean implements Comparable<AsamBean>, Parcelable {
     private Date mOccurrenceDate;
     private String mReferenceNumber;
     private String mGeographicalSubregion;
-    private String mAggressor;
+    private String mNavArea;
+    private String mHostility;
     private String mVictim;
     private String mDescription;
     private String mLatitudeDegMinSec;
@@ -95,12 +96,20 @@ public class AsamBean implements Comparable<AsamBean>, Parcelable {
         this.mGeographicalSubregion = geographicalSubregion;
     }
 
-    public String getAggressor() {
-        return mAggressor;
+    public String getNavArea() {
+        return mNavArea;
     }
 
-    public void setAggressor(String aggressor) {
-        this.mAggressor = aggressor;
+    public void setNavArea(String navArea) {
+        this.mNavArea = navArea;
+    }
+
+    public String getHostility() {
+        return mHostility;
+    }
+
+    public void setHostility(String hostility) {
+        this.mHostility = hostility;
     }
 
     public String getVictim() {
@@ -167,7 +176,7 @@ public class AsamBean implements Comparable<AsamBean>, Parcelable {
 
     @Override
     public String toString() {
-        return "Victim: " + mVictim + ", Lat: " + mLatitude + ", Lon: " + mLongitude + ", Date: " + mOccurrenceDate;
+        return "Victim: " + mVictim + ", Lat: " + mLatitude + ", Lon: " + mLongitude + ", Date: " + mOccurrenceDate + ", Nav Area: " + mNavArea;
     }
 
     @Override
@@ -269,25 +278,25 @@ public class AsamBean implements Comparable<AsamBean>, Parcelable {
         }
     }
 
-    public static class AscendingAggressorComparator implements Comparator<AsamBean> {
+    public static class AscendingHostilityComparator implements Comparator<AsamBean> {
 
         @Override
         public int compare(AsamBean asam1, AsamBean asam2) {
-            if (asam1.mAggressor == null) {
+            if (asam1.mHostility == null) {
                 return -1;
             }
-            return asam1.mAggressor.toUpperCase(Locale.US).compareTo(asam2.mAggressor == null ? null : asam2.mAggressor.toUpperCase(Locale.US));
+            return asam1.mHostility.toUpperCase(Locale.US).compareTo(asam2.mHostility == null ? null : asam2.mHostility.toUpperCase(Locale.US));
         }
     }
 
-    public static class DescendingAggressorComparator implements Comparator<AsamBean> {
+    public static class DescendingHostilityComparator implements Comparator<AsamBean> {
 
         @Override
         public int compare(AsamBean asam1, AsamBean asam2) {
-            if (asam1.mAggressor == null) {
+            if (asam1.mHostility == null) {
                 return 1;
             }
-            return -asam1.mAggressor.toUpperCase(Locale.US).compareTo(asam2.mAggressor == null ? null : asam2.mAggressor.toUpperCase(Locale.US));
+            return -asam1.mHostility.toUpperCase(Locale.US).compareTo(asam2.mHostility == null ? null : asam2.mHostility.toUpperCase(Locale.US));
         }
     }
 
@@ -298,7 +307,8 @@ public class AsamBean implements Comparable<AsamBean>, Parcelable {
         mOccurrenceDate = new Date(in.readLong());
         mReferenceNumber = in.readString();
         mGeographicalSubregion = in.readString();
-        mAggressor = in.readString();
+        mNavArea = in.readString();
+        mHostility = in.readString();
         mVictim = in.readString();
         mDescription = in.readString();
         mLatitudeDegMinSec = in.readString();
@@ -328,7 +338,8 @@ public class AsamBean implements Comparable<AsamBean>, Parcelable {
         dest.writeLong(mOccurrenceDate.getTime());
         dest.writeString(mReferenceNumber);
         dest.writeString(mGeographicalSubregion);
-        dest.writeString(mAggressor);
+        dest.writeString(mNavArea);
+        dest.writeString(mHostility);
         dest.writeString(mVictim);
         dest.writeString(mDescription);
         dest.writeString(mLatitudeDegMinSec);

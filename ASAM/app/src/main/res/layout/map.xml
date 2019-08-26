@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -8,41 +9,52 @@
         android:layout_height="wrap_content"
         class="com.google.android.gms.maps.SupportMapFragment"/>
 
-    <LinearLayout android:id="@+id/all_asams_map_tablet_query_mode_message_container_ui"
-        android:layout_width="match_parent"
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/map_layer"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:animateLayoutChanges="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:paddingTop="5dp"
-        android:paddingRight="5dp"
-        android:paddingLeft="5dp"
-        android:orientation="vertical"
-        android:background="@color/md_blue_grey_500">
+        android:layout_gravity="top|end"
+        android:layout_margin="16dp"
+        app:fabSize="mini"
+        app:pressedTranslationZ="0dp"
+        android:theme="@style/asam_theme.alternate_fab"
+        android:src="@drawable/ic_layers_white_24dp" />
 
-        <TextView android:id="@+id/all_asams_map_query_feedback_text_ui"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:textColor="@android:color/white"/>
+    <!--<LinearLayout android:id="@+id/all_asams_map_tablet_query_mode_message_container_ui"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:animateLayoutChanges="true"-->
+        <!--android:layout_alignParentTop="true"-->
+        <!--android:layout_alignParentLeft="true"-->
+        <!--android:paddingTop="5dp"-->
+        <!--android:paddingRight="5dp"-->
+        <!--android:paddingLeft="5dp"-->
+        <!--android:orientation="vertical"-->
+        <!--android:background="@color/md_blue_grey_500">-->
 
-        <TextView android:id="@+id/all_asams_map_tablet_query_mode_message_text_view_ui"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:textColor="@android:color/white"
-            android:visibility="gone"/>
+        <!--<TextView android:id="@+id/all_asams_map_query_feedback_text_ui"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="center"-->
+            <!--android:textColor="@android:color/white"/>-->
 
-        <ImageView android:id="@+id/filter_results_toggle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="-5dp"
-            android:layout_marginBottom="-5dp"
-            android:adjustViewBounds="true"
-            android:tint="@color/md_teal_A700"
-            android:src="@drawable/ic_keyboard_arrow_down_white"/>
+        <!--<TextView android:id="@+id/all_asams_map_tablet_query_mode_message_text_view_ui"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="center_horizontal"-->
+            <!--android:textColor="@android:color/white"-->
+            <!--android:visibility="gone"/>-->
 
-    </LinearLayout>
+        <!--<ImageView android:id="@+id/filter_results_toggle"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="center_horizontal"-->
+            <!--android:layout_marginTop="-5dp"-->
+            <!--android:layout_marginBottom="-5dp"-->
+            <!--android:adjustViewBounds="true"-->
+            <!--android:tint="?attr/colorAccent"-->
+            <!--android:src="@drawable/ic_keyboard_arrow_down_white"/>-->
 
-</RelativeLayout>
+    <!--</LinearLayout>-->
+
+</android.support.design.widget.CoordinatorLayout>

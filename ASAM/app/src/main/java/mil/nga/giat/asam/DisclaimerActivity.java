@@ -10,7 +10,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.CheckBox;
 
-import mil.nga.giat.asam.map.AsamMapActivity;
 import mil.nga.giat.asam.util.AsamConstants;
 
 
@@ -27,7 +26,7 @@ public class DisclaimerActivity extends FragmentActivity {
         setContentView(R.layout.disclaimer);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
-        showDisclaimer = (CheckBox) findViewById(R.id.show_disclaimer);
+        showDisclaimer = findViewById(R.id.show_disclaimer);
 
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean hideDisclaimer = preferences.getBoolean(AsamConstants.HIDE_DISCLAIMER_KEY, false);
@@ -47,7 +46,7 @@ public class DisclaimerActivity extends FragmentActivity {
         editor.putBoolean(AsamConstants.HIDE_DISCLAIMER_KEY, !showDisclaimer.isChecked());
         editor.apply();
 
-        Intent intent = new Intent(this, AsamMapActivity.class);
+        Intent intent = new Intent(this, SyncActivity.class);
         startActivity(intent);
         finish();
     }

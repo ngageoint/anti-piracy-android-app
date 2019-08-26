@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">ASAM</string>
+    <string name="sync_loading_text">Fetching latest data...</string>
     <string name="empty_content_description"></string>
     <string name="hyphen_text">-</string>
     <string name="map_type_normal_text">Normal</string>
@@ -62,7 +63,7 @@
     <string name="asam_list_map_menu_zoom_menu_item_text">Zoom</string>
     <string name="asam_list_row_date_label_text">Date:</string>
     <string name="asam_list_row_subregion_label_text">Subregion:</string>
-    <string name="asam_list_row_aggressor_label_text">Aggressor:</string>
+    <string name="asam_list_row_hostility_label_text">Hostility:</string>
     <string name="asam_list_row_victim_label_text">Victim:</string>
     <string name="asam_list_sort_popup_title_text">Asam List Sort</string>
     <string name="asam_list_sort_popup_prompt_text">Sort By</string>
@@ -73,9 +74,10 @@
     <string name="asam_list_sort_popup_descending_radio_button_text">Descending</string>
     <string name="asam_report_title_text">ASAM Details</string>
     <string name="asam_report_occurrence_date_label_text">Date of Occurrence</string>
-    <string name="asam_report_aggressor_label_text">Aggressor</string>
+    <string name="asam_report_hostility_label_text">Hostility</string>
     <string name="asam_report_victim_label_text">Victim</string>
     <string name="asam_report_subregion_label_text">Geographical Subregion</string>
+    <string name="asam_report_navarea_label_text">Nav Area</string>
     <string name="asam_report_reference_number_label_text">Reference Number</string>
     <string name="asam_report_location_label_text">Geographical Location</string>
     <string name="asam_report_description_label_text">Description</string>
@@ -99,7 +101,7 @@
     <string name="info_title_text">ASAM Info</string>
     <string name="info_dialog_fragment_close_button_text">Close</string>
     <string name="info_fragment_image_content_description_text">NGA Logo</string>
-    <string name="info_fragment_version_text">ASAM v1.0.0</string>
+    <string name="info_fragment_version_text">"ASAM v%1$s"</string>
     <string name="info_fragment_info_text">Anti-Shipping Activity Messages (ASAM) include the locations and descriptive accounts of specific hostile acts against ships and mariners. The reports may be useful for recognition, prevention and avoidance of potential hostile activity.</string>
     <string name="info_fragment_contact_text">Contact Us</string>
     <string name="info_fragment_phone_number_text">1-800-362-6289</string>
@@ -197,6 +199,7 @@
     <string name="subregion_map_menu_selected_subregions_text">Selected Subregions</string>
     <string name="subregion_map_menu_query_text">Query</string>
     <string name="subregion_map_menu_clear_text">Clear</string>
+    <string name="subregion_map_menu_apply_text">Apply</string>
     <string name="subregion_map_menu_60_days_text">60 days</string>
     <string name="subregion_map_menu_90_days_text">90 days</string>
     <string name="subregion_map_menu_180_days_text">180 days</string>
@@ -208,12 +211,12 @@
     <string name="text_query_reference_number_label_text">Reference Number</string>
     <string name="text_query_victim_label_text">Victim</string>
     <string name="text_query_victim_content_description_text">Victim</string>
-    <string name="text_query_aggressor_label_text">Aggressor</string>
-    <string name="text_query_aggressor_content_description_text">Aggressor</string>
+    <string name="text_query_hostility_label_text">Hostility</string>
+    <string name="text_query_hostility_content_description_text">Hostility</string>
     <string name="text_query_date_from_text">Date From:</string>
     <string name="text_query_date_to_text">Date To:</string>
-    <string name="text_query_year_hint_text">YYYY</string>
-    <string name="text_query_number_hint_text">###</string>
+    <string name="text_query_year_hint_text">Reference # Year</string>
+    <string name="text_query_number_hint_text">Reference # ID</string>
     <string name="text_query_date_hint_text">MM/DD/YYYY</string>
     <string name="text_query_reset_button_text">Reset</string>
     <string name="text_query_query_button_text">Search</string>
@@ -225,8 +228,8 @@
     <string name="text_query_dialog_fragment_reference_number_label_text">Reference Number</string>
     <string name="text_query_dialog_fragment_victim_label_text">Victim</string>
     <string name="text_query_dialog_fragment_victim_content_description_text">Victim</string>
-    <string name="text_query_dialog_fragment_aggressor_label_text">Aggressor</string>
-    <string name="text_query_dialog_fragment_aggressor_content_description_text">Aggressor</string>
+    <string name="text_query_dialog_fragment_hostility_label_text">Hostility</string>
+    <string name="text_query_dialog_fragment_hostility_content_description_text">Hostility</string>
     <string name="text_query_dialog_fragment_date_from_label_text">Date From:</string>
     <string name="text_query_dialog_fragment_date_to_label_text">Date To:</string>
     <string name="text_query_dialog_fragment_cancel_button_text">Cancel</string>
@@ -244,7 +247,7 @@
         <item>Subregions</item>
         <item>Reference Number</item>
         <item>Victim</item>
-        <item>Aggressor</item>
+        <item>Hostility</item>
     </string-array>
     
     <string-array name="subregions">

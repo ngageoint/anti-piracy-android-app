@@ -1,14 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:asam="http://schemas.android.com/apk/res-auto">
-    
-    <item android:id="@+id/subregion_map_menu_reset_ui"
+
+    <item android:id="@+id/subregion_map_clear"
         android:title="@string/subregion_map_menu_clear_text"
         asam:showAsAction="always|withText"
         android:enabled="false"
         android:menuCategory="system"
-        android:orderInCategory="400" />
-    
+        android:orderInCategory="100" />
 
+    <item android:id="@+id/subregion_map_apply"
+        android:title="@string/subregion_map_menu_apply_text"
+        asam:showAsAction="always|withText"
+        android:menuCategory="system"
+        android:orderInCategory="200" />
         
 </menu>

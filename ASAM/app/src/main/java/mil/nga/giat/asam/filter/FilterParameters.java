@@ -7,7 +7,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
 
 public class FilterParameters implements Parcelable {
@@ -27,7 +26,7 @@ public class FilterParameters implements Parcelable {
     public ArrayList<Integer> mSubregionIds = new ArrayList<Integer>();
     public String mReferenceNumber;
     public String mVictim;
-    public String mAggressor;
+    public String mHostility;
     
     public static FilterParameters newInstance(FilterParameters parameters) {
         FilterParameters copy = new FilterParameters(parameters.mType);
@@ -38,7 +37,7 @@ public class FilterParameters implements Parcelable {
         copy.mSubregionIds = parameters.mSubregionIds;
         copy.mReferenceNumber = parameters.mReferenceNumber;
         copy.mVictim = parameters.mVictim;
-        copy.mAggressor = parameters.mAggressor;
+        copy.mHostility = parameters.mHostility;
         return copy;
     }
 
@@ -54,7 +53,7 @@ public class FilterParameters implements Parcelable {
                 mSubregionIds.isEmpty() &&
                 StringUtils.isBlank(mReferenceNumber) &&
                 StringUtils.isBlank(mVictim) &&
-                StringUtils.isBlank(mAggressor);
+                StringUtils.isBlank(mHostility);
     }
 
     public Date getStartDateFromInterval() {
@@ -90,54 +89,6 @@ public class FilterParameters implements Parcelable {
         }
     }
 
-    public String getParametersAsFormattedHtml() {
-        Collection<String> partials = new ArrayList<String>();
-
-        StringBuilder html = new StringBuilder();
-        if (StringUtils.isNotBlank(mKeyword)) {
-            partials.add(String.format("&nbsp;<b>Keyword:</b> %s", mKeyword));
-        }
-        if (mTimeInterval != null) {
-            switch (mTimeInterval) {
-                case 60:
-                case 90:
-                case 180:
-                    partials.add(String.format("&nbsp;<b>Last:</b> %s days", mTimeInterval));
-                    break;
-                case 365:
-                    partials.add("&nbsp;<b>Date</b>: last year");
-                    break;
-                case 1300:
-                    partials.add("&nbsp;<b>Date</b>: last 5 years");
-                    break;
-            }
-        }
-
-        if (StringUtils.isNotBlank(mDateFrom) && StringUtils.isNotBlank(mDateTo)) {
-            partials.add(String.format("&nbsp;<b>Date:</b> %s - %s", mDateFrom, mDateTo));
-        } else if (StringUtils.isNotBlank(mDateTo)) {
-            partials.add(String.format("&nbsp;<b>Date To:</b> %s", mDateTo));
-        } else if (StringUtils.isNotBlank(mDateFrom)){
-            partials.add(String.format("&nbsp;<b>Date From:</b> %s", mDateFrom));
-        }
-
-        if (!mSubregionIds.isEmpty()) {
-            partials.add(String.format("&nbsp;<b>Subregion:</b> %s", StringUtils.join(mSubregionIds, ", ")));
-        }
-
-        if (StringUtils.isNotBlank(mReferenceNumber)) {
-            partials.add(String.format("&nbsp;<b>Reference Number:</b> %s", mReferenceNumber));
-        }
-        if (StringUtils.isNotBlank(mVictim)) {
-            partials.add(String.format("&nbsp;<b>Victim:</b> %s", mVictim));
-        }
-        if (StringUtils.isNotBlank(mAggressor)) {
-            partials.add(String.format("&nbsp;<b>Aggressor:</b> %s", mAggressor));
-        }
-
-        return "<br>" + StringUtils.join(partials, "<br>");
-    }
-
     /**
      * Creator required for class implementing the parcelable interface.
      */
@@ -170,7 +121,7 @@ public class FilterParameters implements Parcelable {
         dest.writeSerializable(mSubregionIds);
         dest.writeString(mReferenceNumber);
         dest.writeString(mVictim);
-        dest.writeString(mAggressor);
+        dest.writeString(mHostility);
     }
 
     private FilterParameters(Parcel in) {
@@ -182,6 +133,6 @@ public class FilterParameters implements Parcelable {
         mSubregionIds = (ArrayList<Integer>) in.readSerializable();
         mReferenceNumber = in.readString();
         mVictim = in.readString();
-        mAggressor = in.readString();
+        mHostility = in.readString();
     }
 }

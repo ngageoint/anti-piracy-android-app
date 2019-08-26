@@ -9,25 +9,10 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
 import mil.nga.giat.asam.R;
 
 
 public class AsamUtils {
-    
-    public static String readStream(InputStream stream) throws IOException {
-        BufferedReader in = new BufferedReader(new InputStreamReader(stream));
-        StringBuilder contents = new StringBuilder();
-        String line;
-        while ((line = in.readLine()) != null) {
-            contents.append(line);
-        }
-        return contents.toString();
-    }
 
     public static Bitmap drawNumberOnClusterMarker(Context context, int number) {
         String numberOfPoints = "" + number;

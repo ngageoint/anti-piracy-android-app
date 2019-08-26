@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minHeight="?android:attr/actionBarSize"
-        android:title="Filters"
+        android:title="Filter"
         android:background="?attr/colorPrimary"
         app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
@@ -28,28 +28,30 @@
             android:layout_height="fill_parent"
             android:orientation="vertical"
             android:layout_marginTop="16dp"
-            android:paddingStart="15dp"
-            android:paddingEnd="15dp">
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="Keyword"
-                android:id="@+id/searchLabel" />
-
-            <EditText
-                android:id="@+id/keyword"
-                android:inputType="text"
+            <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"/>
+                android:layout_height="wrap_content">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/keyword"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="7dip"
+                    android:layout_marginTop="7dip"
+                    android:hint="Keyword"
+                    android:inputType="text"
+                    android:maxLines="1" />
+
+            </android.support.design.widget.TextInputLayout>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:layout_marginBottom="10dp"
+                android:textSize="12sp"
+                android:textColor="?attr/colorAccent"
                 android:text="@string/filter_interval_label" />
 
             <Spinner
@@ -57,11 +59,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="12dp"
                 android:entries="@array/filter_interval_labels"
                 android:labelFor="@string/asam_map_label" />
 
             <CheckBox android:id="@+id/current_subregion"
+                android:visibility="gone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/filter_current_subregion_label" />
@@ -73,27 +76,17 @@
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_marginBottom="16dp">
 
-        <Button android:id="@+id/apply"
+        <Button android:id="@+id/advanced"
             style="?android:attr/borderlessButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_marginRight="16dp"
-            android:textColor="@color/md_teal_A700"
-            android:text="Apply"
-            android:background="?attr/selectableItemBackgroundBorderless"/>
-
-        <Button android:id="@+id/cancel"
-            style="?android:attr/borderlessButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toLeftOf="@id/apply"
-            android:layout_marginRight="8dp"
-            android:textColor="@color/md_teal_A700"
-            android:text="@android:string/cancel"
-            android:background="?attr/selectableItemBackgroundBorderless"/>
+            android:textColor="?attr/colorAccent"
+            android:text="More Options" />
 
     </RelativeLayout>
 

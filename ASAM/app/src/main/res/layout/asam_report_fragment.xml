@@ -40,21 +40,20 @@
                 android:layout_weight="1"
                 android:orientation="vertical">
 
-                <!-- Aggressor -->
+                <!-- Hostility -->
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    style="@style/ListTextPrimary"
-                    android:text="@string/asam_report_aggressor_label_text" />
+                    style="@style/ListTextSecondary"
+                    android:text="@string/asam_report_hostility_label_text" />
 
-                <TextView android:id="@+id/asam_report_fragment_aggressor_ui"
+                <TextView android:id="@+id/asam_report_fragment_hostility_ui"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    style="@style/ListTextSecondary"
+                    style="@style/ListTextPrimary"
                     android:textIsSelectable="false"/>
 
             </LinearLayout>
-
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -66,13 +65,13 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    style="@style/ListTextPrimary"
+                    style="@style/ListTextSecondary"
                     android:text="@string/asam_report_victim_label_text" />
 
                 <TextView android:id="@+id/asam_report_fragment_victim_ui"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    style="@style/ListTextSecondary"
+                    style="@style/ListTextPrimary"
                     android:textIsSelectable="false"/>
 
             </LinearLayout>
@@ -109,25 +108,25 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textIsSelectable="false"
-            android:layout_marginBottom="25dp"/>
+            android:layout_marginBottom="16dp"/>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginBottom="5dp">
+            android:layout_marginBottom="8dp">
 
             <!-- Reference Number -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                style="@style/ListTextPrimary"
+                style="@style/ListTextSecondary"
                 android:text="@string/asam_report_reference_number_label_text"/>
 
             <TextView android:id="@+id/asam_report_fragment_reference_number_ui"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                style="@style/ListTextSecondary"
+                style="@style/ListTextPrimary"
                 android:paddingLeft="10dp"
                 android:textIsSelectable="false"/>
 
@@ -137,17 +136,18 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:layout_marginBottom="8dp">
 
-            <!-- Subregion -->
+        <!-- Subregion -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                style="@style/ListTextPrimary"
+                style="@style/ListTextSecondary"
                 android:text="@string/asam_report_subregion_label_text" />
 
             <TextView android:id="@+id/asam_report_fragment_subregion_ui"
-                style="@style/ListTextSecondary"
+                style="@style/ListTextPrimary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingLeft="10dp"
@@ -155,22 +155,27 @@
 
         </LinearLayout>
 
-        <!--<LinearLayout-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:orientation="horizontal">-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="8dp">
 
-            <!--&lt;!&ndash; Location &ndash;&gt;-->
-            <!--<TextView-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--style="@style/ListTextPrimary"-->
-                <!--android:text="@string/asam_report_location_label_text" />-->
+        <!-- NavArea -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/ListTextSecondary"
+                android:text="@string/asam_report_navarea_label_text" />
 
+            <TextView android:id="@+id/asam_report_fragment_navarea_ui"
+                style="@style/ListTextPrimary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:textIsSelectable="false"/>
 
-
-        <!--</LinearLayout>-->
-
+        </LinearLayout>
 
 
     </LinearLayout>

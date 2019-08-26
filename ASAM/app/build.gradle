@@ -3,8 +3,8 @@ apply plugin: 'com.android.application'
 def googleMapsApiKeyDebug = hasProperty('DEBUG_MAPS_API_KEY') ? DEBUG_MAPS_API_KEY: ''
 
 android {
-    compileSdkVersion 21
-    buildToolsVersion "21.1.2"
+    compileSdkVersion 28
+    buildToolsVersion '28.0.3'
 
     dexOptions {
         javaMaxHeapSize "4g"
@@ -13,7 +13,7 @@ android {
     defaultConfig {
         applicationId "mil.nga.giat.asam"
         minSdkVersion 16
-        targetSdkVersion 22
+        targetSdkVersion 28
         multiDexEnabled true
     }
 
@@ -48,12 +48,14 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:appcompat-v7:22.1.1'
-    compile 'com.android.support:cardview-v7:22.1.1'
-    compile 'com.android.support:recyclerview-v7:22.1.1'
-    compile 'com.google.android.gms:play-services:7.3.0'
-    compile 'com.fasterxml.jackson.core:jackson-databind:2.4.2'
-    compile 'com.vividsolutions:jts:1.8'
-    compile 'org.apache.commons:commons-lang3:3.4'
-    compile files('libs/poffen_cluster_1.1.jar')
+    api 'com.android.support:appcompat-v7:28.0.0'
+    api "com.android.support:design:28.0.0"
+    api 'com.android.support:cardview-v7:28.0.0'
+    api 'com.android.support:recyclerview-v7:28.0.0'
+    api 'com.google.android.gms:play-services-maps:10.2.6'
+    api 'com.fasterxml.jackson.core:jackson-databind:2.9.5'
+    api 'com.vividsolutions:jts:1.13'
+    api 'org.apache.commons:commons-lang3:3.4'
+    implementation("com.squareup.okhttp3:okhttp:4.1.0")
+    implementation files('libs/poffen_cluster_1.1.jar')
 }

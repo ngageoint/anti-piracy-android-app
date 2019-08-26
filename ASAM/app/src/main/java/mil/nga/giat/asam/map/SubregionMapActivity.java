@@ -9,11 +9,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
@@ -37,13 +37,13 @@ import mil.nga.giat.asam.util.AsamConstants;
 import mil.nga.giat.asam.util.AsamLog;
 
 
-public class SubregionMapActivity extends AppCompatActivity implements OnMapClickListener, Asam.OnOfflineFeaturesListener, View.OnClickListener {
+public class SubregionMapActivity extends AppCompatActivity implements OnMapClickListener, Asam.OnOfflineFeaturesListener, OnMapReadyCallback {
 
     private static final int INITIAL_ZOOM_LEVEL = 2;
     private static final float OUTLINE_WIDTH = 2.0f;
 
-    private static final int OUTLINE_COLOR = 0xFF00BFA5;
-    private static final int SELECTED_FILL_COLOR = 0x7F00BFA5;
+    private static final int OUTLINE_COLOR = 0xFFBF360C;
+    private static final int SELECTED_FILL_COLOR = 0x7FE64A19;
 
     private GoogleMap mMapUI;
     private int mMapType;
@@ -60,29 +60,11 @@ public class SubregionMapActivity extends AppCompatActivity implements OnMapClic
         
         AsamLog.i(SubregionMapActivity.class.getName() + ":onCreate");
         setContentView(R.layout.subregion_map);
-        
-        mMapUI = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.subregion_map_map_view_ui)).getMap();
-        mMapUI.setOnMapClickListener(this);
 
-        findViewById(R.id.apply).setOnClickListener(this);
-        findViewById(R.id.cancel).setOnClickListener(this);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_white_24dp);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        Collection<Integer> selectedSubregionIds = getIntent().getIntegerArrayListExtra(FilterAdvancedActivity.SUBREGIONS_EXTRA);
-        
-        // Initialize subregions and place on map.
-        mSubregions = new SubregionTextParser().parseSubregions(this);
-        for (SubregionBean subregion : mSubregions) {
-            PolygonOptions polygonOptions = new PolygonOptions().zIndex(100);
-            polygonOptions.addAll(subregion.getMapCoordinates()).strokeColor(OUTLINE_COLOR).strokeWidth(OUTLINE_WIDTH);
-
-            if (selectedSubregionIds.contains(subregion.getSubregionId())) {
-                polygonOptions.fillColor(SELECTED_FILL_COLOR);
-                subregion.setSelected(true);
-            }
-
-            Polygon polygon = mMapUI.addPolygon(polygonOptions);
-            subregion.setMapPolygon(polygon);
-        }
+        ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.subregion_map_map_view_ui)).getMapAsync(this);
     }
     
     @Override
@@ -90,16 +72,10 @@ public class SubregionMapActivity extends AppCompatActivity implements OnMapClic
         super.onResume();
         
         AsamLog.i(SubregionMapActivity.class.getName() + ":onResume");
-        LatLng position = new LatLng(0.0, 0.0);
-        CameraPosition cameraPosition = new CameraPosition.Builder().target(position).zoom(INITIAL_ZOOM_LEVEL).build();
-        mMapUI.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
         ((Asam) getApplication()).registerOfflineMapListener(this);
 
         supportInvalidateOptionsMenu();
-        
-        int mapType = mSharedPreferences.getInt(AsamConstants.MAP_TYPE_KEY, GoogleMap.MAP_TYPE_NORMAL);
-        if (mapType != mMapType) setMapType(mapType);
     }
 
     @Override
@@ -113,7 +89,7 @@ public class SubregionMapActivity extends AppCompatActivity implements OnMapClic
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.subregion_map_menu, menu);
-        mResetMenuItemUI = menu.findItem(R.id.subregion_map_menu_reset_ui);
+        mResetMenuItemUI = menu.findItem(R.id.subregion_map_clear);
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -128,26 +104,52 @@ public class SubregionMapActivity extends AppCompatActivity implements OnMapClic
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.subregion_map_menu_reset_ui:
+            case R.id.subregion_map_apply:
+                Intent intent = new Intent();
+                intent.putIntegerArrayListExtra(FilterAdvancedActivity.SUBREGIONS_EXTRA, getSelectedSubregionIds());
+                setResult(RESULT_OK, intent);
+                finish();
+                return true;
+            case R.id.subregion_map_clear:
                 clearMenuClicked();
+                return true;
+            case android.R.id.home:
+                finish();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
+
     @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.cancel:
-                finish();
-                break;
-            case R.id.apply:
-                Intent intent = new Intent();
-                intent.putIntegerArrayListExtra(FilterAdvancedActivity.SUBREGIONS_EXTRA, getSelectedSubregionIds());
-                setResult(RESULT_OK, intent);
-                finish();
-                break;
+    public void onMapReady(GoogleMap googleMap) {
+        mMapUI = googleMap;
+
+        mMapUI.setOnMapClickListener(this);
+
+        int mapType = mSharedPreferences.getInt(AsamConstants.MAP_TYPE_KEY, GoogleMap.MAP_TYPE_NORMAL);
+        if (mapType != mMapType) setMapType(mapType);
+
+        LatLng position = new LatLng(0.0, 0.0);
+        CameraPosition cameraPosition = new CameraPosition.Builder().target(position).zoom(INITIAL_ZOOM_LEVEL).build();
+        mMapUI.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
+        Collection<Integer> selectedSubregionIds = getIntent().getIntegerArrayListExtra(FilterAdvancedActivity.SUBREGIONS_EXTRA);
+
+        // Initialize subregions and place on map.
+        mSubregions = new SubregionTextParser().parseSubregions(this);
+        for (SubregionBean subregion : mSubregions) {
+            PolygonOptions polygonOptions = new PolygonOptions().zIndex(100);
+            polygonOptions.addAll(subregion.getMapCoordinates()).strokeColor(OUTLINE_COLOR).strokeWidth(OUTLINE_WIDTH);
+
+            if (selectedSubregionIds.contains(subregion.getSubregionId())) {
+                polygonOptions.fillColor(SELECTED_FILL_COLOR);
+                subregion.setSelected(true);
+            }
+
+            Polygon polygon = mMapUI.addPolygon(polygonOptions);
+            subregion.setMapPolygon(polygon);
         }
     }
 

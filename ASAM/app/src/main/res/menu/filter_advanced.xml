@@ -2,10 +2,16 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:asam="http://schemas.android.com/apk/res-auto">
 
-    <item android:id="@+id/reset"
+    <item android:id="@+id/clear"
         android:title="Clear"
         asam:showAsAction="always|withText"
         android:menuCategory="system"
         android:orderInCategory="100"/>
+
+    <item android:id="@+id/apply"
+        android:title="Apply"
+        asam:showAsAction="always|withText"
+        android:menuCategory="system"
+        android:orderInCategory="200"/>
 
 </menu>

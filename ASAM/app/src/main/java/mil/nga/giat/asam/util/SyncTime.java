@@ -47,6 +47,12 @@ public class SyncTime {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         return preferences.getString(AsamConstants.LAST_SYNC_TIME, "N/A");
     }
+
+    public static void removeSync(Context context) {
+        SharedPreferences.Editor edit = PreferenceManager.getDefaultSharedPreferences(context).edit();
+        edit.remove(AsamConstants.LAST_SYNC_TIME);
+        edit.apply();
+    }
     
     private static Date truncateDate(Date date) {
         try {

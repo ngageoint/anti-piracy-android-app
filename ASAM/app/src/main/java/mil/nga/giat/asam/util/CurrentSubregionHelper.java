@@ -1,14 +1,15 @@
 package mil.nga.giat.asam.util;
 
-import java.util.List;
-import java.util.Locale;
-
-import mil.nga.giat.asam.model.SubregionBean;
 import android.content.Context;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+
+import java.util.List;
+import java.util.Locale;
+
+import mil.nga.giat.asam.model.SubregionBean;
 
 
 public class CurrentSubregionHelper implements LocationListener {
@@ -20,8 +21,13 @@ public class CurrentSubregionHelper implements LocationListener {
     
     public CurrentSubregionHelper(Context context, List<SubregionBean> subregions) {
         mLocationManager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
-        mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
-        mCurrentLocation = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        try {
+            mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
+            mCurrentLocation = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        } catch (SecurityException e) {
+            AsamLog.e("Cannot request location", e);
+        }
+
         mSubregions = subregions;
     }
     
@@ -34,9 +40,11 @@ public class CurrentSubregionHelper implements LocationListener {
                     break;
                 }
             }
+
             mLocationManager.removeUpdates(this);
             return mCurrentSubregion == null ? 11 : mCurrentSubregion;
         }
+
         return mCurrentSubregion;
     }
 

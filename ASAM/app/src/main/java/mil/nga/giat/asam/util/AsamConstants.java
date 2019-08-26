@@ -9,7 +9,7 @@ import mil.nga.giat.asam.R;
 public class AsamConstants {
     
     public static final String ASAM_KEY = "asam";
-    public static final int QUERY_TIMEOUT_THRESHOLD_IN_MILLISECONDS = 20 * 1000;
+    public static final int QUERY_TIMEOUT_THRESHOLD_IN_SECONDS = 60;
     public static final String LAST_SYNC_TIME = "last_sync_time";
     public static final String HIDE_DISCLAIMER_KEY = "hide_disclaimer";
     public static final String INITIAL_MAP_POSITION_KEY = "initial_map_position";
@@ -32,7 +32,7 @@ public class AsamConstants {
     public static final int SUBREGION_SORT = 1;
     public static final int REFERENCE_NUMBER_SORT = 2;
     public static final int VICTIM_SORT = 3;
-    public static final int AGGRESSOR_SORT = 4;
+    public static final int HOSTILITY_SORT = 4;
     
     public static final String QUERY_TYPE_KEY = "query_type_key";
     public static final int SUBREGION_QUERY = 1;

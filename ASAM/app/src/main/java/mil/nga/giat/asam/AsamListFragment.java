@@ -103,11 +103,11 @@ public class AsamListFragment extends Fragment implements AdapterView.OnItemClic
         mSortDirection = sortDirection;
         mSortPopupSpinnerSelection = sortPopupSpinnerSelection;
         switch (mSortPopupSpinnerSelection) {
-            case AsamConstants.AGGRESSOR_SORT:
+            case AsamConstants.HOSTILITY_SORT:
                 if (mSortDirection == AsamConstants.SORT_ASCENDING) {
-                    mAsamArrayAdapter.sort(new AsamBean.AscendingAggressorComparator());
+                    mAsamArrayAdapter.sort(new AsamBean.AscendingHostilityComparator());
                 } else {
-                    mAsamArrayAdapter.sort(new AsamBean.DescendingAggressorComparator());
+                    mAsamArrayAdapter.sort(new AsamBean.DescendingHostilityComparator());
                 }
                 break;
 

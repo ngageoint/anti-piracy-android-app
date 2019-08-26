@@ -27,7 +27,6 @@ import mil.nga.giat.asam.R;
 import mil.nga.giat.asam.db.AsamDbHelper;
 import mil.nga.giat.asam.map.AsamMapActivity;
 import mil.nga.giat.asam.map.SubregionMapActivity;
-import mil.nga.giat.asam.util.AsamLog;
 
 
 public class FilterAdvancedActivity extends AppCompatActivity implements OnClickListener {
@@ -45,34 +44,35 @@ public class FilterAdvancedActivity extends AppCompatActivity implements OnClick
     private EditText mReferenceNumberYearUI;
     private EditText mReferenceNumberIdUI;
     private EditText mVictimUI;
-    private EditText mAggressorUI;
+    private EditText mHostility;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        AsamLog.i(FilterAdvancedActivity.class.getName() + ":onCreate");
+
         setContentView(R.layout.filter_advanced);
         getWindow().setSoftInputMode(LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_white_24dp);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
                 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.subregions, R.layout.subregion_spinner_item);
         adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
 
-        mReferenceNumberYearUI = (EditText) findViewById(R.id.text_query_reference_number_year_edit_text_ui);
-        mReferenceNumberIdUI = (EditText) findViewById(R.id.text_query_reference_number_id_edit_text_ui);
+        mReferenceNumberYearUI = findViewById(R.id.text_query_reference_number_year_edit_text_ui);
+        mReferenceNumberIdUI = findViewById(R.id.text_query_reference_number_id_edit_text_ui);
 
-        mKeyword = (EditText) findViewById(R.id.keyword);
-        mDateFromUI = (EditText) findViewById(R.id.text_query_date_from_edit_text_ui);
-        mDateToUI = (EditText) findViewById(R.id.text_query_date_to_edit_text_ui);
-        mSubregionsText = (EditText) findViewById(R.id.subregions);
-        mVictimUI = (EditText) findViewById(R.id.text_query_victim_edit_text_ui);
-        mAggressorUI = (EditText) findViewById(R.id.text_query_aggressor_edit_text_ui);
+        mKeyword = findViewById(R.id.keyword);
+        mDateFromUI = findViewById(R.id.text_query_date_from_edit_text_ui);
+        mDateToUI = findViewById(R.id.text_query_date_to_edit_text_ui);
+        mSubregionsText = findViewById(R.id.subregions);
+        mVictimUI = findViewById(R.id.text_query_victim_edit_text_ui);
+        mHostility = findViewById(R.id.text_query_hostility_edit_text_ui);
 
         mDateFromUI.setOnClickListener(this);
         mDateToUI.setOnClickListener(this);
 
-        findViewById(R.id.apply).setOnClickListener(this);
-        findViewById(R.id.cancel).setOnClickListener(this);
-        findViewById(R.id.subregion_button).setOnClickListener(this);
+        findViewById(R.id.subregions).setOnClickListener(this);
 
         Intent intent = getIntent();
         FilterParameters filterParameters = intent.getParcelableExtra(AsamMapActivity.SEARCH_PARAMETERS);
@@ -82,8 +82,18 @@ public class FilterAdvancedActivity extends AppCompatActivity implements OnClick
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.reset:
+            case android.R.id.home:
+                finish();
+                return true;
+            case R.id.clear:
                 clearFields();
+                return true;
+            case R.id.apply:
+                Intent intent = new Intent();
+                FilterParameters parameters = parseFields();
+                intent.putExtra(AsamMapActivity.SEARCH_PARAMETERS, parameters);
+                setResult(Activity.RESULT_OK, intent);
+                finish();
                 return true;
             default: {
                 return super.onOptionsItemSelected(item);
@@ -112,19 +122,7 @@ public class FilterAdvancedActivity extends AppCompatActivity implements OnClick
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.apply: {
-                Intent intent = new Intent();
-                FilterParameters parameters = parseFields();
-                intent.putExtra(AsamMapActivity.SEARCH_PARAMETERS, parameters);
-                setResult(Activity.RESULT_OK, intent);
-                finish();
-                break;
-            }
-            case R.id.cancel: {
-                finish();
-                break;
-            }
-            case R.id.subregion_button: {
+            case R.id.subregions: {
                 Intent intent = new Intent(this, SubregionMapActivity.class);
                 intent.putIntegerArrayListExtra(SUBREGIONS_EXTRA, mSubregionIds);
                 startActivityForResult(intent, PICK_SUBREGIONS_REQUEST);
@@ -204,7 +202,7 @@ public class FilterAdvancedActivity extends AppCompatActivity implements OnClick
 
         populateSubregions(filterParameters.mSubregionIds);
 
-        mAggressorUI.setText(filterParameters.mAggressor);
+        mHostility.setText(filterParameters.mHostility);
         mVictimUI.setText(filterParameters.mVictim);
 
         String[] referenceNumber = StringUtils.split(filterParameters.mReferenceNumber, "-");
@@ -227,7 +225,7 @@ public class FilterAdvancedActivity extends AppCompatActivity implements OnClick
 
         parameters.mSubregionIds = mSubregionIds;
 
-        parameters.mAggressor = mAggressorUI.getText().toString();
+        parameters.mHostility = mHostility.getText().toString();
         parameters.mVictim = mVictimUI.getText().toString();
         if (StringUtils.isNotBlank(mReferenceNumberYearUI.getText().toString()) && StringUtils.isNotBlank(mReferenceNumberIdUI.getText().toString())) {
             parameters.mReferenceNumber = mReferenceNumberYearUI.getText().toString() + "-" + mReferenceNumberIdUI.getText().toString();
@@ -247,7 +245,7 @@ public class FilterAdvancedActivity extends AppCompatActivity implements OnClick
         mDateFromUI.setText("");
         mDateToUI.setText("");
         mVictimUI.setText("");
-        mAggressorUI.setText("");
+        mHostility.setText("");
         mReferenceNumberYearUI.setText("");
         mReferenceNumberIdUI.setText("");
     }

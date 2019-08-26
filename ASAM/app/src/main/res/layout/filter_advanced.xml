@@ -16,189 +16,170 @@
             android:layout_height="fill_parent"
             android:orientation="vertical"
             android:layout_marginTop="16dp"
-            android:paddingStart="15dp"
-            android:paddingEnd="15dp">
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp">
 
-            <TextView android:id="@+id/searchLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Keyword"
-                android:textSize="18sp"/>
-
-            <EditText android:id="@+id/keyword"
-                android:inputType="text"
+            <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"/>
+                android:layout_height="wrap_content">
 
-            <LinearLayout android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="10dp">
-
-                <TextView android:text="@string/text_query_date_from_text"
-                    android:layout_width="0dp"
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/keyword"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="left"
-                    android:textSize="18sp"/>
+                    android:layout_marginBottom="7dip"
+                    android:layout_marginTop="7dip"
+                    android:hint="Keyword"
+                    android:inputType="text"
+                    android:maxLines="1" />
 
-                <TextView android:text="@string/text_query_date_to_text"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="left"
-                    android:textSize="18sp"/>
-
-            </LinearLayout>
+            </android.support.design.widget.TextInputLayout>
 
             <LinearLayout android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <EditText android:id="@+id/text_query_date_from_edit_text_ui"
+                <android.support.design.widget.TextInputLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:inputType="date"
-                    android:gravity="left"
-                    android:hint="@string/text_query_date_hint_text"
-                    android:focusable="false"/>
+                    android:layout_weight="1">
 
-                <TextView android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/hyphen_text"/>
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/text_query_date_from_edit_text_ui"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="7dip"
+                        android:layout_marginTop="7dip"
+                        android:hint="Date From"
+                        android:inputType="text"
+                        android:maxLines="1"
+                        android:focusable="false"/>
 
-                <EditText android:id="@+id/text_query_date_to_edit_text_ui"
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:inputType="date"
-                    android:hint="@string/text_query_date_hint_text"
-                    android:focusable="false"/>
+                    android:layout_weight="1">
+
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/text_query_date_to_edit_text_ui"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="7dip"
+                        android:layout_marginTop="7dip"
+                        android:hint="Date To"
+                        android:inputType="text"
+                        android:maxLines="1"
+                        android:focusable="false"/>
+
+                </android.support.design.widget.TextInputLayout>
 
             </LinearLayout>
 
-            <TextView android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/text_query_select_subregion_label_text"
-                android:layout_marginTop="10dp"
-                android:textSize="18sp"/>
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/subregions"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="7dip"
+                    android:layout_marginTop="7dip"
+                    android:hint="@string/text_query_select_subregion_label_text"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:editable="false"
+                    android:focusable="false"
+                    android:textIsSelectable="false"
+                    android:focusableInTouchMode="false"
+                    android:clickable="false"/>
+
+            </android.support.design.widget.TextInputLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <EditText android:id="@+id/subregions"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:inputType="text"
-                    android:ellipsize="end"
-                    android:scrollHorizontally="true"
-                    android:editable="false"
-                    android:focusable="false"
-                    android:textIsSelectable="false"
-                    android:focusableInTouchMode="false"
-                    android:clickable="false"
-                    android:singleLine="true" />
-
-                <Button android:id="@+id/subregion_button"
-                    style="?android:attr/borderlessButtonStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/all_asams_map_tablet_change_subregions_text"
-                    android:textColor="@color/md_teal_A700"
-                    android:background="?attr/selectableItemBackgroundBorderless"/>
-
-            </LinearLayout>
-
-            <TextView android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/text_query_reference_number_label_text"
-                android:layout_marginTop="10dp"
-                android:textSize="18sp"/>
-
-            <LinearLayout android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <EditText android:id="@+id/text_query_reference_number_year_edit_text_ui"
+                <android.support.design.widget.TextInputLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:inputType="number"
-                    android:hint="@string/text_query_year_hint_text"/>
+                    android:layout_weight="1">
+
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/text_query_reference_number_year_edit_text_ui"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="7dip"
+                        android:layout_marginTop="7dip"
+                        android:hint="@string/text_query_year_hint_text"
+                        android:inputType="number"
+                        android:maxLines="1"/>
+
+                </android.support.design.widget.TextInputLayout>
 
                 <TextView android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
                     android:text="@string/hyphen_text"/>
 
-                <EditText android:id="@+id/text_query_reference_number_id_edit_text_ui"
+                <android.support.design.widget.TextInputLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:inputType="number"
-                    android:hint="@string/text_query_number_hint_text"/>
+                    android:layout_weight="1">
+
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/text_query_reference_number_id_edit_text_ui"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="7dip"
+                        android:layout_marginTop="7dip"
+                        android:hint="@string/text_query_number_hint_text"
+                        android:inputType="number"
+                        android:maxLines="1"/>
+
+                </android.support.design.widget.TextInputLayout>
 
             </LinearLayout>
 
-
-            <TextView android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/text_query_victim_label_text"
-                android:layout_marginTop="10dp"
-                android:textSize="18sp"/>
-
-            <EditText android:id="@+id/text_query_victim_edit_text_ui"
+            <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="text"
-                android:contentDescription="@string/text_query_victim_content_description_text"/>
+                android:layout_height="wrap_content">
 
-            <TextView android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/text_query_aggressor_label_text"
-                android:layout_marginTop="10dp"
-                android:textSize="18sp"/>
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/text_query_victim_edit_text_ui"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="7dip"
+                    android:layout_marginTop="7dip"
+                    android:hint="@string/text_query_victim_label_text"
+                    android:inputType="number"
+                    android:maxLines="1"/>
 
-            <EditText android:id="@+id/text_query_aggressor_edit_text_ui"
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="text"
-                android:contentDescription="@string/text_query_aggressor_content_description_text"/>
+                android:layout_height="wrap_content">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/text_query_hostility_edit_text_ui"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="7dip"
+                    android:layout_marginTop="7dip"
+                    android:hint="@string/text_query_hostility_label_text"
+                    android:inputType="number"
+                    android:maxLines="1"/>
+
+            </android.support.design.widget.TextInputLayout>
 
         </LinearLayout>
 
     </ScrollView>
-
-
-    <RelativeLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <Button android:id="@+id/apply"
-            style="?android:attr/borderlessButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="16dp"
-            android:textColor="@color/md_teal_A700"
-            android:text="Apply"
-            android:background="?attr/selectableItemBackgroundBorderless"/>
-
-        <Button android:id="@+id/cancel"
-            style="?android:attr/borderlessButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toLeftOf="@id/apply"
-            android:layout_marginRight="8dp"
-            android:textColor="@color/md_teal_A700"
-            android:text="@android:string/cancel"
-            android:background="?attr/selectableItemBackgroundBorderless"/>
-
-    </RelativeLayout>
 
 </LinearLayout>

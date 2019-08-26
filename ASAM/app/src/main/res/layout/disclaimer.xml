@@ -4,15 +4,16 @@
     android:layout_height="fill_parent"
     android:orientation="vertical"
     android:windowSoftInputMode="stateVisible"
-    android:background="@color/md_blue_grey_500">
+    android:background="@color/background">
 
-    <ImageView android:layout_width="wrap_content"
+    <ImageView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_logo"
+        android:tint="?attr/colorAccent"
         android:layout_gravity="center"
         android:paddingTop="25dp"
-        android:paddingBottom="25dp"
-        />
+        android:paddingBottom="25dp" />
 
     <LinearLayout
         android:layout_width="fill_parent"
@@ -28,9 +29,9 @@
             android:gravity="center"
             android:paddingBottom="10dip"
             android:text="Disclaimer"
-            android:textSize="22sp"
+            android:textSize="24sp"
             android:textIsSelectable="true"
-            android:textColor="@android:color/white"/>
+            android:textColor="#AF000000"/>
 
         <ScrollView
             android:layout_width="match_parent"
@@ -50,16 +51,13 @@
                     android:text="@string/disclaimer_text"
                     android:textSize="15sp"
                     android:textIsSelectable="true"
-                    android:textColor="@android:color/white"
-                    android:alpha=".7"/>
+                    android:textColor="#AF000000" />
 
                 <CheckBox android:id="@+id/show_disclaimer"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="15dp"
-                    android:textColor="@android:color/white"
-                    android:alpha=".7"
-                    android:buttonTint="#AFFFFFFF"
+                    android:textColor="#AF000000"
                     android:text="@string/disclaimer_show_text" />
 
             </LinearLayout>
@@ -70,30 +68,29 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:layout_marginBottom="16dp"
             android:layout_alignParentBottom="true"
             style="?android:attr/buttonBarStyle">
 
             <Button android:id="@+id/disclaimer_exit_button_ui"
                 style="?android:attr/borderlessButtonStyle"
                 android:text="@string/disclaimer_exit_button_text"
-                android:textColor="@color/md_teal_A700"
+                android:textColor="?attr/colorPrimaryDark"
                 android:contentDescription="@string/disclaimer_exit_button_text"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:onClick="disclaimerExitButtonClicked"
-                android:background="?attr/selectableItemBackgroundBorderless"/>
+                android:onClick="disclaimerExitButtonClicked"/>
 
             <Button android:id="@+id/disclaimer_agree_button_ui"
                 style="?android:attr/borderlessButtonStyle"
                 android:text="@string/disclaimer_agree_button_text"
-                android:textColor="@color/md_teal_A700"
+                android:textColor="?attr/colorPrimaryDark"
                 android:contentDescription="@string/disclaimer_agree_button_text"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:onClick="disclaimerAgreeButtonClicked"
-                android:background="?attr/selectableItemBackgroundBorderless"/>
+                android:onClick="disclaimerAgreeButtonClicked" />
 
         </LinearLayout>
 

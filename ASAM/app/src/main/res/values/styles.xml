@@ -4,13 +4,13 @@
 	<style name="asam_theme" parent="@style/Theme.AppCompat.Light.DarkActionBar">
         <item name="colorPrimary">@color/md_blue_grey_600</item>
         <item name="colorPrimaryDark">@color/md_blue_grey_800</item>
-        <item name="colorAccent">@color/md_teal_A700</item>
+        <item name="colorAccent">@color/md_deep_orange_700</item>
 
         <item name="alertDialogTheme">@style/AppCompatAlertDialogStyle</item>
 
         <item name="android:spinnerStyle">@style/Widget.AppCompat.Spinner.Underlined</item>
 
-        <item name="android:colorButtonNormal">@color/md_teal_A700</item>
+        <item name="android:colorButtonNormal">@color/md_deep_orange_700</item>
     </style>
 
     <style name="asam_theme_search" parent="@style/Theme.AppCompat.Light.DialogWhenLarge">
@@ -20,13 +20,25 @@
 
         <item name="colorPrimary">@color/md_blue_grey_600</item>
         <item name="colorPrimaryDark">@color/md_blue_grey_800</item>
-        <item name="colorAccent">@color/md_teal_A700</item>
+        <item name="colorAccent">@color/md_deep_orange_700</item>
+    </style>
+
+    <style name="asam_theme.no_action_bar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+
+    <style name="asam_theme.alternate_fab" parent="Widget.AppCompat.Button">
+        <item name="android:tint">@color/md_blue_grey_600</item>
+        <item name="colorAccent">@color/md_white_1000</item>
+        <item name="colorButtonNormal">@color/md_blue_grey_600</item>
     </style>
 
     <style name="AppCompatAlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
         <item name="colorPrimary">@color/md_blue_grey_600</item>
         <item name="colorPrimaryDark">@color/md_blue_grey_800</item>
-        <item name="colorAccent">@color/md_teal_A700</item>
+        <item name="colorAccent">@color/md_deep_orange_700</item>
     </style>
 
     <style name="MapText">
@@ -82,7 +94,7 @@
     <style name="ListTextSecondary">
         <item name="android:textStyle">normal</item>
         <item name="android:fontFamily">sans-serif</item>
-        <item name="android:textSize">14sp</item>
+        <item name="android:textSize">12sp</item>
         <item name="android:alpha">.7</item>
     </style>
 

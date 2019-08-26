@@ -13,32 +13,20 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:layout_weight="1"
-        android:layout_marginRight="25dp">
+        android:layout_weight="1">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <TextView android:id="@+id/asam_list_row_aggressor_label_ui"
-                style="@style/ListTextPrimaryLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/asam_list_row_subregion_label_ui"
-                android:layout_alignParentLeft="true"
-                android:text="@string/asam_list_row_aggressor_label_text"/>
-
-            <TextView android:id="@+id/asam_list_row_aggressor_ui"
+            <TextView android:id="@+id/asam_list_row_victim_ui"
                 style="@style/ListTextPrimary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toRightOf="@+id/asam_list_row_aggressor_label_ui"
-                android:layout_alignTop="@+id/asam_list_row_aggressor_label_ui"
                 android:ellipsize="marquee"
-                android:maxLines="1"
-                android:paddingLeft="5dp"
-                android:text="Aggressor Placeholder"/>
+                android:singleLine="true" />
+
         </LinearLayout>
 
         <LinearLayout
@@ -46,25 +34,13 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <TextView android:id="@+id/asam_list_row_victim_label_ui"
-                style="@style/ListTextPrimaryLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/asam_list_row_aggressor_label_ui"
-                android:layout_alignParentLeft="true"
-                android:text="@string/asam_list_row_victim_label_text"/>
-
-            <TextView android:id="@+id/asam_list_row_victim_ui"
+            <TextView android:id="@+id/asam_list_row_hostility_ui"
                 style="@style/ListTextPrimary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toRightOf="@+id/asam_list_row_victim_label_ui"
-                android:layout_alignTop="@+id/asam_list_row_victim_label_ui"
                 android:ellipsize="marquee"
-                android:maxLines="1"
-                android:paddingLeft="5dp"
-                android:text="Victim Placeholder"/>
-
+                android:singleLine="true"
+                android:text="Hostility Placeholder"/>
         </LinearLayout>
 
         <LinearLayout
@@ -78,8 +54,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ellipsize="marquee"
-                android:maxLines="1"
-                android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec at sapien faucibus, finibus risus at"/>
+                android:singleLine="true" />
 
         </LinearLayout>
 

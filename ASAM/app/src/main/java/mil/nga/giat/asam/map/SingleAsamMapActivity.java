@@ -1,5 +1,22 @@
 package mil.nga.giat.asam.map;
 
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.vividsolutions.jts.geom.Geometry;
+
 import java.util.Collection;
 
 import mil.nga.giat.asam.Asam;
@@ -7,24 +24,8 @@ import mil.nga.giat.asam.R;
 import mil.nga.giat.asam.connectivity.OfflineBannerFragment;
 import mil.nga.giat.asam.model.AsamBean;
 import mil.nga.giat.asam.util.AsamConstants;
-import android.content.SharedPreferences;
-import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.support.v7.app.ActionBarActivity;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.vividsolutions.jts.geom.Geometry;
-
-
-public class SingleAsamMapActivity extends ActionBarActivity implements Asam.OnOfflineFeaturesListener, OfflineBannerFragment.OnOfflineBannerClick {
+public class SingleAsamMapActivity extends AppCompatActivity implements Asam.OnOfflineFeaturesListener, OfflineBannerFragment.OnOfflineBannerClick, OnMapReadyCallback {
 
     private GoogleMap mMapUI;
     private int mMapType;
@@ -41,42 +42,19 @@ public class SingleAsamMapActivity extends ActionBarActivity implements Asam.OnO
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        
-        AsamBean asam = null;
-        CameraPosition initialPosition = null;
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            asam = (AsamBean)extras.getSerializable(AsamConstants.ASAM_KEY);
-            initialPosition = (CameraPosition)extras.getParcelable(AsamConstants.INITIAL_MAP_POSITION_KEY);
-        }
-        mMapUI = ((SupportMapFragment)getSupportFragmentManager().findFragmentById(R.id.single_asam_map_map_view_ui)).getMap();
+
+        ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.single_asam_map_map_view_ui)).getMapAsync(this);
         
         offlineAlertFragment = new OfflineBannerFragment();
         getSupportFragmentManager().beginTransaction()
             .add(android.R.id.content, offlineAlertFragment)
             .commit();
-
-        LatLng markerPosition = new LatLng(asam.getLatitude(), asam.getLongitude());
-        String title = asam.getVictim();
-        String snippet = String.format(getResources().getString(R.string.single_asam_map_snippet_text), AsamBean.OCCURRENCE_DATE_FORMAT.format(asam.getOccurrenceDate()));
-        mMapUI.addMarker(new MarkerOptions().position(markerPosition).title(title).snippet(snippet).icon(AsamConstants.PIRATE_MARKER).anchor(0.5f, 0.5f));
-        
-        float zoomLevel = AsamConstants.SINGLE_ASAM_ZOOM_LEVEL;
-        if (initialPosition != null) {
-            zoomLevel = initialPosition.zoom;
-            mMapUI.moveCamera(CameraUpdateFactory.newCameraPosition(initialPosition));
-            mMapUI.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder().target(markerPosition).zoom(zoomLevel).build()));
-        }
-        else {
-            mMapUI.moveCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder().target(markerPosition).zoom(zoomLevel).build()));
-        }
     }
     
     @Override
     protected void onResume() {
         super.onResume();
         
-        ((Asam) getApplication()).registerOfflineMapListener(this);
         supportInvalidateOptionsMenu();
         
         int mapType = mSharedPreferences.getInt(AsamConstants.MAP_TYPE_KEY, GoogleMap.MAP_TYPE_NORMAL);
@@ -200,5 +178,35 @@ public class SingleAsamMapActivity extends ActionBarActivity implements Asam.OnO
     public void onOfflineBannerClick() {
         onMapTypeChanged(AsamConstants.MAP_TYPE_OFFLINE_110M);
         supportInvalidateOptionsMenu();
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMapUI = googleMap;
+
+        ((Asam) getApplication()).registerOfflineMapListener(this);
+
+        AsamBean asam = null;
+        CameraPosition initialPosition = null;
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            asam = (AsamBean) extras.getSerializable(AsamConstants.ASAM_KEY);
+            initialPosition = extras.getParcelable(AsamConstants.INITIAL_MAP_POSITION_KEY);
+        }
+
+        LatLng markerPosition = new LatLng(asam.getLatitude(), asam.getLongitude());
+        String title = asam.getVictim();
+        String snippet = String.format(getResources().getString(R.string.single_asam_map_snippet_text), AsamBean.OCCURRENCE_DATE_FORMAT.format(asam.getOccurrenceDate()));
+        mMapUI.addMarker(new MarkerOptions().position(markerPosition).title(title).snippet(snippet).icon(AsamConstants.PIRATE_MARKER).anchor(0.5f, 0.5f));
+
+        float zoomLevel = AsamConstants.SINGLE_ASAM_ZOOM_LEVEL;
+        if (initialPosition != null) {
+            zoomLevel = initialPosition.zoom;
+            mMapUI.moveCamera(CameraUpdateFactory.newCameraPosition(initialPosition));
+            mMapUI.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder().target(markerPosition).zoom(zoomLevel).build()));
+        }
+        else {
+            mMapUI.moveCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder().target(markerPosition).zoom(zoomLevel).build()));
+        }
     }
 }
