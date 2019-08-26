@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 
-def googleMapsApiKeyDebug = hasProperty('DEBUG_MAPS_API_KEY') ? DEBUG_MAPS_API_KEY: ''
+def googleMapsApiDebugKey = hasProperty('DEBUG_MAPS_API_KEY') ? DEBUG_MAPS_API_KEY: ''
+def googleMapsApiReleaseKey = hasProperty('RELEASE_MAPS_API_KEY') ? DEBUG_MAPS_API_KEY: ''
 
 android {
     compileSdkVersion 28
@@ -17,25 +18,15 @@ android {
         multiDexEnabled true
     }
 
-    signingConfigs {
-        release {
-            storeFile file(RELEASE_STORE_FILE)
-            storePassword RELEASE_STORE_PASSWORD
-            keyAlias RELEASE_KEY_ALIAS
-            keyPassword RELEASE_KEY_PASSWORD
-        }
-    }
-
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
-            signingConfig signingConfigs.release
-            resValue "string", "GOOGLE_MAPS_ANDROID_API_KEY", "AIzaSyD4ncpeAxwb0KyEMOi4-OFXIWWp61h2uhE"
+            resValue "string", "GOOGLE_MAPS_ANDROID_API_KEY", googleMapsApiReleaseKey
         }
         debug {
             minifyEnabled false
-            resValue "string", "GOOGLE_MAPS_ANDROID_API_KEY", googleMapsApiKeyDebug
+            resValue "string", "GOOGLE_MAPS_ANDROID_API_KEY", googleMapsApiDebugKey
         }
     }
 
@@ -59,3 +50,44 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.1.0")
     implementation files('libs/poffen_cluster_1.1.jar')
 }
+
+configure extensions.android, {
+    if (project.hasProperty('RELEASE_STORE_FILE') && file(project.getProperty('RELEASE_STORE_FILE')).exists()) {
+        println 'found release key store for signing'
+        signingConfigs {
+            release {
+                storeFile file(RELEASE_STORE_FILE)
+                storePassword RELEASE_STORE_PASSWORD
+                keyAlias RELEASE_KEY_ALIAS
+                keyPassword RELEASE_KEY_PASSWORD
+            }
+        }
+        buildTypes {
+            release {
+                signingConfig signingConfigs.release
+            }
+        }
+    }
+    else {
+        println 'no release key store configured - will skip signing'
+    }
+
+    if (project.hasProperty('SKIP_DEBUG_SIGNING')) {
+        buildTypes {
+            debug {
+                signingConfig null
+            }
+        }
+    }
+    else if (project.hasProperty('DEBUG_STORE_FILE') && file(project.getProperty('DEBUG_STORE_FILE')).exists()) {
+        signingConfigs {
+            debug {
+                storeFile file(DEBUG_STORE_FILE)
+                storePassword DEBUG_STORE_PASSWORD
+                keyAlias DEBUG_KEY_ALIAS
+                keyPassword DEBUG_KEY_PASSWORD
+            }
+        }
+    }
+}
+
