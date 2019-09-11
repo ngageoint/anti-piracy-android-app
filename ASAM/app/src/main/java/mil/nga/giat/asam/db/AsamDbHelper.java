@@ -30,7 +30,7 @@ import mil.nga.giat.asam.util.SyncTime;
 @SuppressLint("SdCardPath")
 public class AsamDbHelper extends SQLiteOpenHelper {
 
-    public static final SimpleDateFormat SQLITE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+    public static final SimpleDateFormat SQLITE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
     public static final SimpleDateFormat TEXT_QUERY_DATE_FORMAT = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
     private static final String DB_PATH = "/data/data/mil.nga.giat.asam/databases/";
     private static final String DB_NAME = "asams.db";

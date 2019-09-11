@@ -2,7 +2,6 @@ package mil.nga.giat.asam.map;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -92,7 +91,6 @@ public class AsamMapActivity extends AppCompatActivity implements OnCameraChange
 
             asamMapActivity.setFilterStatus(asamMapActivity.mDateRangeText, asamMapActivity.mTotalAsamsText);
 
-            asamMapActivity.mQueryProgressDialog.dismiss();
             if (asamMapActivity.mQueryError) {
                 asamMapActivity.mQueryError = false;
                 Toast.makeText(asamMapActivity, asamMapActivity.getString(R.string.all_asams_map_tablet_query_error_text), Toast.LENGTH_LONG).show();
@@ -196,7 +194,6 @@ public class AsamMapActivity extends AppCompatActivity implements OnCameraChange
     private SeekBar mTimeSliderUI;
 
     private Date mEarliestAsamDate;
-    private ProgressDialog mQueryProgressDialog;
     private QueryHandler mQueryHandler;
     private FilterParameters mFilterParameters;
     private Date mTextQueryDateEarliest;
@@ -205,7 +202,6 @@ public class AsamMapActivity extends AppCompatActivity implements OnCameraChange
     private List<AsamMapClusterBean> mVisibleClusters;
     private SharedPreferences mSharedPreferences;
     private OfflineMap offlineMap;
-    private OfflineBannerFragment offlineAlertFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -479,11 +475,11 @@ public class AsamMapActivity extends AppCompatActivity implements OnCameraChange
 
         setTimeSlider(null);
 
-        mQueryProgressDialog = new ProgressDialog(this, R.style.AppCompatAlertDialogStyle);
-        mQueryProgressDialog.setTitle(getString(R.string.all_asams_map_tablet_query_progress_dialog_title_text));
-        mQueryProgressDialog.setMessage(getString(R.string.all_asams_map_tablet_query_progress_dialog_content_text));
-        mQueryProgressDialog.setIndeterminate(true);
-        mQueryProgressDialog.show();
+//        mQueryProgressDialog = new ProgressDialog(this, R.style.AppCompatAlertDialogStyle);
+//        mQueryProgressDialog.setTitle(getString(R.string.all_asams_map_tablet_query_progress_dialog_title_text));
+//        mQueryProgressDialog.setMessage(getString(R.string.all_asams_map_tablet_query_progress_dialog_content_text));
+//        mQueryProgressDialog.setIndeterminate(true);
+//        mQueryProgressDialog.show();
         new QueryThread().start();
     }
 
@@ -833,11 +829,6 @@ public class AsamMapActivity extends AppCompatActivity implements OnCameraChange
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                mQueryProgressDialog = new ProgressDialog(AsamMapActivity.this, R.style.AppCompatAlertDialogStyle);
-                mQueryProgressDialog.setTitle(getString(R.string.all_asams_map_tablet_query_progress_dialog_title_text));
-                mQueryProgressDialog.setMessage(getString(R.string.all_asams_map_tablet_query_progress_dialog_content_text));
-                mQueryProgressDialog.setIndeterminate(true);
-                mQueryProgressDialog.show();
                 new QueryThread(seekBar.getProgress()).start();
             }
 

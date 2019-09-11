@@ -25,7 +25,7 @@ import okhttp3.ResponseBody;
 
 public class AsamWebService {
 
-    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMdd", Locale.US);
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-mm-dd", Locale.US);
 
     public final OkHttpClient client = new OkHttpClient.Builder()
             .connectTimeout(AsamConstants.QUERY_TIMEOUT_THRESHOLD_IN_SECONDS, TimeUnit.SECONDS)
