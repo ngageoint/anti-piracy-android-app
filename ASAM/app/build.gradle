@@ -1,38 +1,42 @@
 apply plugin: 'com.android.application'
+apply plugin: 'maven-publish'
+archivesBaseName = 'asam'
+version '2.0.0'
+ext {
+    versionCode = 8
+}
 
-def googleMapsApiKeyDebug = hasProperty('DEBUG_MAPS_API_KEY') ? DEBUG_MAPS_API_KEY: ''
+def googleMapsApiDebugKey = hasProperty('DEBUG_MAPS_API_KEY') ? DEBUG_MAPS_API_KEY: ''
+def googleMapsApiReleaseKey = hasProperty('RELEASE_MAPS_API_KEY') ? RELEASE_MAPS_API_KEY: ''
+def signedApkPath = hasProperty('SIGNED_APK_PATH') ? SIGNED_APK_PATH : "${project.buildDir}/outputs/apk/release/${archivesBaseName}-release.apk"
+def signedDebugApkPath = hasProperty('SIGNED_DEBUG_APK_PATH') ? SIGNED_DEBUG_APK_PATH : "${project.buildDir}/outputs/apk/debug/${archivesBaseName}-debug.apk"
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion '25.0.3'
-    useLibrary 'org.apache.http.legacy'
+    compileSdkVersion 28
+    buildToolsVersion '28.0.3'
+
+    dexOptions {
+        javaMaxHeapSize "4g"
+    }
 
     defaultConfig {
         applicationId "mil.nga.giat.asam"
-        minSdkVersion 17
-        targetSdkVersion 25
+        versionName project.version
+        versionCode project.versionCode as int
+        minSdkVersion 16
+        targetSdkVersion 28
         multiDexEnabled true
-    }
-
-    signingConfigs {
-        release {
-            storeFile file(RELEASE_STORE_FILE)
-            storePassword RELEASE_STORE_PASSWORD
-            keyAlias RELEASE_KEY_ALIAS
-            keyPassword RELEASE_KEY_PASSWORD
-        }
     }
 
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
-            signingConfig signingConfigs.release
-            resValue "string", "GOOGLE_MAPS_ANDROID_API_KEY", "AIzaSyD4ncpeAxwb0KyEMOi4-OFXIWWp61h2uhE"
+            resValue "string", "GOOGLE_MAPS_ANDROID_API_KEY", googleMapsApiReleaseKey
         }
         debug {
             minifyEnabled false
-            resValue "string", "GOOGLE_MAPS_ANDROID_API_KEY", googleMapsApiKeyDebug
+            resValue "string", "GOOGLE_MAPS_ANDROID_API_KEY", googleMapsApiDebugKey
         }
     }
 
@@ -44,11 +48,128 @@ android {
     }
 }
 
-dependencies {
-    compile 'com.android.support:appcompat-v7:25.3.1'
-    compile 'com.google.android.gms:play-services:6.5.87'
-    compile 'com.fasterxml.jackson.core:jackson-databind:2.4.2'
-    compile 'com.squareup.okhttp3:okhttp:3.10.0'
-    compile 'com.vividsolutions:jts:1.8'
-    compile files('libs/poffen_cluster_1.1.jar')
+def configurePom(pom) {
+    pom.withXml {
+        // for dependencies and exclusions
+        def dependenciesNode = asNode().appendNode('dependencies')
+        project.configurations.compile.allDependencies.each { Dependency dep ->
+            if (dep instanceof SelfResolvingDependency) {
+                // apparently the files() dependency results in a SelfResolvingDependency - skip it
+                return
+            }
+
+            def dependencyNode = dependenciesNode.appendNode('dependency')
+            dependencyNode.appendNode('groupId', dep.group)
+            dependencyNode.appendNode('artifactId', dep.name)
+            dependencyNode.appendNode('version', dep.version)
+
+            // for exclusions
+            if (dep.excludeRules.size() > 0) {
+                def exclusions = dependencyNode.appendNode('exclusions')
+                dep.excludeRules.each { ExcludeRule ex ->
+                    def exclusion = exclusions.appendNode('exclusion')
+                    exclusion.appendNode('groupId', ex.group)
+                    exclusion.appendNode('artifactId', ex.module)
+                }
+            }
+        }
+    }
 }
+
+
+publishing {
+    publications {
+        defaultsApk(MavenPublication) {
+            artifactId archivesBaseName
+            pom.packaging 'apk'
+            configurePom(pom)
+            artifact "${project.buildDir}/outputs/apk/release/${archivesBaseName}-release-unsigned.apk", {
+                classifier 'unsigned'
+            }
+            if (file(signedApkPath).exists()) {
+                artifact signedApkPath
+            }
+            if (file(signedDebugApkPath).exists()) {
+                artifact signedDebugApkPath, {
+                    classifier 'debug'
+                }
+            }
+            if (project.hasProperty('SKIP_DEBUG_SIGNING')) {
+                artifact "${project.buildDir}/outputs/apk/debug/${archivesBaseName}-debug-unsigned.apk", {
+                    classifier 'debug-unsigned'
+                }
+            }
+        }
+    }
+}
+
+repositories {
+    def buildRepo = maven {
+        name 'build'
+        url project.properties['repositories.build.url'] ?: "${buildDir}/m2"
+    }
+    publishing.repositories.add buildRepo
+
+    if (project.hasProperty('repositories.shared.name')) {
+        def sharedRepo = maven {
+            name project.properties['repositories.shared.name']
+            url project.properties['repositories.shared.url']
+        }
+        publishing.repositories.add sharedRepo
+    }
+    mavenCentral()
+}
+
+dependencies {
+    api 'com.android.support:appcompat-v7:28.0.0'
+    api "com.android.support:design:28.0.0"
+    api 'com.android.support:cardview-v7:28.0.0'
+    api 'com.android.support:recyclerview-v7:28.0.0'
+    api 'com.google.android.gms:play-services-maps:10.2.6'
+    api 'com.fasterxml.jackson.core:jackson-databind:2.9.5'
+    api 'com.vividsolutions:jts:1.13'
+    api 'org.apache.commons:commons-lang3:3.4'
+    implementation("com.squareup.okhttp3:okhttp:4.1.0")
+    implementation files('libs/poffen_cluster_1.1.jar')
+}
+
+configure extensions.android, {
+    if (project.hasProperty('RELEASE_STORE_FILE') && file(project.getProperty('RELEASE_STORE_FILE')).exists()) {
+        println 'found release key store for signing'
+        signingConfigs {
+            release {
+                storeFile file(RELEASE_STORE_FILE)
+                storePassword RELEASE_STORE_PASSWORD
+                keyAlias RELEASE_KEY_ALIAS
+                keyPassword RELEASE_KEY_PASSWORD
+            }
+        }
+        buildTypes {
+            release {
+                signingConfig signingConfigs.release
+            }
+        }
+    }
+    else {
+        println 'no release key store configured - will skip signing'
+    }
+
+    if (project.hasProperty('SKIP_DEBUG_SIGNING')) {
+        buildTypes {
+            debug {
+                signingConfig null
+            }
+        }
+    }
+    else if (project.hasProperty('DEBUG_STORE_FILE') && file(project.getProperty('DEBUG_STORE_FILE')).exists()) {
+        signingConfigs {
+            debug {
+                storeFile file(DEBUG_STORE_FILE)
+                storePassword DEBUG_STORE_PASSWORD
+                keyAlias DEBUG_KEY_ALIAS
+                keyPassword DEBUG_KEY_PASSWORD
+            }
+        }
+    }
+}
+

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+
+    <fragment android:id="@+id/asam_list_report_tablet_asam_list_fragment"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="4"
+        class="mil.nga.giat.asam.AsamListFragment"/>
+
+    <fragment android:id="@+id/asam_list_report_tablet_asam_report_fragment"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="7"
+        class="mil.nga.giat.asam.AsamReportFragment"/>
+
+</LinearLayout>

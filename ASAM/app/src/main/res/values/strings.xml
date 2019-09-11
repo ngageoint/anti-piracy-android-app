@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">ASAM</string>
+    <string name="sync_loading_text">Fetching latest data...</string>
     <string name="empty_content_description"></string>
     <string name="hyphen_text">-</string>
     <string name="map_type_normal_text">Normal</string>
@@ -10,15 +11,20 @@
     <string name="map_type_offline_50m_text">Offline 1:50m</string>
     <string name="offline_map_progress_dialog_title_text">Please wait...</string>
     <string name="offline_map_progress_dialog_content_text">Loading offline map data</string>
+    <string name="asam_map_label">ASAM</string>
+    <string name="filter_label">Filters</string>
+    <string name="filter_interval_label">Time Interval</string>
+    <string name="filter_current_subregion_label">Current Subregion</string>
     <string name="all_asams_list_title_text">List View</string>
+    <string name="all_asams_about_title_text">About</string>
     <string name="all_asams_map_title_text">ASAM</string>
     <string name="all_asams_map_query_error_text">There was an error retrieving new ASAMs.</string>
     <string name="all_asams_map_no_asams_text">No ASAM activity found</string>
     <string name="all_asams_map_1_asam_text">1 Result</string>
-    <string name="all_asams_map_1_asam_text_with_timespan">1 Result; %s</string>
+    <string name="all_asams_map_1_asam_text_with_timespan">1 Filtered ASAM</string>
     <string name="all_asams_map_1_asam_text_with_timespan_with_subregions">1 Result; %1$s; %2$s</string>
     <string name="all_asams_map_multiple_asams_text">%d Results</string>
-    <string name="all_asams_map_multiple_asams_text_with_timespan">%1$d Results; %2$s</string>
+    <string name="all_asams_map_multiple_asams_text_with_timespan">%1$d Filtered ASAMs</string>
     <string name="all_asams_map_multiple_asams_text_with_timespan_with_subregions">%1$d Results; %2$s; %3$s</string>
     <string name="all_asams_map_1_subregion_text">1 Subregion</string>
     <string name="all_asams_map_multiple_subregions_text">%d Subregions</string>
@@ -26,7 +32,6 @@
     <string name="all_asams_map_query_progress_dialog_content_text">Checking for new ASAMs</string>
     <string name="all_asams_map_menu_list_view_text">List View</string>
     <string name="all_asams_map_menu_query_text">Query</string>
-    <string name="all_asams_map_menu_zoom_text">Center Map</string>
     <string name="all_asams_map_menu_map_type_text">Map Type</string>
     <string name="all_asams_map_menu_60_days_text">60 days</string>
     <string name="all_asams_map_menu_90_days_text">90 days</string>
@@ -34,7 +39,7 @@
     <string name="all_asams_map_menu_1_year_text">1 year</string>
     <string name="all_asams_map_menu_5_years_text">5 years</string>
     <string name="all_asams_map_menu_all_text">All</string>
-    <string name="all_asams_map_tablet_title_text">Anti-Shipping Activity Messages</string>
+    <string name="all_asams_map_menu_custom_text">Custom</string>
     <string name="all_asams_map_tablet_query_error_text">There was an error retrieving new ASAMs.</string>
     <string name="all_asams_map_tablet_no_asams_text">No ASAM activity found</string>
     <string name="all_asams_map_tablet_query_progress_dialog_title_text">ASAM Query</string>
@@ -42,22 +47,23 @@
     <string name="all_asams_map_tablet_date_range_text">--/--/---- to --/--/----</string>
     <string name="all_asams_map_tablet_total_asams_text">----- of ---- ASAMs</string>
     <string name="all_asams_map_tablet_subregions_query_mode_message_text"><![CDATA[<u><b>Selected Subregion(s)</b></u><p>&nbsp;&nbsp;&nbsp;%s</p>Click <i>Menu->Reset</i> to return to "All ASAMs" mode.]]></string>
-    <string name="all_asams_map_tablet_text_query_mode_message_text"><![CDATA[<u><b>Text Query</b></u><br/>%s<br/><br/>Click <i>Menu->Reset</i> to return to "All ASAMs" mode.]]></string>
+    <string name="all_asams_map_tablet_text_query_mode_message_text"><![CDATA[%s<br/>]]></string>
     <string name="all_asams_map_tablet_menu_list_view_text">List View</string>
+    <string name="all_asams_map_tablet_change_subregions_text">Change</string>
     <string name="all_asams_map_tablet_menu_subregions_text">Subregions</string>
     <string name="all_asams_map_tablet_menu_settings_text">Settings</string>
-    <string name="all_asams_map_tablet_menu_text_query_text">Text Query</string>
+    <string name="all_asams_map_tablet_menu_text_filter_text">Filters</string>
     <string name="all_asams_map_tablet_menu_reset_text">Reset</string>
     <string name="all_asams_map_tablet_menu_info_text">Info</string>
     <string name="asam_list_report_tablet_title_text">ASAM List</string>
     <string name="asam_list_fragment_menu_sort_text">Sort</string>
-    <string name="asam_list_title_text">List View</string>
+    <string name="asam_list_title_text">ASAMs</string>
     <string name="asam_list_empty_list_text">There are no ASAMs.</string>
     <string name="asam_list_menu_sort_text">Sort</string>
     <string name="asam_list_map_menu_zoom_menu_item_text">Zoom</string>
     <string name="asam_list_row_date_label_text">Date:</string>
     <string name="asam_list_row_subregion_label_text">Subregion:</string>
-    <string name="asam_list_row_aggressor_label_text">Aggressor:</string>
+    <string name="asam_list_row_hostility_label_text">Hostility:</string>
     <string name="asam_list_row_victim_label_text">Victim:</string>
     <string name="asam_list_sort_popup_title_text">Asam List Sort</string>
     <string name="asam_list_sort_popup_prompt_text">Sort By</string>
@@ -68,9 +74,10 @@
     <string name="asam_list_sort_popup_descending_radio_button_text">Descending</string>
     <string name="asam_report_title_text">ASAM Details</string>
     <string name="asam_report_occurrence_date_label_text">Date of Occurrence</string>
-    <string name="asam_report_aggressor_label_text">Aggressor</string>
+    <string name="asam_report_hostility_label_text">Hostility</string>
     <string name="asam_report_victim_label_text">Victim</string>
     <string name="asam_report_subregion_label_text">Geographical Subregion</string>
+    <string name="asam_report_navarea_label_text">Nav Area</string>
     <string name="asam_report_reference_number_label_text">Reference Number</string>
     <string name="asam_report_location_label_text">Geographical Location</string>
     <string name="asam_report_description_label_text">Description</string>
@@ -78,25 +85,28 @@
     <string name="asam_report_back_button_text">Back</string>
     <string name="tablet_disclaimer">true</string>
     <string name="disclaimer_title_text">Disclaimer</string>
+    <string name="disclaimer_show_text">Show this disclaimer on launch</string>
     <string name="disclaimer_text">
         Information contained in this Application resides on a computer system funded by the National Geospatial-Intelligence Agency. This system
         and related equipment are intended for the communication, transmission, processing and storage of U.S. Government information.\n\nWith respect to
         information available in this Application, neither the United States Government nor the National Geospatial-Intelligence Agency nor any of their
         employees, makes any warranty, express or implied, including the warranties of merchantability and fitness for a particular purpose, or assumes any
         legal liability or responsibility for the accuracy, completeness, or usefullness of any information, apparatus, product, or process disclosed, or
-        represents that its use would not infringe privately owned rights.
+        represents that its use would not infringe privately owned rights.\n\nUser agrees, through use of this product, to assume any and all liability
+        for any damage or loss resulting from your use of the content or the
+        products and holds NGA harmless from liability.
     </string>
     <string name="disclaimer_exit_button_text">Exit</string>
     <string name="disclaimer_agree_button_text">I Agree</string>
     <string name="info_title_text">ASAM Info</string>
     <string name="info_dialog_fragment_close_button_text">Close</string>
     <string name="info_fragment_image_content_description_text">NGA Logo</string>
-    <string name="info_fragment_version_text">ASAM v1.0.2</string>
+    <string name="info_fragment_version_text">"ASAM v%1$s"</string>
     <string name="info_fragment_info_text">Anti-Shipping Activity Messages (ASAM) include the locations and descriptive accounts of specific hostile acts against ships and mariners. The reports may be useful for recognition, prevention and avoidance of potential hostile activity.</string>
-    <string name="info_fragment_contact_text"><u>Contact Us</u></string>
-    <string name="info_fragment_phone_number_text">Phone: 1-800-362-6289</string>
+    <string name="info_fragment_contact_text">Contact Us</string>
+    <string name="info_fragment_phone_number_text">1-800-362-6289</string>
     <string name="info_fragment_email_subject_text">ASAM app feedback</string>
-    <string name="info_fragment_email_text">Email: <a href="mailto:MCDASAM@nga.mil">MCDASAM@nga.mil</a></string>
+    <string name="info_fragment_email_text"><a href="mailto:MCDASAM@nga.mil">MCDASAM@nga.mil</a></string>
     <string name="info_fragment_email_address">MCDASAM@nga.mil</string>
     <string name="info_fragment_menu_info_text">About</string>
     <string name="info_fragment_legal_row_text">Legal Information</string>
@@ -104,86 +114,63 @@
     <string name="launch_screen_subregions_label_text">Subregions</string>
     <string name="launch_screen_text_query_label_text">ASAM Query</string>
     <string name="launch_screen_settings_label_text">Settings</string>
-    <string name="launch_screen_sync_text">* Go to Settings and select \"Sync Now\" to view the most recent reports.</string>
-    <string name="launch_screen_menu_information_text">About</string>
     <string name="legal_title_text">Legal</string>
     <string name="legal_fragment_nga_disclaimer_label_text">NGA Disclaimer</string>
     <string name="legal_fragment_nga_privacy_policy_label_text">NGA Privacy Policy</string>
     <string name="legal_fragment_nga_open_source_licenses_label_text">Open Source Licenses</string>
     <string name="legal_details_title_text">License</string>
     <string name="legal_details_nga_disclaimer_title_text">NGA Disclaimer</string>
-    <string name="legal_details_fragment_nga_disclaimer_license_text">
-        <![CDATA[
-                 <p>
-                     As a condition of downloading, accessing, or using the products, you agree to the terms of the NGA Disclaimer.
-                 </p>
-                 <p>
-                     DISCLAIMER OF WARRANTIES AND LIMITATIONS ON LIABILITY.
-                 </p>
-                 <p>
-                     NGA MAKES NO REPRESENTATIONS OR WARRANTIES REGARDING THE ACCURACY OR COMPLETENESS OF ANY CONTENT OF THE PRODUCTS.
-                 </p>
-                 <p>
-                     USER AGREES, THROUGH USE OF THE PRODUCT, TO ASSUME ANY AND ALL LIABILITY FOR ANY DAMAGE OR LOSS RESULTING FROM
-                     YOUR USE OF THE CONTENT OR THE PRODUCTS AND HOLDS NGA HARMLESS FROM LIABILITY.
-                 <p>
-        ]]>
-    </string>
     <string name="legal_details_nga_privacy_policy_title_text">ASAM App</string>
     <string name="legal_details_fragment_nga_privacy_policy_license_text">
-        <![CDATA[
-                 <p>
                      NGA Mobile Application Privacy Policy for ASAM Mobile
-                 </p>
-                 <p>
+                     \n\n
                      This App is exclusively licensed to and operated by the National Geospatial-Intelligence Agency (NGA).
                      Our Privacy Policy informs you, the user, what personally identifiable information (PII) we collect
                      when you use this App, how we use and share the PII we collect, and how we protect your privacy.
                      Further information on NGA\'s privacy practices can be found at http://www.nga.mil, at the "Privacy and Security" tab.
-                 </p>
-                 <p>
+                     \n\n
                      If you have any questions about this Policy or our privacy practices, please contact us using the following
                      information: publicaffairs@nga.mil. Effective Date: 20 August 2012
-                 </p>
-                 <p>
+                     \n\n
                      Your Consent: Please review NGA\'s Privacy Policy before using this App. By using this App you are consenting
                      to the collection, use, and disclosure of your PII as set forth in this Policy. If you do not agree to be
                      bound by this Policy, you may not access or use this App.
-                 </p>
-                 <p>
+                     \n\n
+
                      Privacy Notices
-                 </p>
-                 <p>
+                     \n\n
+
                      This Policy may be supplemented or amended from time to time and NGA will notify you by issuing “privacy notices.”
                      These Privacy Notices will provide a level of detail describing the changes in our policy and how they may affect you.
                      For example, this App may issue Privacy Notices providing details about changes in the function and use of the PII
                      we collect, and why we need that information.
-                 </p>
-                 <p>
+                     \n\n
+
                      Types of Information We Collect
-                 </p>
-                 <p>
+                     \n\n
+
                      NGA will collect NO PII or information from your mobile device. NGA neither collects nor acquires any user names, passwords or other login information or personal information from Google.
-                 </p>
-                 <p>
+                     \n\n
+
                      Links to Third-Party Websites
-                 </p>
-                 <p>
+                     \n\n
+
                      This App may contain links to websites operated by other organizations. This Policy does not apply to PII collected
                      on any of these third-party websites. When you access third-party websites through a link on this App, please take
                      a few minutes to review the privacy policy posted on that site. This App uses the Google Maps/Google Earth API.
                      It incorporates by reference the Google Privacy Policy, which can be viewed at http://www.google.com/privacy.html,
                      as amended by Google from time to time.
-                 </p>
-        ]]>
     </string>
+    <string name="preferences_date_title_text">Data</string>
+    <string name="preferences_last_sync_title_text">Last Sync Date</string>
     <string name="preferences_no_sync_title_text">Sync\'d</string>
     <string name="preferences_no_sync_description_text">The ASAM application is already sync\'d.</string>
     <string name="preferences_error_sync_description_text">There was an error retrieving new ASAMs.</string>
     <string name="preferences_sync_complete_title_text">Sync\'d</string>
     <string name="preferences_sync_complete_description_text">The ASAM application sync is now complete.</string>
     <string name="preferences_title_text">Settings</string>
-    <string name="preferences_last_sync_time_label_text">Last Sync Time</string>
+    <string name="preferences_last_sync_time_label_text">Last Sync Time %1$s</string>
+    <string name="preferences_click_to_sync_label_text">Click to sync</string>
     <string name="preferences_sync_now_button_text">Sync Now</string>
     <string name="preferences_hide_disclaimer_label_text">Disclaimer</string>
     <string name="preferences_hide_disclaimer_checkbox_text">Hide Disclaimer</string>
@@ -202,7 +189,7 @@
     <string name="selected_subregions_popup_cancel_text">Close</string>
     <string name="single_asam_map_snippet_text">ASAM Report - %1$s</string>
     <string name="sort_asam_list_dialog_fragment_prompt_text">Sort By</string>
-    <string name="sort_asam_list_dialog_fragment_title_text">Asam List Sort</string>
+    <string name="sort_asam_list_dialog_fragment_title_text">Sort</string>
     <string name="sort_asam_list_dialog_fragment_sort_button_text">Sort</string>
     <string name="sort_asam_list_dialog_fragment_cancel_button_text">Cancel</string>
     <string name="sort_asam_list_dialog_fragment_spinner_prompt_text">Sort By</string>
@@ -211,25 +198,25 @@
     <string name="subregion_map_title_text">Subregions</string>
     <string name="subregion_map_menu_selected_subregions_text">Selected Subregions</string>
     <string name="subregion_map_menu_query_text">Query</string>
-    <string name="subregion_map_menu_reset_text">Reset</string>
+    <string name="subregion_map_menu_clear_text">Clear</string>
+    <string name="subregion_map_menu_apply_text">Apply</string>
     <string name="subregion_map_menu_60_days_text">60 days</string>
     <string name="subregion_map_menu_90_days_text">90 days</string>
     <string name="subregion_map_menu_180_days_text">180 days</string>
     <string name="subregion_map_menu_1_year_text">1 year</string>
     <string name="subregion_map_menu_5_years_text">5 years</string>
     <string name="subregion_map_menu_all_text">All</string>
-    <string name="text_query_title_text">ASAM Query</string>
-    <string name="text_query_select_subregion_label_text">Subregion</string>
+    <string name="text_query_select_subregion_label_text">Subregions</string>
     <string name="text_query_select_subregion_prompt_text">Select A Subregion</string>
     <string name="text_query_reference_number_label_text">Reference Number</string>
     <string name="text_query_victim_label_text">Victim</string>
     <string name="text_query_victim_content_description_text">Victim</string>
-    <string name="text_query_aggressor_label_text">Aggressor</string>
-    <string name="text_query_aggressor_content_description_text">Aggressor</string>
+    <string name="text_query_hostility_label_text">Hostility</string>
+    <string name="text_query_hostility_content_description_text">Hostility</string>
     <string name="text_query_date_from_text">Date From:</string>
     <string name="text_query_date_to_text">Date To:</string>
-    <string name="text_query_year_hint_text">YYYY</string>
-    <string name="text_query_number_hint_text">###</string>
+    <string name="text_query_year_hint_text">Reference # Year</string>
+    <string name="text_query_number_hint_text">Reference # ID</string>
     <string name="text_query_date_hint_text">MM/DD/YYYY</string>
     <string name="text_query_reset_button_text">Reset</string>
     <string name="text_query_query_button_text">Search</string>
@@ -241,8 +228,8 @@
     <string name="text_query_dialog_fragment_reference_number_label_text">Reference Number</string>
     <string name="text_query_dialog_fragment_victim_label_text">Victim</string>
     <string name="text_query_dialog_fragment_victim_content_description_text">Victim</string>
-    <string name="text_query_dialog_fragment_aggressor_label_text">Aggressor</string>
-    <string name="text_query_dialog_fragment_aggressor_content_description_text">Aggressor</string>
+    <string name="text_query_dialog_fragment_hostility_label_text">Hostility</string>
+    <string name="text_query_dialog_fragment_hostility_content_description_text">Hostility</string>
     <string name="text_query_dialog_fragment_date_from_label_text">Date From:</string>
     <string name="text_query_dialog_fragment_date_to_label_text">Date To:</string>
     <string name="text_query_dialog_fragment_cancel_button_text">Cancel</string>
@@ -260,7 +247,7 @@
         <item>Subregions</item>
         <item>Reference Number</item>
         <item>Victim</item>
-        <item>Aggressor</item>
+        <item>Hostility</item>
     </string-array>
     
     <string-array name="subregions">

@@ -1,12 +1,12 @@
 package mil.nga.giat.asam.model;
 
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Polygon;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Polygon;
 
 
 @SuppressWarnings("serial")
@@ -55,7 +55,7 @@ public class SubregionBean implements Serializable {
     public List<GeoPoint> getGeoPoints() {
         return mGeoPoints;
     }
-    
+
     public static class GeoPoint {
         
         public double latitude;

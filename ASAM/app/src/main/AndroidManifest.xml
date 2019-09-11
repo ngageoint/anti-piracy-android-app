@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-      package="mil.nga.giat.asam"
-      android:versionCode="7"
-      android:versionName="1.0.2">
+      package="mil.nga.giat.asam">
 
     <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
@@ -14,17 +12,20 @@
 
     <application 
         android:name="Asam" 
-        android:icon="@drawable/ic_launcher_pirate" 
+        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name" 
         android:allowBackup="true"
-        android:largeHeap="true"
-        android:networkSecurityConfig="@xml/network_security_config">
+        android:largeHeap="true">
+
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false" />
     
         <uses-library android:name="com.google.android.maps" />
         
         <activity android:name=".MainActivity"
             android:label="@string/app_name"
-            android:theme="@android:style/Theme.Black.NoTitleBar"
+            android:theme="@style/asam_theme.no_action_bar"
             android:configChanges="orientation|keyboardHidden|screenSize">
             
             <intent-filter>
@@ -33,55 +34,70 @@
             </intent-filter>
             
         </activity>
-        
-        <activity android:name=".LaunchScreenActivity"
-            android:label="@string/app_name"
-            android:theme="@style/asam_theme"
-            android:configChanges="orientation|keyboardHidden|screenSize">
-        </activity>
-        
+
         <activity android:name=".DisclaimerActivity"
             android:label="@string/disclaimer_title_text"
-            android:theme="@style/asam_theme"
-            android:configChanges="orientation|keyboardHidden|screenSize">
+            android:theme="@style/asam_theme">
+        </activity>
+
+        <activity android:name=".SyncActivity"
+            android:theme="@style/asam_theme.no_action_bar">
+        </activity>
+
+        <activity android:name=".settings.disclaimer.DisclaimerActivity"
+            android:label="@string/disclaimer_title_text"
+            android:theme="@style/asam_theme">
+        </activity>
+
+        <activity android:name=".settings.privacy.PrivacyActivity"
+            android:label="@string/legal_fragment_nga_privacy_policy_label_text"
+            android:theme="@style/asam_theme">
+        </activity>
+
+        <activity android:name=".settings.opensource.OpenSourceActivity"
+            android:label="@string/legal_fragment_nga_open_source_licenses_label_text"
+            android:theme="@style/asam_theme">
         </activity>
         
-        <activity android:name=".InfoActivity"
+        <activity android:name=".settings.SettingsActivity"
             android:label="@string/info_title_text"
-            android:theme="@style/asam_theme"
-            android:configChanges="orientation|keyboardHidden|screenSize">
+            android:theme="@style/asam_theme">
         </activity>
-        
-        <activity android:name="mil.nga.giat.asam.map.AllAsamsMapActivity"
-            android:label="@string/all_asams_map_title_text"
+
+        <activity android:name=".settings.about.AboutActivity"
+            android:label="@string/all_asams_about_title_text"
+            android:theme="@style/asam_theme">
+        </activity>
+
+        <activity android:name=".map.AsamMapActivity"
+            android:label="@string/asam_map_label"
             android:theme="@style/asam_theme"
             android:configChanges="orientation|keyboardHidden|screenSize">
         </activity>
         
         <activity android:name=".AsamListActivity"
             android:label="@string/asam_list_title_text"
-            android:theme="@style/asam_theme"
-            android:configChanges="orientation|keyboardHidden|screenSize">
+            android:theme="@style/asam_theme">
         </activity>
-        
+
+        <activity android:name=".filter.FilterActivity"
+            android:label="@string/filter_label"
+            android:theme="@style/asam_theme_search"
+            android:windowSoftInputMode="stateHidden">
+        </activity>
+
         <activity android:name="mil.nga.giat.asam.map.SubregionMapActivity"
             android:label="@string/subregion_map_title_text"
             android:theme="@style/asam_theme"
             android:configChanges="orientation|keyboardHidden|screenSize">
         </activity>
         
-        <activity android:name=".TextQueryActivity"
-            android:label="@string/text_query_title_text"
+        <activity android:name=".filter.FilterAdvancedActivity"
+            android:label="@string/filter_label"
             android:theme="@style/asam_theme"
             android:configChanges="orientation|keyboardHidden|screenSize">
         </activity>
-        
-        <activity android:name=".PreferencesActivity"
-            android:label="@string/preferences_title_text"
-            android:theme="@style/asam_theme"
-            android:configChanges="orientation|keyboardHidden|screenSize">
-        </activity>
-        
+
         <activity android:name=".AsamReportActivity"
             android:label="@string/asam_report_title_text"
             android:theme="@style/asam_theme"
@@ -93,50 +109,15 @@
             android:theme="@style/asam_theme"
             android:configChanges="orientation|keyboardHidden|screenSize">
         </activity>
-        
-        <activity android:name=".LegalActivity"
-            android:label="@string/legal_title_text"
-            android:theme="@style/asam_theme"
-            android:configChanges="orientation|keyboardHidden|screenSize">
-        </activity>
-        
-        <activity android:name=".LegalTabletActivity"
-            android:label="@string/legal_title_text"
-            android:theme="@style/asam_theme"
-            android:configChanges="orientation|keyboardHidden|screenSize">
-        </activity>
-        
-        <activity android:name=".LegalDetailsActivity"
-            android:label="@string/legal_details_title_text"
-            android:theme="@style/asam_theme"
-            android:configChanges="orientation|keyboardHidden|screenSize">
-        </activity>
-        
-        <activity android:name=".OpenSourceDetailsActivity"
-            android:label="@string/legal_fragment_nga_open_source_licenses_label_text"
-            android:theme="@style/asam_theme"
-            android:configChanges="orientation|keyboardHidden|screenSize">
-        </activity>
-        
-        <activity android:name="mil.nga.giat.asam.map.AllAsamsMapTabletActivity"
-            android:label="@string/all_asams_map_tablet_title_text"
-            android:theme="@style/asam_theme"
-            android:configChanges="orientation|keyboardHidden|screenSize">
-        </activity>
-        
-        <activity android:name=".AsamListReportTabletActivity"
-            android:label="@string/asam_list_report_tablet_title_text"
-            android:theme="@style/asam_theme"
-            android:configChanges="orientation|keyboardHidden|screenSize">
-        </activity>
-        
+
         <receiver android:name="mil.nga.giat.asam.connectivity.NetworkChangeReceiver" >
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
         </receiver>
         
-        <meta-data android:name="web_service_url" android:value="https://msi.nga.mil/MSI_JWS/ASAM_JSON/getJSON?typename=DateRange_AllRefNumbers&amp;fromDate=%s&amp;toDate=%s" />
+        <meta-data android:name="web_service_url" android:value="https://msi.gs.mil/api/publications/asam?sort=date&amp;output=html&amp;minOccurDate=%s&amp;maxOccurDate=%s" />
+
         <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
 
         <meta-data

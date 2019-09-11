@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_enabled="false" android:drawable="@drawable/ic_action_bar_reset_dark_64"/>
-    <item android:state_enabled="true" android:state_pressed="true" android:drawable="@drawable/ic_action_bar_reset_dark_64"/>
-    <item android:state_enabled="true" android:state_pressed="false" android:drawable="@drawable/ic_action_bar_reset_light_64"/>
-</selector>

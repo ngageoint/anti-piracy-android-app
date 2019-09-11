@@ -6,9 +6,8 @@
     <item android:id="@+id/asam_list_fragment_menu_sort_ui"
         android:title="@string/asam_list_fragment_menu_sort_text"
         asam:showAsAction="always"
-        android:icon="@drawable/ic_action_bar_sort"
+        android:icon="@drawable/ic_sort_white"
         android:menuCategory="system"
-        android:orderInCategory="100"
-        />
+        android:orderInCategory="100"/>
 
 </menu>

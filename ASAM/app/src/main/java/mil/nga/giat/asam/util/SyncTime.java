@@ -1,12 +1,15 @@
 package mil.nga.giat.asam.util;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+
+import org.apache.commons.lang3.StringUtils;
+
 import java.text.ParseException;
 import java.util.Date;
 
 import mil.nga.giat.asam.db.AsamDbHelper;
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 
 
 public class SyncTime {
@@ -14,7 +17,7 @@ public class SyncTime {
     public static boolean isSynched(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         String lastSyncTime = preferences.getString(AsamConstants.LAST_SYNC_TIME, "");
-        if (AsamUtils.isEmpty(lastSyncTime)) {
+        if (StringUtils.isBlank(lastSyncTime)) {
             return false;
         }
         Date today = truncateDate(new Date());
@@ -43,6 +46,12 @@ public class SyncTime {
     public static String getLastSyncTimeAsText(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         return preferences.getString(AsamConstants.LAST_SYNC_TIME, "N/A");
+    }
+
+    public static void removeSync(Context context) {
+        SharedPreferences.Editor edit = PreferenceManager.getDefaultSharedPreferences(context).edit();
+        edit.remove(AsamConstants.LAST_SYNC_TIME);
+        edit.apply();
     }
     
     private static Date truncateDate(Date date) {

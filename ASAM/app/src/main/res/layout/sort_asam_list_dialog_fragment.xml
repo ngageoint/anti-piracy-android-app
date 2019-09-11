@@ -2,35 +2,32 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    
-    <TextView android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="3dp"
-        android:paddingLeft="10dp"
-        android:text="@string/sort_asam_list_dialog_fragment_prompt_text"
-        />
+    android:layout_height="match_parent"
+    android:paddingLeft="20dp"
+    android:paddingRight="20dp"
+    android:paddingTop="15dp">
         
     <Spinner android:id="@+id/sort_asam_list_dialog_fragment_sort_spinner_ui"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="3dp"
-        android:prompt="@string/sort_asam_list_dialog_fragment_spinner_prompt_text"
-        />
+        android:layout_marginBottom="15dp"
+        android:prompt="@string/sort_asam_list_dialog_fragment_spinner_prompt_text"/>
         
     <RadioGroup android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
         
         <RadioButton android:id="@+id/sort_asam_list_dialog_fragment_sort_ascending_radio_button_ui"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:checked="false"
-            android:text="@string/sort_asam_list_dialog_fragment_ascending_radio_button_text"
-            />
+            android:text="@string/sort_asam_list_dialog_fragment_ascending_radio_button_text"/>
 
         <RadioButton android:id="@+id/sort_asam_list_dialog_fragment_sort_descending_radio_button_ui"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:checked="false"
-            android:text="@string/sort_asam_list_dialog_fragment_descending_radio_button_text"
-            />
+            android:text="@string/sort_asam_list_dialog_fragment_descending_radio_button_text"/>
             
     </RadioGroup>
     

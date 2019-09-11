@@ -1,17 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="asam_text_color">#eeeeee</color> <!-- #cf5c00 orange91b52d -->
-    <color name="asam_highlight_color">#ffffff</color> <!-- #af3c00 orangeish739d00#af3c00 -->
-    <color name="asam_nonhighlight_color">#bbbbbb</color>
-    <color name="asam_button_background_start_color">#444444</color> <!-- #cf5c00 orangeish -->
-    <color name="asam_button_background_end_color">#222222</color> <!-- #7f0c00 orangeish -->
-    <color name="asam_button_background_selected_start_color">#00ff00</color>
-    <color name="asam_button_background_selected_end_color">#009900</color>
-    <color name="asam_details_fragment_background_color">#222222</color>
-    <color name="asam_list_fragment_divider_color">#444444</color>
-    <color name="list_divider_color">#333333</color>
-    <color name="legal_fragment_background_color">#222222</color>
-    <color name="tablerow_clicked_color">#ff33b5e5</color> <!-- light blue -->
-    <color name="holo_red_light">#ffff4444</color>
-    
+    <color name="list_selected">#EEEEEE</color>
+    <color name="background">#E1E2E1</color>
 </resources>

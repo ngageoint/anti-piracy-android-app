@@ -9,8 +9,9 @@
         android:layout_height="match_parent"
         android:fastScrollEnabled="true"
         android:choiceMode="singleChoice"
-        android:divider="@color/asam_list_fragment_divider_color"
         android:dividerHeight="1dp"
-        />
+        android:divider="#1f000000"
+        android:background="@android:color/background_light"
+        android:drawSelectorOnTop="true"/>
     
 </LinearLayout>

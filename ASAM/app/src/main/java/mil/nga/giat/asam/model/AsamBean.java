@@ -1,36 +1,43 @@
 package mil.nga.giat.asam.model;
 
-import java.io.Serializable;
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Locale;
 
 @SuppressWarnings("serial")
-public class AsamBean implements Serializable, Comparable<AsamBean> {
+public class AsamBean implements Comparable<AsamBean>, Parcelable {
 
     public static final SimpleDateFormat OCCURRENCE_DATE_FORMAT = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
-    
+
     private Integer mId;
     private Double mLatitude;
     private Double mLongitude;
     private Date mOccurrenceDate;
     private String mReferenceNumber;
     private String mGeographicalSubregion;
-    private String mAggressor;
+    private String mNavArea;
+    private String mHostility;
     private String mVictim;
     private String mDescription;
     private String mLatitudeDegMinSec;
     private String mLongitudeDegMinSec;
-    
+
+    public AsamBean() {
+
+    }
+
     public Integer getId() {
         return mId;
     }
-    
+
     public void setId(Integer id) {
         this.mId = id;
     }
-    
+
     public Double getLatitude() {
         if (mLatitude == null) {
             return 0.0;
@@ -43,11 +50,11 @@ public class AsamBean implements Serializable, Comparable<AsamBean> {
         }
         return mLatitude;
     }
-    
+
     public void setLatitude(Double latitude) {
         this.mLatitude = latitude;
     }
-    
+
     public Double getLongitude() {
         if (mLongitude == null) {
             return 0.0;
@@ -60,59 +67,67 @@ public class AsamBean implements Serializable, Comparable<AsamBean> {
         }
         return mLongitude;
     }
-    
+
     public void setLongitude(Double longitude) {
         this.mLongitude = longitude;
     }
-    
+
     public Date getOccurrenceDate() {
         return mOccurrenceDate;
     }
-    
+
     public void setOccurrenceDate(Date occurrenceDate) {
         this.mOccurrenceDate = occurrenceDate;
     }
-    
+
     public String getReferenceNumber() {
         return mReferenceNumber;
     }
-    
+
     public void setReferenceNumber(String referenceNumber) {
         this.mReferenceNumber = referenceNumber;
     }
-    
+
     public String getGeographicalSubregion() {
         return mGeographicalSubregion;
     }
-    
+
     public void setGeographicalSubregion(String geographicalSubregion) {
         this.mGeographicalSubregion = geographicalSubregion;
     }
-    
-    public String getAggressor() {
-        return mAggressor;
+
+    public String getNavArea() {
+        return mNavArea;
     }
-    
-    public void setAggressor(String aggressor) {
-        this.mAggressor = aggressor;
+
+    public void setNavArea(String navArea) {
+        this.mNavArea = navArea;
     }
-    
+
+    public String getHostility() {
+        return mHostility;
+    }
+
+    public void setHostility(String hostility) {
+        this.mHostility = hostility;
+    }
+
     public String getVictim() {
         return mVictim;
     }
-    
+
     public void setVictim(String victim) {
         this.mVictim = victim;
     }
-    
+
     public String getDescription() {
         return mDescription;
     }
-    
+
     public void setDescription(String description) {
         this.mDescription = description;
     }
-    
+
     public String formatLatitutdeDegMinSec() {
         if (mLatitudeDegMinSec == null && mLatitude != null) {
             String hemisphere = "N";
@@ -135,7 +150,7 @@ public class AsamBean implements Serializable, Comparable<AsamBean> {
         }
         return mLatitudeDegMinSec == null ? "" : mLatitudeDegMinSec;
     }
-    
+
     public String formatLongitudeDegMinSec() {
         if (mLongitudeDegMinSec == null && mLongitude != null) {
             String hemisphere = "E";
@@ -158,10 +173,10 @@ public class AsamBean implements Serializable, Comparable<AsamBean> {
         }
         return mLongitudeDegMinSec == null ? "" : mLongitudeDegMinSec;
     }
-    
+
     @Override
     public String toString() {
-        return "Victim: " + mVictim + ", Lat: " + mLatitude + ", Lon: " + mLongitude + ", Date: " + mOccurrenceDate;
+        return "Victim: " + mVictim + ", Lat: " + mLatitude + ", Lon: " + mLongitude + ", Date: " + mOccurrenceDate + ", Nav Area: " + mNavArea;
     }
 
     @Override
@@ -174,7 +189,7 @@ public class AsamBean implements Serializable, Comparable<AsamBean> {
         }
         return 1;
     }
-    
+
     public static class AscendingOccurrenceDateComparator implements Comparator<AsamBean> {
 
         @Override
@@ -185,7 +200,7 @@ public class AsamBean implements Serializable, Comparable<AsamBean> {
             return asam1.mOccurrenceDate.compareTo(asam2.mOccurrenceDate);
         }
     }
-    
+
     public static class DescendingOccurrenceDateComparator implements Comparator<AsamBean> {
 
         @Override
@@ -196,9 +211,9 @@ public class AsamBean implements Serializable, Comparable<AsamBean> {
             return -asam1.mOccurrenceDate.compareTo(asam2.mOccurrenceDate);
         }
     }
-    
+
     public static class AscendingReferenceNumberComparator implements Comparator<AsamBean> {
-        
+
         @Override
         public int compare(AsamBean asam1, AsamBean asam2) {
             if (asam1.mReferenceNumber == null) {
@@ -207,9 +222,9 @@ public class AsamBean implements Serializable, Comparable<AsamBean> {
             return asam1.mReferenceNumber.toUpperCase(Locale.US).compareTo(asam2.mReferenceNumber == null ? null : asam2.mReferenceNumber.toUpperCase(Locale.US));
         }
     }
-    
+
     public static class DescendingReferenceNumberComparator implements Comparator<AsamBean> {
-        
+
         @Override
         public int compare(AsamBean asam1, AsamBean asam2) {
             if (asam1.mReferenceNumber == null) {
@@ -218,9 +233,9 @@ public class AsamBean implements Serializable, Comparable<AsamBean> {
             return -asam1.mReferenceNumber.toUpperCase(Locale.US).compareTo(asam2.mReferenceNumber == null ? null : asam2.mReferenceNumber.toUpperCase(Locale.US));
         }
     }
-    
+
     public static class AscendingVictimComparator implements Comparator<AsamBean> {
-        
+
         @Override
         public int compare(AsamBean asam1, AsamBean asam2) {
             if (asam1.mVictim == null) {
@@ -229,9 +244,9 @@ public class AsamBean implements Serializable, Comparable<AsamBean> {
             return asam1.mVictim.toUpperCase(Locale.US).compareTo(asam2.mVictim == null ? null : asam2.mVictim.toUpperCase(Locale.US));
         }
     }
-    
+
     public static class DescendingVictimComparator implements Comparator<AsamBean> {
-        
+
         @Override
         public int compare(AsamBean asam1, AsamBean asam2) {
             if (asam1.mVictim == null) {
@@ -240,9 +255,9 @@ public class AsamBean implements Serializable, Comparable<AsamBean> {
             return -asam1.mVictim.toUpperCase(Locale.US).compareTo(asam2.mVictim == null ? null : asam2.mVictim.toUpperCase(Locale.US));
         }
     }
-    
+
     public static class AscendingSubregionComparator implements Comparator<AsamBean> {
-        
+
         @Override
         public int compare(AsamBean asam1, AsamBean asam2) {
             if (asam1.mGeographicalSubregion == null) {
@@ -251,9 +266,9 @@ public class AsamBean implements Serializable, Comparable<AsamBean> {
             return asam1.mGeographicalSubregion.compareTo(asam2.mGeographicalSubregion);
         }
     }
-    
+
     public static class DescendingSubregionComparator implements Comparator<AsamBean> {
-        
+
         @Override
         public int compare(AsamBean asam1, AsamBean asam2) {
             if (asam1.mGeographicalSubregion == null) {
@@ -262,26 +277,72 @@ public class AsamBean implements Serializable, Comparable<AsamBean> {
             return -asam1.mGeographicalSubregion.compareTo(asam2.mGeographicalSubregion);
         }
     }
-    
-    public static class AscendingAggressorComparator implements Comparator<AsamBean> {
-        
+
+    public static class AscendingHostilityComparator implements Comparator<AsamBean> {
+
         @Override
         public int compare(AsamBean asam1, AsamBean asam2) {
-            if (asam1.mAggressor == null) {
+            if (asam1.mHostility == null) {
                 return -1;
             }
-            return asam1.mAggressor.toUpperCase(Locale.US).compareTo(asam2.mAggressor == null ? null : asam2.mAggressor.toUpperCase(Locale.US));
+            return asam1.mHostility.toUpperCase(Locale.US).compareTo(asam2.mHostility == null ? null : asam2.mHostility.toUpperCase(Locale.US));
         }
     }
-    
-    public static class DescendingAggressorComparator implements Comparator<AsamBean> {
-        
+
+    public static class DescendingHostilityComparator implements Comparator<AsamBean> {
+
         @Override
         public int compare(AsamBean asam1, AsamBean asam2) {
-            if (asam1.mAggressor == null) {
+            if (asam1.mHostility == null) {
                 return 1;
             }
-            return -asam1.mAggressor.toUpperCase(Locale.US).compareTo(asam2.mAggressor == null ? null : asam2.mAggressor.toUpperCase(Locale.US));
+            return -asam1.mHostility.toUpperCase(Locale.US).compareTo(asam2.mHostility == null ? null : asam2.mHostility.toUpperCase(Locale.US));
         }
+    }
+
+    private AsamBean(Parcel in) {
+        mId = in.readInt();
+        mLatitude = in.readDouble();
+        mLongitude = in.readDouble();
+        mOccurrenceDate = new Date(in.readLong());
+        mReferenceNumber = in.readString();
+        mGeographicalSubregion = in.readString();
+        mNavArea = in.readString();
+        mHostility = in.readString();
+        mVictim = in.readString();
+        mDescription = in.readString();
+        mLatitudeDegMinSec = in.readString();
+        mLongitudeDegMinSec = in.readString();
+    }
+
+    public static final Parcelable.Creator<AsamBean> CREATOR = new Parcelable.Creator<AsamBean>() {
+        public AsamBean createFromParcel(Parcel in) {
+            return new AsamBean(in);
+        }
+
+        public AsamBean[] newArray(int size) {
+            return new AsamBean[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(mId);
+        dest.writeDouble(mLatitude);
+        dest.writeDouble(mLongitude);
+        dest.writeLong(mOccurrenceDate.getTime());
+        dest.writeString(mReferenceNumber);
+        dest.writeString(mGeographicalSubregion);
+        dest.writeString(mNavArea);
+        dest.writeString(mHostility);
+        dest.writeString(mVictim);
+        dest.writeString(mDescription);
+        dest.writeString(mLatitudeDegMinSec);
+        dest.writeString(mLongitudeDegMinSec);
     }
 }

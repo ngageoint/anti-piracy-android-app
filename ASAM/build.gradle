@@ -3,18 +3,20 @@ buildscript {
     repositories {
         jcenter()
         google()
+        mavenLocal()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.3'
+        classpath 'com.android.tools.build:gradle:3.4.2'
     }
-}
-
-task wrapper(type: Wrapper) {
-    gradleVersion = '2.9'
 }
 
 allprojects {
     repositories {
         jcenter()
+        google()
+        mavenLocal()
+        flatDir {
+            dirs 'libs'
+        }
     }
 }

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="48dp"
+    android:paddingTop="24dp"
+    android:paddingBottom="8dp">
+
+    <TextView android:id="@+id/header_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="16dp"
+        android:layout_gravity="center_vertical"
+        style="@style/ListSubHeader"
+        android:text="Some Text"/>
+
+</LinearLayout>
