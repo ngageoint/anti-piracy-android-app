@@ -73,8 +73,8 @@ public class SettingsAdapter extends BaseAdapter {
                     viewHolder.title.setText(context.getString(R.string.legal_fragment_nga_open_source_licenses_label_text));
                     break;
                 case 6:
-                    viewHolder.title.setText(String.format(context.getString(R.string.preferences_last_sync_time_label_text), SyncTime.getLastSyncTimeAsText(context)));
-                    viewHolder.subtitle.setText(context.getString(R.string.preferences_click_to_sync_label_text));
+                    viewHolder.title.setText(String.format(context.getString(R.string.preferences_last_sync_time_label_text)));
+                    viewHolder.subtitle.setText(SyncTime.getLastSyncTimeAsText(context));
                     break;
             }
         }

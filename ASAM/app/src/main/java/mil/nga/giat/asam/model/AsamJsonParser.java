@@ -18,7 +18,7 @@ import mil.nga.giat.asam.util.AsamLog;
 
 public class AsamJsonParser {
 
-    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy MM dd hh:mm:ss", Locale.US);
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
     private static JsonFactory factory = new JsonFactory();
 
     public List<AsamBean> parseJson(InputStream is) throws JsonParseException, IOException {

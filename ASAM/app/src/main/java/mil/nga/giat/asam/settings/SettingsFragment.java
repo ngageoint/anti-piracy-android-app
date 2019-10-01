@@ -77,6 +77,7 @@ public class SettingsFragment extends Fragment implements AdapterView.OnItemClic
                 break;
             case 6:
                 onSyncClick();
+                listView.clearChoices();
                 break;
         }
     }

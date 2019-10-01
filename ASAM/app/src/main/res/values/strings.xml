@@ -169,8 +169,7 @@
     <string name="preferences_sync_complete_title_text">Sync\'d</string>
     <string name="preferences_sync_complete_description_text">The ASAM application sync is now complete.</string>
     <string name="preferences_title_text">Settings</string>
-    <string name="preferences_last_sync_time_label_text">Last Sync Time %1$s</string>
-    <string name="preferences_click_to_sync_label_text">Click to sync</string>
+    <string name="preferences_last_sync_time_label_text">Last Sync Date</string>
     <string name="preferences_sync_now_button_text">Sync Now</string>
     <string name="preferences_hide_disclaimer_label_text">Disclaimer</string>
     <string name="preferences_hide_disclaimer_checkbox_text">Hide Disclaimer</string>

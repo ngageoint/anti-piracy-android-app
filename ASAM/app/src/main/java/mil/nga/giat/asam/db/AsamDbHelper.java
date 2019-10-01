@@ -10,8 +10,6 @@ import android.provider.BaseColumns;
 
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -22,7 +20,6 @@ import java.util.Locale;
 
 import mil.nga.giat.asam.filter.FilterParameters;
 import mil.nga.giat.asam.model.AsamBean;
-import mil.nga.giat.asam.model.AsamJsonParser;
 import mil.nga.giat.asam.util.AsamLog;
 import mil.nga.giat.asam.util.SyncTime;
 
@@ -30,9 +27,8 @@ import mil.nga.giat.asam.util.SyncTime;
 @SuppressLint("SdCardPath")
 public class AsamDbHelper extends SQLiteOpenHelper {
 
-    public static final SimpleDateFormat SQLITE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
+    public static final SimpleDateFormat SQLITE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
     public static final SimpleDateFormat TEXT_QUERY_DATE_FORMAT = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
-    private static final String DB_PATH = "/data/data/mil.nga.giat.asam/databases/";
     private static final String DB_NAME = "asams.db";
     private static final int DB_VERSION = 2;
     public static final String TABLE_NAME = "asams";
@@ -95,26 +91,6 @@ public class AsamDbHelper extends SQLiteOpenHelper {
         db.execSQL(drop);
 
         SyncTime.removeSync(mContext);
-    }
-
-    private void seed(SQLiteDatabase db) {
-        InputStream is = null;
-
-        try {
-            is = mContext.getAssets().open("asam_seed.json");
-            List<AsamBean> asams = new AsamJsonParser().parseJson(is);
-            insertAsams(db, asams);
-        } catch (Exception e) {
-            AsamLog.e("Error seeding database", e);
-        } finally {
-            try {
-                if (is != null) {
-                    is.close();
-                }
-            } catch (IOException ignore) {
-            }
-        }
-
     }
     
     public void insertAsams(SQLiteDatabase db, List<AsamBean> asams) {

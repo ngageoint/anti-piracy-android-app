@@ -475,11 +475,6 @@ public class AsamMapActivity extends AppCompatActivity implements OnCameraChange
 
         setTimeSlider(null);
 
-//        mQueryProgressDialog = new ProgressDialog(this, R.style.AppCompatAlertDialogStyle);
-//        mQueryProgressDialog.setTitle(getString(R.string.all_asams_map_tablet_query_progress_dialog_title_text));
-//        mQueryProgressDialog.setMessage(getString(R.string.all_asams_map_tablet_query_progress_dialog_content_text));
-//        mQueryProgressDialog.setIndeterminate(true);
-//        mQueryProgressDialog.show();
         new QueryThread().start();
     }
 
@@ -521,9 +516,10 @@ public class AsamMapActivity extends AppCompatActivity implements OnCameraChange
                             onMapTypeChanged(AsamConstants.MAP_TYPE_OFFLINE_110M);
                             break;
                     }
+
+                    dialog.dismiss();
                 }
             })
-            .setPositiveButton("OK", null)
             .create()
             .show();
     }
