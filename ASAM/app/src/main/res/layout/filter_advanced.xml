@@ -157,7 +157,7 @@
                     android:layout_marginBottom="7dip"
                     android:layout_marginTop="7dip"
                     android:hint="@string/text_query_victim_label_text"
-                    android:inputType="number"
+                    android:inputType="text"
                     android:maxLines="1"/>
 
             </android.support.design.widget.TextInputLayout>
@@ -173,7 +173,7 @@
                     android:layout_marginBottom="7dip"
                     android:layout_marginTop="7dip"
                     android:hint="@string/text_query_hostility_label_text"
-                    android:inputType="number"
+                    android:inputType="text"
                     android:maxLines="1"/>
 
             </android.support.design.widget.TextInputLayout>
