@@ -3,7 +3,9 @@ package mil.nga.giat.asam.filter;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -35,7 +37,7 @@ public class FilterAdvancedActivity extends AppCompatActivity implements OnClick
 
     private static final int PICK_SUBREGIONS_REQUEST = 1;
 
-    private ArrayList<Integer> mSubregionIds = new ArrayList<Integer>();
+    private ArrayList<Integer> mSubregionIds = new ArrayList<>();
 
     private EditText mKeyword;
     private EditText mDateFromUI;
@@ -85,12 +87,15 @@ public class FilterAdvancedActivity extends AppCompatActivity implements OnClick
             case android.R.id.home:
                 finish();
                 return true;
-            case R.id.clear:
+            case R.id.clear: {
                 clearFields();
                 return true;
+            }
             case R.id.apply:
                 Intent intent = new Intent();
                 FilterParameters parameters = parseFields();
+                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                parameters.save(preferences);
                 intent.putExtra(AsamMapActivity.SEARCH_PARAMETERS, parameters);
                 setResult(Activity.RESULT_OK, intent);
                 finish();

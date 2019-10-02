@@ -231,8 +231,7 @@ public class AsamMapActivity extends AppCompatActivity implements OnCameraChange
 
         mQueryHandler = new QueryHandler(this);
 
-        mFilterParameters = new FilterParameters(FilterParameters.Type.SIMPLE);
-        mFilterParameters.mTimeInterval = 365;
+        mFilterParameters = FilterParameters.newInstance(mSharedPreferences);
         onFilter();
 
         findViewById(R.id.map_layer).setOnClickListener(new View.OnClickListener() {

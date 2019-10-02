@@ -3,8 +3,10 @@ package mil.nga.giat.asam.filter;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -31,7 +33,6 @@ public class FilterActivity extends AppCompatActivity {
     private CheckBox currentSubregion;
 
     private CurrentSubregionHelper currentSubregionHelper;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,12 +69,15 @@ public class FilterActivity extends AppCompatActivity {
             case android.R.id.home:
                 finish();
                 return true;
-            case R.id.clear:
+            case R.id.clear: {
                 clearFields();
                 return true;
+            }
             case R.id.apply: {
                 Intent intent = new Intent();
                 FilterParameters parameters = parseFields();
+                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                parameters.save(preferences);
                 intent.putExtra(AsamMapActivity.SEARCH_PARAMETERS, parameters);
                 setResult(Activity.RESULT_OK, intent);
                 finish();
