@@ -3,7 +3,7 @@ apply plugin: 'maven-publish'
 archivesBaseName = 'asam'
 version '2.0.0'
 ext {
-    versionCode = 10
+    versionCode = 11
 }
 
 def googleMapsApiDebugKey = hasProperty('DEBUG_MAPS_API_KEY') ? DEBUG_MAPS_API_KEY: ''
