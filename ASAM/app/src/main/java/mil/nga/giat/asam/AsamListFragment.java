@@ -1,9 +1,9 @@
 package mil.nga.giat.asam;
 
-import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -26,7 +26,7 @@ import mil.nga.giat.asam.widget.AsamArrayAdapter;
 public class AsamListFragment extends Fragment implements AdapterView.OnItemClickListener {
 
     public interface OnAsamSelectedListener {
-        public void onAsamSelected(AsamBean asam);
+        void onAsamSelected(AsamBean asam);
     }
 
     private int mSortDirection;
@@ -47,7 +47,7 @@ public class AsamListFragment extends Fragment implements AdapterView.OnItemClic
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.asam_list_fragment, container, false);
 
-        mAsamListViewUI = (ListView) view.findViewById(R.id.asam_list_tablet_list_view_ui);
+        mAsamListViewUI = view.findViewById(R.id.asam_list_tablet_list_view_ui);
 
         TextView emptyListViewUI = new TextView(view.getContext());
         emptyListViewUI.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
@@ -84,13 +84,13 @@ public class AsamListFragment extends Fragment implements AdapterView.OnItemClic
     }
     
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    public void onAttach(Context context) {
+        super.onAttach(context);
         AsamLog.i(AsamListFragment.class.getName() + ":onAttach");
         try {
-            mOnAsamSelectedListener = (OnAsamSelectedListener)activity;
+            mOnAsamSelectedListener = (OnAsamSelectedListener) context;
         } catch (ClassCastException caught) {
-            throw new ClassCastException(activity.toString() + " must implement OnAsamSelectedListener");
+            throw new ClassCastException(context.toString() + " must implement OnAsamSelectedListener");
         }
     }
         
@@ -99,7 +99,7 @@ public class AsamListFragment extends Fragment implements AdapterView.OnItemClic
         mOnAsamSelectedListener.onAsamSelected(mAsams.get(position));
     }
     
-    public void onSortAsamList(int sortDirection, int sortPopupSpinnerSelection) {
+    public void onSort(int sortDirection, int sortPopupSpinnerSelection) {
         mSortDirection = sortDirection;
         mSortPopupSpinnerSelection = sortPopupSpinnerSelection;
         switch (mSortPopupSpinnerSelection) {

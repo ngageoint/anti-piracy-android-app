@@ -1,9 +1,10 @@
 package mil.nga.giat.asam.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,16 +16,21 @@ import java.util.Locale;
 
 import mil.nga.giat.asam.util.AsamLog;
 
-
 public class AsamJsonParser {
 
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-    private static JsonFactory factory = new JsonFactory();
+    private static ObjectMapper mapper;
 
-    public List<AsamBean> parseJson(InputStream is) throws JsonParseException, IOException {
+    public AsamJsonParser() {
+        JsonFactory factory = new JsonFactory();
+        mapper = new ObjectMapper(factory);
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+    }
+
+    public List<AsamBean> parseJson(InputStream is) throws IOException {
         List<AsamBean> asams = new ArrayList<>();
 
-        JsonParser parser = factory.createParser(is);
+        JsonParser parser = mapper.createParser(is);
         if (parser.nextToken() != JsonToken.START_OBJECT) {
             return asams;
         }
@@ -47,7 +53,7 @@ public class AsamJsonParser {
         return asams;
     }
 
-    public AsamBean parseAsam(JsonParser parser) throws JsonParseException, IOException {
+    public AsamBean parseAsam(JsonParser parser) throws IOException {
         if (parser.getCurrentToken() != JsonToken.START_OBJECT) {
             return null;
         }
@@ -79,7 +85,7 @@ public class AsamJsonParser {
                 asam.setVictim(parseString(name, parser));
             } else if ("hostility".equals(name)) {
                 parser.nextToken();
-                asam.setHostility(parseString(name, parser));
+                asam.setAggressor(parseString(name, parser));
             } else if ("description".equals(name)) {
                 parser.nextToken();
                 asam.setDescription(parseString(name, parser));
@@ -95,10 +101,12 @@ public class AsamJsonParser {
     
     private String parseString(String key, JsonParser parser) {
         String value = null;
-        try {
-            value = parser.getText().trim().replaceAll("\\+s", " ");
-        } catch (IOException e) {
-            AsamLog.e(AsamJsonParser.class.getName() + ":Error extracting " + key, e);
+        if (parser.currentToken() != JsonToken.VALUE_NULL) {
+            try {
+                value = parser.getText().trim().replaceAll("\\+s", " ");
+            } catch (IOException e) {
+                AsamLog.e(AsamJsonParser.class.getName() + ":Error extracting " + key, e);
+            }
         }
 
         return value;

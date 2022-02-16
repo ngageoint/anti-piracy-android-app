@@ -2,74 +2,46 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal"
+    android:orientation="vertical"
     android:paddingTop="16dp"
     android:paddingBottom="20dp"
     android:paddingLeft="16dp"
     android:paddingRight="16dp"
     android:background="@drawable/list_active">
 
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:layout_weight="1">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView android:id="@+id/asam_list_row_victim_ui"
-                style="@style/ListTextPrimary"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ellipsize="marquee"
-                android:singleLine="true" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView android:id="@+id/asam_list_row_hostility_ui"
-                style="@style/ListTextPrimary"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ellipsize="marquee"
-                android:singleLine="true"
-                android:text="Hostility Placeholder"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingTop="5dp">
-
-            <TextView android:id="@+id/asam_list_row_description_ui"
-                style="@style/ListTextSecondary"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ellipsize="marquee"
-                android:singleLine="true" />
-
-        </LinearLayout>
-
-    </LinearLayout>
-
-    <LinearLayout
+    <TextView android:id="@+id/asam_list_row_date_ui"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        style="@style/TextAppearance.MaterialComponents.Overline"/>
 
-        <TextView android:id="@+id/asam_list_row_date_ui"
-            style="@style/ListTextSecondary"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="01/01/2015"/>
+    <TextView android:id="@+id/asam_list_row_hostility_ui"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        style="@style/TextAppearance.MaterialComponents.Body1"
+        android:fontFamily="sans-serif"
+        android:alpha=".87"
+        android:ellipsize="marquee"
+        android:singleLine="true" />
 
-    </LinearLayout>
+    <TextView android:id="@+id/asam_list_row_victim_ui"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        style="@style/TextAppearance.MaterialComponents.Body1"
+        android:fontFamily="sans-serif"
+        android:alpha=".87"
+        android:ellipsize="marquee"
+        android:singleLine="true" />
+
+    <TextView android:id="@+id/asam_list_row_description_ui"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/TextAppearance.MaterialComponents.Body2"
+        android:fontFamily="sans-serif"
+        android:alpha=".60"
+        android:ellipsize="marquee"
+        android:singleLine="true" />
 
 </LinearLayout>

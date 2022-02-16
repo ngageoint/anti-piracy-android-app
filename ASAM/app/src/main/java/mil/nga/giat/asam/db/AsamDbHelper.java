@@ -110,7 +110,7 @@ public class AsamDbHelper extends SQLiteOpenHelper {
                 bindString(pstmt, 4, asam.getNavArea());
                 pstmt.bindDouble(5, asam.getLatitude());
                 pstmt.bindDouble(6, asam.getLongitude());
-                bindString(pstmt, 7, asam.getHostility());
+                bindString(pstmt, 7, asam.getAggressor());
                 bindString(pstmt, 8, asam.getVictim());
                 bindString(pstmt, 9, asam.getDescription());
 
@@ -405,7 +405,7 @@ public class AsamDbHelper extends SQLiteOpenHelper {
                 asam.setGeographicalSubregion(cursor.getString(cursor.getColumnIndex(AsamDbHelper.SUBREGION)));
                 asam.setLatitude(cursor.getDouble(cursor.getColumnIndex(AsamDbHelper.LATITUDE)));
                 asam.setLongitude(cursor.getDouble(cursor.getColumnIndex(AsamDbHelper.LONGITUDE)));
-                asam.setHostility(cursor.getString(cursor.getColumnIndex(AsamDbHelper.HOSTILITY)));
+                asam.setAggressor(cursor.getString(cursor.getColumnIndex(AsamDbHelper.HOSTILITY)));
                 asam.setVictim(cursor.getString(cursor.getColumnIndex(AsamDbHelper.VICTIM)));
                 asam.setDescription(cursor.getString(cursor.getColumnIndex(AsamDbHelper.DESCRIPTION)));
                 asams.add(asam);

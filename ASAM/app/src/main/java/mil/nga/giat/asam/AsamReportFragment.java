@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.Fragment;
+import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,15 +30,15 @@ import mil.nga.giat.asam.util.AsamConstants;
 
 public class AsamReportFragment extends Fragment implements Asam.OnOfflineFeaturesListener, OnMapReadyCallback {
 
-    private AsamBean mAsam;
-    private TextView mOccurrenceDateUI;
-    private TextView mHostilityUI;
-    private TextView mVictimUI;
-    private TextView mSubregionUI;
-    private TextView mNavAreaUI;
-    private TextView mReferenceNumberUI;
-    private TextView mLocationUI;
-    private TextView mDescriptionUI;
+    private AsamBean asam;
+    private TextView occurrenceDate;
+    private TextView aggressor;
+    private TextView victim;
+    private TextView subregion;
+    private TextView navArea;
+    private TextView referenceNumber;
+    private TextView location;
+    private TextView description;
 
     private MapView mapView;
     private GoogleMap map;
@@ -50,14 +50,14 @@ public class AsamReportFragment extends Fragment implements Asam.OnOfflineFeatur
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.asam_report_fragment, container, false);
 
-        mOccurrenceDateUI = view.findViewById(R.id.asam_report_fragment_occurrence_date_ui);
-        mHostilityUI = view.findViewById(R.id.asam_report_fragment_hostility_ui);
-        mVictimUI = view.findViewById(R.id.asam_report_fragment_victim_ui);
-        mSubregionUI = view.findViewById(R.id.asam_report_fragment_subregion_ui);
-        mNavAreaUI = view.findViewById(R.id.asam_report_fragment_navarea_ui);
-        mReferenceNumberUI = view.findViewById(R.id.asam_report_fragment_reference_number_ui);
-        mLocationUI = view.findViewById(R.id.asam_report_fragment_location_ui);
-        mDescriptionUI = view.findViewById(R.id.asam_report_fragment_description_ui);
+        occurrenceDate = view.findViewById(R.id.asam_report_fragment_occurrence_date_ui);
+        aggressor = view.findViewById(R.id.asam_report_fragment_hostility_ui);
+        victim = view.findViewById(R.id.asam_report_fragment_victim_ui);
+        subregion = view.findViewById(R.id.asam_report_fragment_subregion_ui);
+        navArea = view.findViewById(R.id.asam_report_fragment_navarea_ui);
+        referenceNumber = view.findViewById(R.id.asam_report_fragment_reference_number_ui);
+        location = view.findViewById(R.id.asam_report_fragment_location_ui);
+        description = view.findViewById(R.id.asam_report_fragment_description_ui);
 
         mapView = view.findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
@@ -96,22 +96,32 @@ public class AsamReportFragment extends Fragment implements Asam.OnOfflineFeatur
 
     public void mapAsamLocation(View view) {
         Intent intent = new Intent(getActivity(), SingleAsamMapActivity.class);
-        intent.putExtra(AsamConstants.ASAM_KEY, mAsam);
+        intent.putExtra(AsamConstants.ASAM_KEY, asam);
         startActivity(intent);
     }
 
     public void updateContent(AsamBean asam) {
-        mAsam = asam;
+        this.asam = asam;
 
-        // Sometimes eye sore if there is no entry. Just make a single " ".
-        mOccurrenceDateUI.setText(AsamBean.OCCURRENCE_DATE_FORMAT.format(mAsam.getOccurrenceDate()));
-        mHostilityUI.setText(StringUtils.isBlank(mAsam.getHostility()) ? " " : mAsam.getHostility());
-        mVictimUI.setText(StringUtils.isBlank(mAsam.getVictim()) ? " " : mAsam.getVictim());
-        mSubregionUI.setText(StringUtils.isBlank(mAsam.getGeographicalSubregion()) ? " " : mAsam.getGeographicalSubregion());
-        mNavAreaUI.setText(StringUtils.isBlank(mAsam.getNavArea()) ? " " : mAsam.getNavArea());
-        mReferenceNumberUI.setText(StringUtils.isBlank(mAsam.getReferenceNumber()) ? " " : mAsam.getReferenceNumber());
-        mLocationUI.setText(mAsam.formatLatitutdeDegMinSec() + ", " + mAsam.formatLongitudeDegMinSec());
-        mDescriptionUI.setText(StringUtils.isBlank(mAsam.getDescription()) ? " " : mAsam.getDescription());
+        occurrenceDate.setText(AsamBean.OCCURRENCE_DATE_FORMAT.format(asam.getOccurrenceDate()));
+
+        if (StringUtils.isBlank(asam.getAggressor())) {
+            aggressor.setText("Unknown");
+        } else {
+            aggressor.setText(asam.getAggressor());
+        }
+
+        if (StringUtils.isBlank(asam.getVictim())) {
+            victim.setText("Unknown");
+        } else {
+            victim.setText(asam.getVictim());
+        }
+
+        subregion.setText(StringUtils.isBlank(asam.getGeographicalSubregion()) ? " " : asam.getGeographicalSubregion());
+        navArea.setText(StringUtils.isBlank(asam.getNavArea()) ? " " : asam.getNavArea());
+        referenceNumber.setText(StringUtils.isBlank(asam.getReferenceNumber()) ? " " : asam.getReferenceNumber());
+        location.setText(asam.formatLatitutdeDegMinSec() + ", " + asam.formatLongitudeDegMinSec());
+        description.setText(StringUtils.isBlank(asam.getDescription()) ? " " : asam.getDescription());
     }
 
     @Override
@@ -134,7 +144,7 @@ public class AsamReportFragment extends Fragment implements Asam.OnOfflineFeatur
         int mapType = preferences.getInt(AsamConstants.MAP_TYPE_KEY, GoogleMap.MAP_TYPE_NORMAL);
         if (mMapType != mapType) setMapType(mapType);
 
-        LatLng latLng = new LatLng(mAsam.getLatitude(), mAsam.getLongitude());
+        LatLng latLng = new LatLng(asam.getLatitude(), asam.getLongitude());
         map.addMarker(new MarkerOptions().position(latLng).icon(AsamConstants.PIRATE_MARKER).anchor(0.5f, 0.5f));
 
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 13));

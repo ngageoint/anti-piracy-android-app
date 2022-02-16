@@ -1,7 +1,7 @@
 package mil.nga.giat.asam.settings.about;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.MenuItem;
 
 import mil.nga.giat.asam.R;

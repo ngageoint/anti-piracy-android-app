@@ -3,8 +3,8 @@ package mil.nga.giat.asam;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.MenuItem;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -79,7 +79,7 @@ public class AsamListActivity extends AppCompatActivity implements AsamListFragm
     
     @Override
     public void onSortAsamList(int sortDirection, int sortPopupSpinnerSelection) {
-        listFragment.onSortAsamList(sortDirection, sortPopupSpinnerSelection);
+        listFragment.onSort(sortDirection, sortPopupSpinnerSelection);
     }
 
     @Override
